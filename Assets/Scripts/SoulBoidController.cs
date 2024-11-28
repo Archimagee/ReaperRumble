@@ -35,7 +35,7 @@ public class SoulBoidController : MonoBehaviour
 
     public void Start()
     {
-        for (int x = 0; x < 5; x++)
+        for (int x = 0; x < 10; x++)
         {
             SoulGameObject newSoul = GameObject.Instantiate(_soulPrefab, Vector3.zero, Quaternion.identity, this.transform);
             newSoul.Setup(this, _follower);
