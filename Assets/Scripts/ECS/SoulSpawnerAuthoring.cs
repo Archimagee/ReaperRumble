@@ -7,7 +7,7 @@ using Unity.Mathematics;
 public class SoulSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private GameObject _soulPrefab;
-    [SerializeField] private int _spawnAmount;
+    [SerializeField] private GameObject _soulGroupPrefab;
     [SerializeField] private Vector3 _spawnPosition;
     [SerializeField] private float _spawnPositionRandomisation;
 
@@ -18,9 +18,9 @@ public class SoulSpawnerAuthoring : MonoBehaviour
         public override void Bake(SoulSpawnerAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
-            AddComponent(entity, new SoulSpawner {
-                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Dynamic),
-                SpawnAmount = authoring._spawnAmount,
+            AddComponent(entity, new SoulSpawnerComponent {
+                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Renderable),
+                SoulGroupPrefabEntity = GetEntity(authoring._soulGroupPrefab, TransformUsageFlags.Dynamic),
                 SpawnPosition = authoring._spawnPosition,
                 SpawnPositionRandomisation = authoring._spawnPositionRandomisation
             });
@@ -30,10 +30,10 @@ public class SoulSpawnerAuthoring : MonoBehaviour
 
 
 
-public struct SoulSpawner : IComponentData
+public struct SoulSpawnerComponent : IComponentData
 {
     public Entity SoulPrefabEntity;
-    public int SpawnAmount;
+    public Entity SoulGroupPrefabEntity;
     public float3 SpawnPosition;
     public float SpawnPositionRandomisation;
 }

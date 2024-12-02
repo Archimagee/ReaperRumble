@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+
+
+public class PlayerController : MonoBehaviour
 {
     private static float _lookSensitivity = 1.3f;
     private static float _baseMoveSpeed = 0.4f;
