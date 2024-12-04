@@ -152,6 +152,8 @@ MonoBehaviour:
   _soulGroupPrefab: {fileID: 1621217679049272800, guid: 7c8b32f072abf65438924fc4843f8018, type: 3}
   _spawnPosition: {x: 0, y: 0, z: 0}
   _spawnPositionRandomisation: 10
+  _separationForce: 0.03
+  _speed: 0.2
 --- !u!4 &691539916
 Transform:
   m_ObjectHideFlags: 0

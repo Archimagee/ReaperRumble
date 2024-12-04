@@ -2,9 +2,12 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
+using Unity.Burst;
 
 
 
+[BurstCompile]
 public partial class SpawnSoulSystem : SystemBase
 {
     private SoulSpawnerComponent _spawner;
@@ -35,49 +38,46 @@ public partial class SpawnSoulSystem : SystemBase
 
 
 
-    protected override void OnUpdate()
+    protected override void OnUpdate() { }
+
+
+
+    [BurstCompile]
+    private void OnSoulsSpawned(int amount, Transform objectToFollow)
     {
         Entity spawnerEntity = SystemAPI.GetSingletonEntity<SoulSpawnerComponent>();
 
-        if (_spawnQueue.Count > 0f)
+        float randomisation = _spawner.SpawnPositionRandomisation;
+
+        Entity soulGroup = EntityManager.Instantiate(_spawner.SoulGroupPrefabEntity);
+        EntityManager.SetComponentData(soulGroup, new LocalTransform { Position = _spawner.SpawnPosition });
+        EntityManager.AddComponentObject(soulGroup, objectToFollow);
+
+        _lookup.Update(this);
+        _lookup.TryGetBuffer(soulGroup, out DynamicBuffer<SoulBufferElement> buffer);
+
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer.ParallelWriter ecbpw = ecb.AsParallelWriter();
+
+        for (int i = 0; i < amount; i++)
         {
-            float randomisation = _spawner.SpawnPositionRandomisation;
-            int amount = _spawnQueue.Dequeue();
-
-            Entity soulGroup = EntityManager.Instantiate(_spawner.SoulGroupPrefabEntity);
-            EntityManager.SetComponentData(soulGroup, new LocalTransform { Position = _spawner.SpawnPosition });
-            _lookup.Update(this);
-            _lookup.TryGetBuffer(soulGroup, out DynamicBuffer<SoulBufferElement> buffer);
-
-            EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
-            EntityCommandBuffer.ParallelWriter ecbpw = ecb.AsParallelWriter();
-
-            for (int i = 0; i < amount; i++)
+            float3 randPos = new float3(UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation));
+            new SpawnSoulJob
             {
-                float3 randPos = new float3(UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation));
-                new SpawnSoulJob
-                {
-                    Ecb = ecbpw,
-                    RandPos = randPos,
-                    Group = soulGroup,
-                }.ScheduleParallel();
-            }
-            this.CompleteDependency();
-            ecb.Playback(_entityManager);
-            ecb.Dispose();
+                Ecb = ecbpw,
+                RandPos = randPos,
+                Group = soulGroup,
+            }.ScheduleParallel();
         }
-    }
-
-
-
-    private void OnSoulsSpawned(int amount)
-    {
-        _spawnQueue.Enqueue(amount);
+        this.CompleteDependency();
+        ecb.Playback(_entityManager);
+        ecb.Dispose();
     }
 }
 
 
 
+[BurstCompile]
 [WithAll(typeof(SoulSpawnerComponent))]
 public partial struct SpawnSoulJob : IJobEntity
 {
@@ -90,7 +90,7 @@ public partial struct SpawnSoulJob : IJobEntity
         Entity soul = Ecb.Instantiate(index, spawner.SoulPrefabEntity);
 
         Ecb.SetComponent(index, soul, new LocalTransform { Position = RandPos + spawner.SpawnPosition, Scale = 1f });
-        Ecb.SetComponent(index, soul, new SoulComponent { Speed = 0.12f, SeparationForce = 0.1f, MyGroup = Group });
+        Ecb.SetComponent(index, soul, new SoulComponent { Speed = spawner.Speed, SeparationForce = spawner.SeparationForce, MyGroup = Group });
         Ecb.AppendToBuffer(index, Group, new SoulBufferElement { Soul = soul });
     }
 }

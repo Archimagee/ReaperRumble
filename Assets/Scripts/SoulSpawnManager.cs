@@ -9,8 +9,10 @@ public class SoulSpawnManager : MonoBehaviour
     private static EntityManager _entityManager;
     private static Entity _soulSpawner;
 
-    public delegate void SoulsSpawnedCallback(int amount);
+    public delegate void SoulsSpawnedCallback(int amount, Transform objectToFollow);
     public static SoulsSpawnedCallback OnSpawnSouls;
+
+    [SerializeField] private Transform _playerTransform;
 
 
 
@@ -34,13 +36,13 @@ public class SoulSpawnManager : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(20);
-        }
+        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(15, _playerTransform);
+    }
 
 
 
-    public void RaiseSoulsSpawned(int amount)
+    public void RaiseSoulsSpawned(int amount, Transform objectToFollow)
     {
-        OnSpawnSouls?.Invoke(amount);
+        OnSpawnSouls?.Invoke(amount, objectToFollow);
     }
 }

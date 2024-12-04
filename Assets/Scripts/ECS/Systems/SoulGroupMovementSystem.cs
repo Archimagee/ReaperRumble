@@ -1,35 +1,73 @@
+using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
+using Unity.Mathematics;
+using Unity.Burst;
+using Unity.Transforms;
 
 
 
-[RequireMatchingQueriesForUpdate]
+[BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-public partial class SoulGroupMovementSystem : SystemBase
+public partial struct SoulGroupMovementSystem : ISystem
 {
-    protected override void OnCreate()
-    {
+    private EndInitializationEntityCommandBufferSystem.Singleton _ecbs;
+    EntityQuery _query;
 
+
+
+    public void OnCreate(ref SystemState state)
+    {
+        _ecbs = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+        _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTag), typeof(Transform));
+        state.RequireForUpdate(_query);
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        _query.Dispose();
     }
 
 
 
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
-        foreach (RefRO<SoulGroupTag> element in SystemAPI.Query<RefRO<SoulGroupTag>>())
-        {
+        EntityManager entityManager = state.EntityManager;
+        NativeArray<Entity> queryResults = _query.ToEntityArray(Allocator.Temp);
 
+        foreach (Entity entity in queryResults)
+        {
+            float3 targetPosition = entityManager.GetComponentObject<Transform>(entity).position;
+            targetPosition.y += 3f;
+            LocalTransform transform = entityManager.GetComponentData<LocalTransform>(entity);
+
+            new MoveSoulGroupJob
+            {
+                Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
+                TargetPosition = targetPosition,
+                CurrentPosition = transform.Position
+            }.ScheduleParallel();
         }
+
+        queryResults.Dispose();
     }
 }
 
 
 
-//public void FixedUpdate()
-//{
-//    Vector3 targetPos = _target.transform.position;
-//    Vector3 followerPos = this.transform.position;
-//    Vector3 direction = (targetPos - followerPos).normalized;
-//    float distance = Vector3.Distance(followerPos, targetPos);
-//    distance = Mathf.Max(distance - 8f, 0f);
-//    this.transform.position += direction * distance * 0.05f;
-//}
+[BurstCompile]
+[WithAll(typeof(SoulGroupTag))]
+public partial struct MoveSoulGroupJob : IJobEntity
+{
+    public EntityCommandBuffer.ParallelWriter Ecb;
+    public float3 TargetPosition;
+    public float3 CurrentPosition;
+
+    public void Execute([ChunkIndexInQuery] int index, in Entity entity)
+    {
+        CurrentPosition += math.normalizesafe(TargetPosition - CurrentPosition) * math.max(math.distance(CurrentPosition, TargetPosition) - 15f, 0f) * 0.05f;
+        CurrentPosition.y += math.normalizesafe(TargetPosition - CurrentPosition).y * math.distance(CurrentPosition, TargetPosition) * 0.02f;
+
+        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = CurrentPosition });
+    }
+}

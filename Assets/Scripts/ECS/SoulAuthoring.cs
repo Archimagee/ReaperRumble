@@ -11,8 +11,8 @@ public class SoulAuthoring : MonoBehaviour
         public override void Bake(SoulAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Renderable);
-            AddComponent(entity, new SoulComponent { Speed = 0.07f, SeparationForce = 0.2f});
-            AddComponent(entity, new SoulFacingComponent { FacingDirection = new float3(1f, 0f, 0f) });
+            AddComponent(entity, new SoulComponent { });
+            AddComponent(entity, new SoulFacingComponent { FacingDirection = new float3(0f, 0f, 1f) });
         }
     }
 }
