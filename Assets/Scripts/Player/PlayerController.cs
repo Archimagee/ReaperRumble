@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-    [SerializeField] private Camera _characterCamera;
+    [SerializeField] private GameObject _characterCameraPivot;
 
 
 
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
     private void HandleMouseLook()
     {
         _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - Input.GetAxis("Mouse Y"), -90f, 90f);
-        _characterCamera.transform.localRotation = Quaternion.Euler(_cameraRotation.x, 0f, 0f);
+        _characterCameraPivot.transform.localRotation = Quaternion.Euler(_cameraRotation.x, 0f, 0f);
         this.transform.rotation *= Quaternion.Euler(0f, Input.GetAxis("Mouse X") * _lookSensitivity, 0f);
     }
 }

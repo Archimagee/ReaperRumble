@@ -38,8 +38,8 @@ public partial class SoulMovementSystem : SystemBase
         }
 
         EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<SoulComponent>().Build();
-        NativeArray<Entity> souls = groupQuery.ToEntityArray(Allocator.TempJob);
-        NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
+        NativeArray<Entity> souls = soulQuery.ToEntityArray(Allocator.TempJob);
+        NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(souls.Length, Allocator.TempJob);
         foreach (Entity soul in souls)
         {
             soulPositions.Add(soul, SystemAPI.GetComponentRO<LocalTransform>(soul).ValueRO.Position);
@@ -59,6 +59,7 @@ public partial class SoulMovementSystem : SystemBase
         this.CompleteDependency();
 
         groupPositions.Dispose();
+        soulPositions.Dispose();
     }
 }
 

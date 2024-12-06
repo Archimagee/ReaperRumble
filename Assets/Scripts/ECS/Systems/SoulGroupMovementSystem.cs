@@ -38,7 +38,7 @@ public partial struct SoulGroupMovementSystem : ISystem
         foreach (Entity entity in queryResults)
         {
             float3 targetPosition = entityManager.GetComponentObject<Transform>(entity).position;
-            targetPosition.y += 3f;
+            targetPosition.y += 2f;
             LocalTransform transform = entityManager.GetComponentData<LocalTransform>(entity);
 
             new MoveSoulGroupJob
@@ -66,7 +66,7 @@ public partial struct MoveSoulGroupJob : IJobEntity
     [BurstCompile]
     public void Execute([ChunkIndexInQuery] int index, in Entity entity)
     {
-        CurrentPosition += math.normalizesafe(TargetPosition - CurrentPosition) * math.max(math.distance(CurrentPosition, TargetPosition) - 15f, 0f) * 0.05f;
+        CurrentPosition += math.normalizesafe(TargetPosition - CurrentPosition) * math.max(math.distance(CurrentPosition, TargetPosition) - 20f, 0f) * 0.05f;
         CurrentPosition.y += math.normalizesafe(TargetPosition - CurrentPosition).y * math.distance(CurrentPosition, TargetPosition) * 0.02f;
 
         Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = CurrentPosition });

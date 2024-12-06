@@ -23,7 +23,7 @@ public class SoulSpawnManager : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(1, _playerTransform);
+        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(50, _playerTransform);
     }
 
 
