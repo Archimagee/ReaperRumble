@@ -26,63 +26,89 @@ public partial class SoulMovementSystem : SystemBase
 
 
 
+    [BurstCompile]
     protected override void OnUpdate()
     {
-        foreach ((RefRW<SoulComponent> soul, RefRW<SoulFacingComponent> facingComponent, Entity entity) in SystemAPI.Query<RefRW<SoulComponent>, RefRW<SoulFacingComponent>>().WithEntityAccess())
+        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build();
+        NativeArray<Entity> groups = groupQuery.ToEntityArray(Allocator.TempJob);
+        NativeHashMap<Entity, float3> groupPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
+        foreach (Entity group in groups)
         {
-            _lookup.Update(this);
-            _lookup.TryGetBuffer(soul.ValueRO.MyGroup, out DynamicBuffer<SoulBufferElement> buffer);
-
-            NativeArray<float3> otherPositions = new NativeArray<float3>(buffer.Length, Allocator.TempJob);
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                otherPositions[i] = SystemAPI.GetComponent<LocalTransform>(buffer[i].Soul).Position;
-            }
-
-            new MoveSoulJob()
-            {
-                Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
-                TargetPosition = SystemAPI.GetComponentRO<LocalTransform>(soul.ValueRO.MyGroup).ValueRO.Position,
-                OtherPositions = otherPositions
-            }.ScheduleParallel();
-            this.CompleteDependency();
+            groupPositions.Add(group, SystemAPI.GetComponentRO<LocalTransform>(group).ValueRO.Position);
         }
+
+        EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<SoulComponent>().Build();
+        NativeArray<Entity> souls = groupQuery.ToEntityArray(Allocator.TempJob);
+        NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
+        foreach (Entity soul in souls)
+        {
+            soulPositions.Add(soul, SystemAPI.GetComponentRO<LocalTransform>(soul).ValueRO.Position);
+        }
+
+
+
+        _lookup.Update(this);
+
+        new MoveSoulJob()
+        {
+            Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
+            SoulBufferLookup = _lookup,
+            GroupPositions = groupPositions,
+            SoulPositions = soulPositions
+        }.ScheduleParallel();
+        this.CompleteDependency();
+
+        groupPositions.Dispose();
     }
 }
 
 
 
 [BurstCompile]
-[WithAll(typeof(SoulComponent))]
 public partial struct MoveSoulJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter Ecb;
-    public float3 TargetPosition;
-    [DeallocateOnJobCompletion] public NativeArray<float3> OtherPositions;
+    [ReadOnly] public NativeHashMap<Entity, float3> GroupPositions;
+    [ReadOnly] public NativeHashMap<Entity, float3> SoulPositions;
+    [ReadOnly] public BufferLookup<SoulBufferElement> SoulBufferLookup;
+
+
+
+    [BurstCompile]
     public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in SoulComponent soul, in SoulFacingComponent facingComponent, in Entity entity)
     {
         float3 separation = float3.zero;
         float3 currentPos = transform.Position;
+        Entity group = soul.MyGroup;
+        float3 groupPosition = GroupPositions[group];
+
+
 
         float3 facing = facingComponent.FacingDirection;
+        facing = Vector3.RotateTowards(facing, math.normalizesafe(groupPosition - currentPos), 0.06f, 1000f);
 
-        facing = Vector3.RotateTowards(facing, math.normalizesafe(TargetPosition - currentPos), 0.06f, 1000f);
 
-        int others = OtherPositions.Length;
-        float separationForce = soul.SeparationForce;
-        foreach (float3 otherPosition in OtherPositions)
+
+        SoulBufferLookup.TryGetBuffer(group, out DynamicBuffer<SoulBufferElement> buffer);
+        buffer.ToNativeArray(Allocator.Temp);
+        foreach (SoulBufferElement bufferElement in buffer)
         {
-            if (!otherPosition.Equals(currentPos))
+            Entity otherSoul = bufferElement.Soul;
+            if (bufferElement.Soul != entity)
             {
-                float3 directionToOther = math.normalize(otherPosition - currentPos);
-                float distanceFromOther = math.distance(currentPos, otherPosition);
-                facing = Vector3.RotateTowards(facing, directionToOther, -((0.007f / others) / (distanceFromOther / 3f)), 1000f);
-                separation -= directionToOther * (separationForce / distanceFromOther);
+                float3 otherSoulPosition = SoulPositions[bufferElement.Soul];
+                float3 directionToOther = math.normalize(otherSoulPosition - currentPos);
+                float distanceFromOther = math.distance(currentPos, otherSoulPosition);
+                facing = Vector3.RotateTowards(facing, directionToOther, -((0.007f / buffer.Length) / (distanceFromOther / 3f)), 1000f);
+                separation -= directionToOther * (soul.SeparationForce / distanceFromOther);
             }
         }
-        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, TargetPosition) / 45f))), Scale = 1f });
+
+
+
+        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f))), Scale = 1f });
         Ecb.SetComponent<SoulFacingComponent>(index, entity, new SoulFacingComponent { FacingDirection = facing });
-    }
+        }
 }
 
 

@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 public class SoulSpawnerAuthoring : MonoBehaviour
 {
-    [SerializeField] private GameObject _soulPrefab;
+    [SerializeField] private SoulAuthoring _soulPrefab;
     [SerializeField] private GameObject _soulGroupPrefab;
     [SerializeField] private Vector3 _spawnPosition;
     [SerializeField] private float _spawnPositionRandomisation;

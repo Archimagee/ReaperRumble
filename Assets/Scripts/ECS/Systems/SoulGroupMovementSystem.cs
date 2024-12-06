@@ -63,6 +63,7 @@ public partial struct MoveSoulGroupJob : IJobEntity
     public float3 TargetPosition;
     public float3 CurrentPosition;
 
+    [BurstCompile]
     public void Execute([ChunkIndexInQuery] int index, in Entity entity)
     {
         CurrentPosition += math.normalizesafe(TargetPosition - CurrentPosition) * math.max(math.distance(CurrentPosition, TargetPosition) - 15f, 0f) * 0.05f;

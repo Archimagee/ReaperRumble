@@ -13,7 +13,6 @@ public partial class SpawnSoulSystem : SystemBase
     private SoulSpawnerComponent _spawner;
     private EntityManager _entityManager;
     private NativeQueue<int> _spawnQueue = new NativeQueue<int>(Allocator.Persistent);
-    private BufferLookup<SoulBufferElement> _lookup;
 
 
 
@@ -22,7 +21,6 @@ public partial class SpawnSoulSystem : SystemBase
         RequireForUpdate<SoulSpawnerComponent>();
         _entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         SoulSpawnManager.OnSpawnSouls += OnSoulsSpawned;
-        _lookup = GetBufferLookup<SoulBufferElement>(false);
     }
 
     protected override void OnStartRunning()
@@ -51,10 +49,7 @@ public partial class SpawnSoulSystem : SystemBase
 
         Entity soulGroup = EntityManager.Instantiate(_spawner.SoulGroupPrefabEntity);
         EntityManager.SetComponentData(soulGroup, new LocalTransform { Position = _spawner.SpawnPosition });
-        EntityManager.AddComponentObject(soulGroup, objectToFollow);
-
-        _lookup.Update(this);
-        _lookup.TryGetBuffer(soulGroup, out DynamicBuffer<SoulBufferElement> buffer);
+        if (objectToFollow != null) EntityManager.AddComponentObject(soulGroup, objectToFollow);
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         EntityCommandBuffer.ParallelWriter ecbpw = ecb.AsParallelWriter();
@@ -66,7 +61,7 @@ public partial class SpawnSoulSystem : SystemBase
             {
                 Ecb = ecbpw,
                 RandPos = randPos,
-                Group = soulGroup,
+                Group = soulGroup
             }.ScheduleParallel();
         }
         this.CompleteDependency();
@@ -89,7 +84,8 @@ public partial struct SpawnSoulJob : IJobEntity
     {
         Entity soul = Ecb.Instantiate(index, spawner.SoulPrefabEntity);
 
-        Ecb.SetComponent(index, soul, new LocalTransform { Position = RandPos + spawner.SpawnPosition, Scale = 1f });
+        LocalTransform soulTransform = new LocalTransform { Position = RandPos + spawner.SpawnPosition, Scale = 1f };
+        Ecb.SetComponent(index, soul, soulTransform);
         Ecb.SetComponent(index, soul, new SoulComponent { Speed = spawner.Speed, SeparationForce = spawner.SeparationForce, MyGroup = Group });
         Ecb.AppendToBuffer(index, Group, new SoulBufferElement { Soul = soul });
     }

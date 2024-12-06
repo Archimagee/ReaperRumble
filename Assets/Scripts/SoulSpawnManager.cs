@@ -1,4 +1,3 @@
-using Unity.Entities;
 using UnityEngine;
 
 
@@ -6,8 +5,6 @@ using UnityEngine;
 public class SoulSpawnManager : MonoBehaviour
 {
     public static SoulSpawnManager Instance;
-    private static EntityManager _entityManager;
-    private static Entity _soulSpawner;
 
     public delegate void SoulsSpawnedCallback(int amount, Transform objectToFollow);
     public static SoulsSpawnedCallback OnSpawnSouls;
@@ -24,19 +21,9 @@ public class SoulSpawnManager : MonoBehaviour
 
 
 
-    public void Start()
-    {
-        _entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        ComponentType[] components = new ComponentType[1];
-        components[0] = typeof(SoulSpawnerComponent);
-        _soulSpawner = _entityManager.CreateEntityQuery(components).GetSingletonEntity();
-    }
-
-
-
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(15, _playerTransform);
+        if (Input.GetKeyDown(KeyCode.Space)) RaiseSoulsSpawned(1, _playerTransform);
     }
 
 
