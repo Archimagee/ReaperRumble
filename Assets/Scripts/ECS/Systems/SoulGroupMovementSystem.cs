@@ -32,24 +32,23 @@ public partial struct SoulGroupMovementSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        EntityManager entityManager = state.EntityManager;
         NativeArray<Entity> queryResults = _query.ToEntityArray(Allocator.Temp);
-
+        NativeHashMap<Entity, float3> soulGroupTargetPositions = new NativeHashMap<Entity, float3>(queryResults.Length, Allocator.TempJob);
         foreach (Entity entity in queryResults)
         {
-            float3 targetPosition = entityManager.GetComponentObject<Transform>(entity).position;
-            targetPosition.y += 2f;
-            LocalTransform transform = entityManager.GetComponentData<LocalTransform>(entity);
-
-            new MoveSoulGroupJob
-            {
-                Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
-                TargetPosition = targetPosition,
-                CurrentPosition = transform.Position
-            }.ScheduleParallel();
+            soulGroupTargetPositions.Add(entity, state.EntityManager.GetComponentObject<Transform>(entity).position);
         }
-
         queryResults.Dispose();
+
+        EntityManager entityManager = state.EntityManager;
+        new MoveSoulGroupJob
+        {
+            Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
+            SoulGroupTargetPositions = soulGroupTargetPositions
+        }.ScheduleParallel();
+        state.CompleteDependency();
+
+        soulGroupTargetPositions.Dispose();
     }
 }
 
@@ -60,15 +59,20 @@ public partial struct SoulGroupMovementSystem : ISystem
 public partial struct MoveSoulGroupJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter Ecb;
-    public float3 TargetPosition;
-    public float3 CurrentPosition;
+    [ReadOnly] public NativeHashMap<Entity, float3> SoulGroupTargetPositions;
 
     [BurstCompile]
-    public void Execute([ChunkIndexInQuery] int index, in Entity entity)
+    public void Execute([ChunkIndexInQuery] int index, in Entity entity, in LocalTransform localTransform)
     {
-        CurrentPosition += math.normalizesafe(TargetPosition - CurrentPosition) * math.max(math.distance(CurrentPosition, TargetPosition) - 20f, 0f) * 0.05f;
-        CurrentPosition.y += math.normalizesafe(TargetPosition - CurrentPosition).y * math.distance(CurrentPosition, TargetPosition) * 0.02f;
+        if (SoulGroupTargetPositions.ContainsKey(entity))
+        {
+            float3 currentPosition = localTransform.Position;
+            float3 targetPosition = SoulGroupTargetPositions[entity];
 
-        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = CurrentPosition });
+            currentPosition += math.normalizesafe(targetPosition - currentPosition) * math.max(math.distance(currentPosition, targetPosition) - 20f, 0f) * 0.05f;
+            currentPosition.y += math.normalizesafe(targetPosition - currentPosition).y * math.distance(currentPosition, targetPosition) * 0.02f;
+
+            Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPosition });
+        }
     }
 }

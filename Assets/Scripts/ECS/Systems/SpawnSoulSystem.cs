@@ -77,8 +77,8 @@ public partial class SpawnSoulSystem : SystemBase
 public partial struct SpawnSoulJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter Ecb;
-    public float3 RandPos;
-    public Entity Group;
+    [ReadOnly] public float3 RandPos;
+    [ReadOnly] public Entity Group;
 
     public void Execute([ChunkIndexInQuery] int index, ref SoulSpawnerComponent spawner)
     {
