@@ -9,16 +9,14 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-public partial struct SoulGroupMovementSystem : ISystem
+public partial struct MoveSoulGroups : ISystem
 {
-    private EndInitializationEntityCommandBufferSystem.Singleton _ecbs;
     EntityQuery _query;
 
 
 
     public void OnCreate(ref SystemState state)
     {
-        _ecbs = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
         _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTag), typeof(Transform));
         state.RequireForUpdate(_query);
     }
@@ -40,14 +38,16 @@ public partial struct SoulGroupMovementSystem : ISystem
         }
         queryResults.Dispose();
 
-        EntityManager entityManager = state.EntityManager;
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         new MoveSoulGroupJob
         {
-            Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
+            Ecb = ecb.AsParallelWriter(),
             SoulGroupTargetPositions = soulGroupTargetPositions
         }.ScheduleParallel();
+        ecb.Playback(state.EntityManager);
         state.CompleteDependency();
 
+        ecb.Dispose();
         soulGroupTargetPositions.Dispose();
     }
 }

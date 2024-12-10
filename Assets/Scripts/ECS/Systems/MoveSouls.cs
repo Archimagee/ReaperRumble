@@ -10,21 +10,21 @@ using UnityEngine;
 [BurstCompile]
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-public partial class SoulMovementSystem : SystemBase
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+public partial class MoveSouls : SystemBase
 {
     private BufferLookup<SoulBufferElement> _lookup;
-    private EndInitializationEntityCommandBufferSystem.Singleton _ecbs;
 
 
 
     protected override void OnCreate()
     {
-        RequireForUpdate<SoulComponent>();
-        _ecbs = SystemAPI.GetSingleton<EndInitializationEntityCommandBufferSystem.Singleton>();
+        RequireForUpdate<Soul>();
         _lookup = GetBufferLookup<SoulBufferElement>(true);
     }
 
-
+    Ilovecreatingerrors
+        // Need to make souls not ghosts and simulated only on client
 
     [BurstCompile]
     protected override void OnUpdate()
@@ -37,7 +37,7 @@ public partial class SoulMovementSystem : SystemBase
             groupPositions.Add(group, SystemAPI.GetComponentRO<LocalTransform>(group).ValueRO.Position);
         }
 
-        EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<SoulComponent>().Build();
+        EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<Soul>().Build();
         NativeArray<Entity> souls = soulQuery.ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(souls.Length, Allocator.TempJob);
         foreach (Entity soul in souls)
@@ -49,15 +49,18 @@ public partial class SoulMovementSystem : SystemBase
 
         _lookup.Update(this);
 
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         new MoveSoulJob()
         {
-            Ecb = _ecbs.CreateCommandBuffer(World.DefaultGameObjectInjectionWorld.EntityManager.WorldUnmanaged).AsParallelWriter(),
+            Ecb = ecb.AsParallelWriter(),
             SoulBufferLookup = _lookup,
             GroupPositions = groupPositions,
             SoulPositions = soulPositions
         }.ScheduleParallel();
         this.CompleteDependency();
+        ecb.Playback(EntityManager);
 
+        ecb.Dispose();
         groupPositions.Dispose();
         soulPositions.Dispose();
     }
@@ -76,7 +79,7 @@ public partial struct MoveSoulJob : IJobEntity
 
 
     [BurstCompile]
-    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in SoulComponent soul, in SoulFacingComponent facingComponent, in Entity entity)
+    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulFacingDirection facingComponent, in Entity entity)
     {
         float3 separation = float3.zero;
         float3 currentPos = transform.Position;
@@ -108,7 +111,7 @@ public partial struct MoveSoulJob : IJobEntity
 
 
         Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f))), Scale = 1f });
-        Ecb.SetComponent<SoulFacingComponent>(index, entity, new SoulFacingComponent { FacingDirection = facing });
+        Ecb.SetComponent<SoulFacingDirection>(index, entity, new SoulFacingDirection { FacingDirection = facing });
         }
 }
 

@@ -11,7 +11,6 @@ public class SoulGroupAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new SoulGroupTag { });
-            AddBuffer<SoulBufferElement>(entity);
         }
     }
 }
