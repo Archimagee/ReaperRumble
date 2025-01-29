@@ -16,7 +16,7 @@ public class PlayerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new Player { Speed = authoring._playerSpeed });
-            AddComponent<SoulGroup>(entity);
+            AddComponent(entity, new SoulGroup { });
         }
     }
 }
@@ -31,5 +31,5 @@ public struct Player : IComponentData
 [GhostComponent]
 public struct SoulGroup : IComponentData
 {
-    public Entity MySoulGroup;
+    [GhostField] public Entity MySoulGroup;
 }

@@ -34,14 +34,13 @@ public partial class SpawnSouls : SystemBase
 
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO <SpawnSoulsRequestRPC> spawnRequest, Entity entity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO <SpawnSoulsRequestRPC>>().WithEntityAccess())
         {
-            //Entity soulGroup = EntityManager.Instantiate(_spawner.SoulGroupPrefabEntity);
-            //EntityManager.SetComponentData(soulGroup, new LocalTransform { Position = _spawner.SpawnPosition });
-            //if (objectToFollow != null) EntityManager.AddComponentObject(soulGroup, objectToFollow);
-
             float randomisation = 10f;
 
-            _playerLookup.TryGetBuffer(rpcCommandRequest.ValueRO.SourceConnection, out DynamicBuffer<LinkedEntityGroup> buffer);
-            Entity playerGroup = SystemAPI.GetComponent<SoulGroup>(buffer[1].Value).MySoulGroup;
+            Entity playerGroup = entity;
+            foreach ((RefRO<GhostInstance> ghost, Entity ghostEntity) in SystemAPI.Query<RefRO<GhostInstance>>().WithEntityAccess())
+            {
+                if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID) playerGroup = ghostEntity;
+            } // change to NetworkObjectReference
 
             for (int i = 0; i < spawnRequest.ValueRO.Amount; i++)
             {

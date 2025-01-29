@@ -1,6 +1,5 @@
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Transforms;
@@ -17,7 +16,7 @@ public partial struct MoveSoulGroups : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTag), typeof(Transform));
+        _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTag), typeof(SoulGroupTarget));
         state.RequireForUpdate(_query);
     }
 
@@ -32,11 +31,11 @@ public partial struct MoveSoulGroups : ISystem
     {
         NativeArray<Entity> queryResults = _query.ToEntityArray(Allocator.Temp);
         NativeHashMap<Entity, float3> soulGroupTargetPositions = new NativeHashMap<Entity, float3>(queryResults.Length, Allocator.TempJob);
-        foreach (Entity entity in queryResults)
-        {
-            soulGroupTargetPositions.Add(entity, state.EntityManager.GetComponentObject<Transform>(entity).position);
-        }
         queryResults.Dispose();
+        foreach ((RefRO<SoulGroupTarget> target, Entity entity) in SystemAPI.Query<RefRO<SoulGroupTarget>>().WithEntityAccess())
+        {
+            soulGroupTargetPositions.Add(entity, SystemAPI.GetComponent<LocalTransform>(target.ValueRO.MyTarget).Position);
+        }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         new MoveSoulGroupJob
@@ -44,8 +43,8 @@ public partial struct MoveSoulGroups : ISystem
             Ecb = ecb.AsParallelWriter(),
             SoulGroupTargetPositions = soulGroupTargetPositions
         }.ScheduleParallel();
-        ecb.Playback(state.EntityManager);
         state.CompleteDependency();
+        ecb.Playback(state.EntityManager);
 
         ecb.Dispose();
         soulGroupTargetPositions.Dispose();

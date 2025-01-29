@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Entities;
+using Unity.NetCode;
 
 
 
@@ -11,6 +12,7 @@ public class SoulGroupAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new SoulGroupTag { });
+            AddComponent(entity, new SoulGroupTarget { });
         }
     }
 }
@@ -29,4 +31,10 @@ public struct SoulBufferElement : IBufferElementData
     {
         Soul = soul;
     }
+}
+
+[GhostComponent]
+public struct SoulGroupTarget : IComponentData
+{
+    [GhostField] public Entity MyTarget;
 }

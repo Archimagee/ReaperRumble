@@ -23,8 +23,7 @@ public partial class MoveSouls : SystemBase
         _lookup = GetBufferLookup<SoulBufferElement>(true);
     }
 
-    Ilovecreatingerrors
-        // Need to make souls not ghosts and simulated only on client
+
 
     [BurstCompile]
     protected override void OnUpdate()
