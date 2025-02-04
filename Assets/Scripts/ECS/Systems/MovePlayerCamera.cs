@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
+using UnityEngine;
 
 
 
@@ -10,9 +11,15 @@ using Unity.Mathematics;
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class MovePlayerCamera : SystemBase
 {
+    private float3 _cameraRotation = float3.zero;
+
+
+
     protected override void OnCreate()
     {
         RequireForUpdate<PlayerCameraFollowTarget>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 
@@ -24,10 +31,12 @@ public partial class MovePlayerCamera : SystemBase
 
 
 
-        foreach ((RefRO<PlayerCameraFollowTarget> cameraTarget, Entity cameraEntity) in SystemAPI.Query<RefRO<PlayerCameraFollowTarget>>().WithEntityAccess())
+        foreach ((RefRO<PlayerCameraFollowTarget> cameraTarget, RefRW<LocalTransform> cameraTransform) in SystemAPI.Query<RefRO<PlayerCameraFollowTarget>, RefRW<LocalTransform>>())
         {
-            float3 targetPosition = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position;
-            ecb.SetComponent<LocalTransform>(cameraEntity, new LocalTransform { Position = targetPosition, Rotation = quaternion.identity, Scale = 1f });
+            quaternion cameraRotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
+            float3 playerPos = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position;
+            cameraTransform.ValueRW.Rotation = cameraRotation;
+            cameraTransform.ValueRW.Position = playerPos;
         }
 
 

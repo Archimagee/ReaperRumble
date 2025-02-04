@@ -12,6 +12,7 @@ using Unity.Transforms;
 public partial struct MoveSoulGroups : ISystem
 {
     EntityQuery _query;
+    float _groupHeightOffset;
 
 
 
@@ -19,6 +20,7 @@ public partial struct MoveSoulGroups : ISystem
     {
         _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTarget));
         state.RequireForUpdate(_query);
+        _groupHeightOffset = 2f;
     }
 
     public void OnDestroy(ref SystemState state)
@@ -38,7 +40,7 @@ public partial struct MoveSoulGroups : ISystem
             Entity groupTarget = target.ValueRO.MyTarget;
 
             if (groupTarget != null)
-                soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(groupTarget).Position);
+                soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(groupTarget).Position + new float3 (0f, _groupHeightOffset, 0f));
             else soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(soulGroupEntity).Position);
         }
 
@@ -76,7 +78,7 @@ public partial struct MoveSoulGroupJob : IJobEntity
             currentPosition += math.normalizesafe(targetPosition - currentPosition) * math.max(math.distance(currentPosition, targetPosition) - 20f, 0f) * 0.05f;
             currentPosition.y += math.normalizesafe(targetPosition - currentPosition).y * math.distance(currentPosition, targetPosition) * 0.02f;
 
-            Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPosition });
+            Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPosition, Scale = 1f, Rotation = quaternion.identity });
         }
     }
 }

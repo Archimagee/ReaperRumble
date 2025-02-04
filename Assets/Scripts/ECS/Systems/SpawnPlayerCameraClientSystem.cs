@@ -1,6 +1,8 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
+using UnityEngine;
+using Unity.NetCode;
 
 
 
@@ -8,6 +10,10 @@ using Unity.Burst;
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class SpawnPlayerCameraClientSystem : SystemBase
 {
+    private GameObject _cameraObject;
+
+
+
     protected override void OnCreate()
     {
         RequireForUpdate<CameraRequired>();
@@ -24,12 +30,12 @@ public partial class SpawnPlayerCameraClientSystem : SystemBase
 
 
 
-        foreach ((RefRW<CameraRequired> cameraRequired, Entity entity) in SystemAPI.Query<RefRW<CameraRequired>>().WithEntityAccess())
+        foreach ((RefRW<CameraRequired> cameraRequired, Entity entity) in SystemAPI.Query<RefRW<CameraRequired>>().WithEntityAccess().WithAll<GhostOwnerIsLocal>())
         {
             if (cameraRequired.ValueRW.Complete == false)
             {
-                ecb.Instantiate(playerCameraPrefabEntity);
-                ecb.AddComponent<PlayerCameraFollowTarget>(entity, new PlayerCameraFollowTarget { Target = entity });
+                Entity newCameraEntity = ecb.Instantiate(playerCameraPrefabEntity);
+                ecb.AddComponent<PlayerCameraFollowTarget>(newCameraEntity, new PlayerCameraFollowTarget { Target = entity });
                 cameraRequired.ValueRW.Complete = true;
             }
         }

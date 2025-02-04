@@ -13,6 +13,7 @@ public class ClientPlayerInputAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
             AddComponent<ClientPlayerInput>(entity);
+            AddComponent(entity, new ClientPlayerInputSettings { LookSensitivity = 1.3f });
         }
     }
 }
@@ -22,5 +23,11 @@ public class ClientPlayerInputAuthoring : MonoBehaviour
 public struct ClientPlayerInput : IInputComponentData
 {
     public float2 ClientInput;
+    public quaternion ClientPlayerRotation;
     public Quaternion ClientCameraRotation;
+}
+
+public struct ClientPlayerInputSettings : IInputComponentData
+{
+    public float LookSensitivity;
 }

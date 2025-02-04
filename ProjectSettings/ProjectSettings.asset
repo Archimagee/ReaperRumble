@@ -826,7 +826,7 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Standalone: UNITY_PHYSICS_CUSTOM
+    Standalone: UNITY_PHYSICS_CUSTOM;HYBRID_ENTITIES_CAMERA_CONVERSION
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
