@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
 using Unity.NetCode;
+using TMPro;
 
 
 
@@ -16,7 +17,8 @@ public class PlayerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new Player { Speed = authoring._playerSpeed });
-            AddComponent(entity, new SoulGroup { });
+            AddComponent<PlayerSoulGroup>(entity);
+            AddComponent(entity, new CameraRequired { Complete = false });
         }
     }
 }
@@ -29,7 +31,12 @@ public struct Player : IComponentData
 }
 
 [GhostComponent]
-public struct SoulGroup : IComponentData
+public struct PlayerSoulGroup : IComponentData
 {
     [GhostField] public Entity MySoulGroup;
+}
+
+public struct CameraRequired : IComponentData
+{
+    public bool Complete;
 }

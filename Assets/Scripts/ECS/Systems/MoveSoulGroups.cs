@@ -8,6 +8,7 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial struct MoveSoulGroups : ISystem
 {
     EntityQuery _query;
@@ -16,7 +17,7 @@ public partial struct MoveSoulGroups : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTag), typeof(SoulGroupTarget));
+        _query = state.EntityManager.CreateEntityQuery(typeof(SoulGroupTarget));
         state.RequireForUpdate(_query);
     }
 
@@ -32,9 +33,13 @@ public partial struct MoveSoulGroups : ISystem
         NativeArray<Entity> queryResults = _query.ToEntityArray(Allocator.Temp);
         NativeHashMap<Entity, float3> soulGroupTargetPositions = new NativeHashMap<Entity, float3>(queryResults.Length, Allocator.TempJob);
         queryResults.Dispose();
-        foreach ((RefRO<SoulGroupTarget> target, Entity entity) in SystemAPI.Query<RefRO<SoulGroupTarget>>().WithEntityAccess())
+        foreach ((RefRO<SoulGroupTarget> target, Entity soulGroupEntity) in SystemAPI.Query<RefRO<SoulGroupTarget>>().WithEntityAccess())
         {
-            soulGroupTargetPositions.Add(entity, SystemAPI.GetComponent<LocalTransform>(target.ValueRO.MyTarget).Position);
+            Entity groupTarget = target.ValueRO.MyTarget;
+
+            if (groupTarget != null)
+                soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(groupTarget).Position);
+            else soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(soulGroupEntity).Position);
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -54,7 +59,7 @@ public partial struct MoveSoulGroups : ISystem
 
 
 [BurstCompile]
-[WithAll(typeof(SoulGroupTag))]
+[WithAll(typeof(SoulGroupTarget))]
 public partial struct MoveSoulGroupJob : IJobEntity
 {
     public EntityCommandBuffer.ParallelWriter Ecb;

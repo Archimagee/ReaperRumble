@@ -28,7 +28,7 @@ partial struct HandleClientPlayerInput : ISystem
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<SoulGroup> soulGroup) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<SoulGroup>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<PlayerSoulGroup> soulGroup) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<PlayerSoulGroup>>().WithAll<GhostOwnerIsLocal>())
         {
             float2 input = new float2();
             if (Input.GetKey(KeyCode.W))
@@ -51,7 +51,7 @@ partial struct HandleClientPlayerInput : ISystem
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Entity rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 30 });
+                ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
             playerInput.ValueRW.ClientInput = input;

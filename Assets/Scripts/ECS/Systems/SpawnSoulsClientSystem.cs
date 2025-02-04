@@ -8,18 +8,16 @@ using Unity.NetCode;
 
 
 [BurstCompile]
-[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-public partial class SpawnSouls : SystemBase
+[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+public partial class SpawnSoulsClientSystem : SystemBase
 {
-    private BufferLookup<LinkedEntityGroup> _playerLookup;
+    Entity _playerGroup;
 
 
 
     protected override void OnCreate()
     {
-        RequireForUpdate<SoulSpawner>();
         RequireForUpdate<SpawnSoulsRequestRPC>();
-        _playerLookup = SystemAPI.GetBufferLookup<LinkedEntityGroup>(true);
     }
 
 
@@ -28,36 +26,37 @@ public partial class SpawnSouls : SystemBase
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
-        _playerLookup.Update(this);
 
 
 
-        foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO <SpawnSoulsRequestRPC> spawnRequest, Entity entity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO <SpawnSoulsRequestRPC>>().WithEntityAccess())
+        foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO <SpawnSoulsRequestRPC> spawnRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO <SpawnSoulsRequestRPC>>().WithEntityAccess())
         {
-            float randomisation = 10f;
-
-            Entity playerGroup = entity;
             foreach ((RefRO<GhostInstance> ghost, Entity ghostEntity) in SystemAPI.Query<RefRO<GhostInstance>>().WithEntityAccess())
             {
-                if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID) playerGroup = ghostEntity;
-            } // change to NetworkObjectReference
+                if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID) _playerGroup = ghostEntity;
+            }
+            if (!EntityManager.HasBuffer<SoulBufferElement>(_playerGroup)) ecb.AddBuffer<SoulBufferElement>(_playerGroup);
+
+
+            float randomisation = 10f;
 
             for (int i = 0; i < spawnRequest.ValueRO.Amount; i++)
             {
                 float3 spawnPos = new float3(UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation));
                 spawnPos.y += 4f;
 
-                Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<SoulSpawner>().SoulPrefabEntity);
+                Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
                 ecb.SetComponent(soul, new LocalTransform { Position = spawnPos, Scale = 1f, Rotation = quaternion.identity });
-                ecb.SetComponent(soul, new Soul { Speed = 0.2f, SeparationForce = 0.03f, MyGroup = playerGroup });
-                ecb.AppendToBuffer(playerGroup, new SoulBufferElement { Soul = soul });
+                ecb.SetComponent(soul, new Soul { Speed = 0.2f, SeparationForce = 0.03f, MyGroup = _playerGroup });
+
+                ecb.AppendToBuffer(_playerGroup, new SoulBufferElement { Soul = soul });
             }
-            ecb.DestroyEntity(entity);
+
+            ecb.DestroyEntity(recieveRpcEntity);
         }
 
 
 
-        CompleteDependency();
         ecb.Playback(EntityManager);
         ecb.Dispose();
     }

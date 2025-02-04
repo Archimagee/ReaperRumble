@@ -9,6 +9,7 @@ using Unity.Transforms;
 
 [BurstCompile]
 [UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
+//[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct MovePlayers : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -22,7 +23,6 @@ partial struct MovePlayers : ISystem
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        Entity playerEntityPrefab = SystemAPI.GetSingleton<PlayerSpawner>().PlayerPrefabEntity;
 
         foreach ((RefRO<ClientPlayerInput> playerInput, RefRW<LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>())
         {

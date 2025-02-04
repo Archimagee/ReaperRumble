@@ -10,7 +10,7 @@ using UnityEngine;
 [BurstCompile]
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class MoveSouls : SystemBase
 {
     private BufferLookup<SoulBufferElement> _lookup;
@@ -28,7 +28,7 @@ public partial class MoveSouls : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build();
+        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTarget>().Build();
         NativeArray<Entity> groups = groupQuery.ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> groupPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
         foreach (Entity group in groups)
