@@ -10,12 +10,20 @@ public class JoinOrCreateLobby : MonoBehaviour
 
 
 
+    public string GetDisplayName()
+    {
+        if (_displayNameInputField.text != string.Empty) return _displayNameInputField.text;
+        else return "Unnamed player";
+    }
+
+
+
     public void CreateLobby()
     {
-        LobbyManager.Instance.CreateLobby(_displayNameInputField.text);
+        LobbyManager.Instance.CreateLobby(GetDisplayName());
     }
     public void JoinLobbyByCode()
     {
-        LobbyManager.Instance.JoinLobbyByCode(_lobbyCodeInputField.text, _displayNameInputField.text);
+        LobbyManager.Instance.JoinLobbyByCode(_lobbyCodeInputField.text, GetDisplayName());
     }
 }

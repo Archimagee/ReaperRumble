@@ -20,15 +20,22 @@ public class LobbyManager : MonoBehaviour
 
 
     public static LobbyManager Instance;
+    public bool IsHost = false;
+    public string RelayJoinCode;
 
 
 
-    CreateLobbyOptions _lobbyOptions = new CreateLobbyOptions();
+    private CreateLobbyOptions _lobbyOptions = new CreateLobbyOptions();
 
 
 
     private Lobby _currentLobby;
     private Player _player;
+
+
+
+    public delegate void LobbyEvent();
+    public LobbyEvent RaiseGameCreatedFromLobby;
 
 
 
@@ -51,6 +58,7 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.Log(e);
         }
+        IsHost = true;
         _loadingText.enabled = false;
 
         HeartbeatLobby();
@@ -68,6 +76,7 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.Log(e);
         }
+        IsHost = false;
         _loadingText.enabled = false;
 
         Setup(displayName);
@@ -94,11 +103,55 @@ public class LobbyManager : MonoBehaviour
 
 
 
+    public async void SetRelayJoinCode(string joinCode)
+    {
+        RelayJoinCode = joinCode;
+
+        UpdateLobbyOptions lobbyOptions = new();
+
+        lobbyOptions.Data = new Dictionary<string, DataObject>()
+        {
+            { "RelayJoinCode", new DataObject(
+                visibility: DataObject.VisibilityOptions.Member,
+                value: joinCode) }
+        };
+
+        Debug.Log("Join code sent");
+        var lobby = await LobbyService.Instance.UpdateLobbyAsync(_currentLobby.Id, lobbyOptions);
+    }
+
+    public async void StartGame()
+    {
+        if (!IsHost) Debug.Log("Cannot start game because you are not the host");
+        else
+        {
+            UpdateLobbyOptions lobbyOptions = new();
+            lobbyOptions.Data = new Dictionary<string, DataObject>()
+            {
+                { "StartGame", new DataObject(
+                    visibility: DataObject.VisibilityOptions.Member,
+                    value: "true") }
+            };
+
+            Debug.Log("Starting game");
+            var lobby = await LobbyService.Instance.UpdateLobbyAsync(_currentLobby.Id, lobbyOptions);
+        }
+    }
+
+    public void CreateGameFromLobby()
+    {
+        Debug.Log("Game is starting");
+        RaiseGameCreatedFromLobby?.Invoke();
+    }
+
+
+
     private async void Setup(string displayName)
     {
         UpdatePlayerOptions playerOptions = new();
 
-        playerOptions.Data = new Dictionary<string, PlayerDataObject>() {
+        playerOptions.Data = new Dictionary<string, PlayerDataObject>()
+        {
             { "Display Name", new PlayerDataObject(
                 visibility: PlayerDataObject.VisibilityOptions.Public,
                 value: displayName) }
@@ -131,6 +184,8 @@ public class LobbyManager : MonoBehaviour
         callbacks.PlayerJoined += OnPlayerJoined;
         callbacks.PlayerLeft += OnPlayerLeft;
         callbacks.PlayerDataChanged += OnPlayerDataChanged;
+        callbacks.DataChanged += OnLobbyDataChanged;
+        callbacks.DataAdded += OnLobbyDataAdded;
         try
         {
             await LobbyService.Instance.SubscribeToLobbyEventsAsync(_currentLobby.Id, callbacks);
@@ -154,5 +209,23 @@ public class LobbyManager : MonoBehaviour
     private void OnPlayerDataChanged(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> changes)
     {
         UpdateText();
+    }
+    private void OnLobbyDataChanged(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> changedData)
+    {
+        Debug.Log("Lobby data changed");
+    }
+    private void OnLobbyDataAdded(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> addedData)
+    {
+        Debug.Log("Lobby data added");
+        foreach (KeyValuePair<string, ChangedOrRemovedLobbyValue<DataObject>> dataChange in addedData)
+        {
+            if (dataChange.Key == "RelayJoinCode")
+            {
+                Debug.Log("Join code recieved");
+                RelayJoinCode = dataChange.Value.Value.Value;
+            }
+
+            if (dataChange.Key == "StartGame" && dataChange.Value.Value.Value == "true") CreateGameFromLobby();
+        }
     }
 }
