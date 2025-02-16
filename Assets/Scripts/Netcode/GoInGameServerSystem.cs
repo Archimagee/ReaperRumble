@@ -42,7 +42,7 @@ partial struct GoInGameServerSystem : ISystem
 
             ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
             ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
-            ecb.SetComponent<LocalTransform>(newPlayer, new LocalTransform { Position = new float3(UnityEngine.Random.Range(-10f, 10f), 2f, 0f), Scale = 1f, Rotation = quaternion.identity });
+            ecb.SetComponent<LocalTransform>(newPlayer, new LocalTransform { Position = new float3(UnityEngine.Random.Range(-10f, 10f), 6f, 0f), Scale = 1f, Rotation = quaternion.identity });
             ecb.AppendToBuffer(sourceConnection, new LinkedEntityGroup { Value = newPlayer });
 
             ecb.DestroyEntity(recieveRpcEntity);

@@ -3,8 +3,6 @@ using Unity.Entities;
 using Unity.Burst;
 using UnityEngine;
 using Unity.NetCode;
-using Unity.Transforms;
-using Unity.Mathematics;
 
 
 
@@ -30,17 +28,12 @@ public partial class SpawnPlayerCameraClientSystem : SystemBase
 
         Entity playerCameraPrefabEntity = SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerCameraPrefabEntity;
 
-
-
         foreach ((RefRW<CameraRequired> cameraRequired, Entity entity) in SystemAPI.Query<RefRW<CameraRequired>>().WithEntityAccess().WithAll<GhostOwnerIsLocal>())
         {
-            if (cameraRequired.ValueRW.Complete == false)
-            {
-                Entity newCameraEntity = ecb.Instantiate(playerCameraPrefabEntity);
-                ecb.SetName(newCameraEntity, "Player Camera");
-                ecb.AddComponent<PlayerCameraFollowTarget>(newCameraEntity, new PlayerCameraFollowTarget { Target = entity });
-                cameraRequired.ValueRW.Complete = true;
-            }
+            Entity newCameraEntity = ecb.Instantiate(playerCameraPrefabEntity);
+            ecb.SetName(newCameraEntity, "Player Camera");
+            ecb.AddComponent<PlayerCameraFollowTarget>(newCameraEntity, new PlayerCameraFollowTarget { Target = entity });
+            ecb.RemoveComponent<CameraRequired>(entity);
         }
 
 
