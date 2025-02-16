@@ -3,6 +3,8 @@ using Unity.Entities;
 using Unity.Burst;
 using UnityEngine;
 using Unity.NetCode;
+using Unity.Transforms;
+using Unity.Mathematics;
 
 
 
@@ -35,6 +37,7 @@ public partial class SpawnPlayerCameraClientSystem : SystemBase
             if (cameraRequired.ValueRW.Complete == false)
             {
                 Entity newCameraEntity = ecb.Instantiate(playerCameraPrefabEntity);
+                ecb.SetName(newCameraEntity, "Player Camera");
                 ecb.AddComponent<PlayerCameraFollowTarget>(newCameraEntity, new PlayerCameraFollowTarget { Target = entity });
                 cameraRequired.ValueRW.Complete = true;
             }

@@ -14,6 +14,7 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _lobbyCodeText;
     [SerializeField] private TextMeshProUGUI _lobbyNameText;
     [SerializeField] private TextMeshProUGUI _lobbyPlayercountText;
+    [SerializeField] private GameObject _lobbyTab;
 
     [SerializeField] private TextMeshProUGUI[] _lobbyPlayerDisplayNames = new TextMeshProUGUI[4];
 
@@ -56,10 +57,11 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log(e);
+            Debug.LogWarning(e);
         }
         IsHost = true;
         _loadingText.enabled = false;
+        _lobbyTab.SetActive(true);
 
         HeartbeatLobby();
         Setup(displayName);
@@ -74,10 +76,11 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log(e);
+            Debug.LogWarning(e);
         }
         IsHost = false;
         _loadingText.enabled = false;
+        _lobbyTab.SetActive(true);
 
         Setup(displayName);
     }
@@ -94,7 +97,7 @@ public class LobbyManager : MonoBehaviour
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                Debug.LogWarning(e);
             }
 
             await Task.Delay(15 * 1000);
@@ -120,27 +123,21 @@ public class LobbyManager : MonoBehaviour
         var lobby = await LobbyService.Instance.UpdateLobbyAsync(_currentLobby.Id, lobbyOptions);
     }
 
-    public async void StartGame()
+    public void StartGame()
     {
         if (!IsHost) Debug.Log("Cannot start game because you are not the host");
         else
         {
-            UpdateLobbyOptions lobbyOptions = new();
-            lobbyOptions.Data = new Dictionary<string, DataObject>()
-            {
-                { "StartGame", new DataObject(
-                    visibility: DataObject.VisibilityOptions.Member,
-                    value: "true") }
-            };
-
             Debug.Log("Starting game");
-            var lobby = await LobbyService.Instance.UpdateLobbyAsync(_currentLobby.Id, lobbyOptions);
+            CreateGameFromLobby();
         }
     }
 
     public void CreateGameFromLobby()
     {
         Debug.Log("Game is starting");
+        _loadingText.enabled = true;
+        _lobbyTab.SetActive(false);
         RaiseGameCreatedFromLobby?.Invoke();
     }
 
@@ -161,13 +158,6 @@ public class LobbyManager : MonoBehaviour
 
         var lobby = await LobbyService.Instance.UpdatePlayerAsync(_currentLobby.Id, playerId, playerOptions);
 
-
-        SubscribeToLobbyEvents();
-        UpdateText();
-    }
-
-    private void UpdateText()
-    {
         _lobbyCodeText.text = _currentLobby.LobbyCode;
         _lobbyNameText.text = _currentLobby.Name;
         _lobbyPlayercountText.text = _currentLobby.Players.Count + " / " + _currentLobby.MaxPlayers;
@@ -176,6 +166,8 @@ public class LobbyManager : MonoBehaviour
         {
             _lobbyPlayerDisplayNames[i].text = _currentLobby.Players[i].Data["Display Name"].Value;
         }
+
+        SubscribeToLobbyEvents();
     }
 
     private async void SubscribeToLobbyEvents()
@@ -183,7 +175,7 @@ public class LobbyManager : MonoBehaviour
         var callbacks = new LobbyEventCallbacks();
         callbacks.PlayerJoined += OnPlayerJoined;
         callbacks.PlayerLeft += OnPlayerLeft;
-        callbacks.PlayerDataChanged += OnPlayerDataChanged;
+        callbacks.PlayerDataAdded += OnPlayerDataAdded;
         callbacks.DataChanged += OnLobbyDataChanged;
         callbacks.DataAdded += OnLobbyDataAdded;
         try
@@ -192,7 +184,7 @@ public class LobbyManager : MonoBehaviour
         }
         catch (LobbyServiceException ex)
         {
-            Debug.Log(ex);
+            Debug.LogWarning(ex);
         }
     }
 
@@ -200,19 +192,42 @@ public class LobbyManager : MonoBehaviour
 
     private void OnPlayerJoined(List<LobbyPlayerJoined> players)
     {
-        UpdateText();
+        _lobbyPlayercountText.text = _currentLobby.Players.Count + " / " + _currentLobby.MaxPlayers;
     }
     private void OnPlayerLeft(List<int> players)
     {
-        UpdateText();
+        _lobbyPlayercountText.text = _currentLobby.Players.Count + " / " + _currentLobby.MaxPlayers;
+        Debug.Log("need to make player names change when player leaves");
     }
-    private void OnPlayerDataChanged(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> changes)
+    private void OnPlayerDataAdded(Dictionary<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> changes)
     {
-        UpdateText();
+        Debug.Log("Player data changed");
+        foreach (KeyValuePair<int, Dictionary<string, ChangedOrRemovedLobbyValue<PlayerDataObject>>> player in changes)
+        {
+            foreach (KeyValuePair<string, ChangedOrRemovedLobbyValue<PlayerDataObject>> change in player.Value)
+            {
+                if (change.Key == "Display Name")
+                {
+                    for (int i = 0; i < _currentLobby.Players.Count; i++)
+                    {
+                        _lobbyPlayerDisplayNames[i].text = _currentLobby.Players[i].Data["Display Name"].Value;
+                    }
+                }
+            }
+        }
     }
     private void OnLobbyDataChanged(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> changedData)
     {
         Debug.Log("Lobby data changed");
+        foreach (KeyValuePair<string, ChangedOrRemovedLobbyValue<DataObject>> dataChange in changedData)
+        {
+            if (dataChange.Key == "RelayJoinCode")
+            {
+                Debug.Log("Join code recieved");
+                RelayJoinCode = dataChange.Value.Value.Value;
+                CreateGameFromLobby();
+            }
+        }
     }
     private void OnLobbyDataAdded(Dictionary<string, ChangedOrRemovedLobbyValue<DataObject>> addedData)
     {
@@ -223,9 +238,8 @@ public class LobbyManager : MonoBehaviour
             {
                 Debug.Log("Join code recieved");
                 RelayJoinCode = dataChange.Value.Value.Value;
+                CreateGameFromLobby();
             }
-
-            if (dataChange.Key == "StartGame" && dataChange.Value.Value.Value == "true") CreateGameFromLobby();
         }
     }
 }

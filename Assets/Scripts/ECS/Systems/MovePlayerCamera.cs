@@ -33,10 +33,12 @@ public partial class MovePlayerCamera : SystemBase
 
         foreach ((RefRO<PlayerCameraFollowTarget> cameraTarget, RefRW<LocalTransform> cameraTransform) in SystemAPI.Query<RefRO<PlayerCameraFollowTarget>, RefRW<LocalTransform>>())
         {
-            quaternion cameraRotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
-            float3 playerPos = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position;
-            cameraTransform.ValueRW.Rotation = cameraRotation;
-            cameraTransform.ValueRW.Position = playerPos;
+            cameraTransform.ValueRW.Rotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
+
+            float3 newPosition = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position;
+
+            if (float.IsNaN(newPosition.x) || float.IsNaN(newPosition.y) || float.IsNaN(newPosition.z)) cameraTransform.ValueRW.Position = float3.zero;
+            else cameraTransform.ValueRW.Position = newPosition;
         }
 
 

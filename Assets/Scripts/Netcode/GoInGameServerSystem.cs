@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.NetCode;
 using Unity.Transforms;
 using Unity.Mathematics;
+using UnityEngine;
 
 
 
@@ -27,11 +28,15 @@ partial struct GoInGameServerSystem : ISystem
 
         foreach ((RefRO<ReceiveRpcCommandRequest> recieveRpcCommandRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>>().WithAll<GoInGameRequestRPC>().WithEntityAccess())
         {
+            Debug.Log("Going in game");
             Entity sourceConnection = recieveRpcCommandRequest.ValueRO.SourceConnection;
             ecb.AddComponent<NetworkStreamInGame>(sourceConnection);
 
             Entity newPlayer = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerPrefabEntity);
             Entity newSoulGroup = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
+            ecb.SetName(newPlayer, "Player");
+            ecb.SetName(newSoulGroup, "Soul Group");
+
             ecb.SetComponent<PlayerSoulGroup>(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
             ecb.SetComponent<SoulGroupTarget>(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
 

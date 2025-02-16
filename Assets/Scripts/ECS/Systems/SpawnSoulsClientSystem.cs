@@ -46,6 +46,7 @@ public partial class SpawnSoulsClientSystem : SystemBase
                 spawnPos.y += 4f;
 
                 Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
+                ecb.SetName(soul, "Soul");
                 ecb.SetComponent(soul, new LocalTransform { Position = spawnPos, Scale = 1f, Rotation = quaternion.identity });
                 ecb.SetComponent(soul, new Soul { Speed = 0.2f, SeparationForce = 0.03f, MyGroup = _playerGroup });
 
