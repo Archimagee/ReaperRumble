@@ -494,6 +494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 5562163836270279163, guid: 8351d475fd6a22641acb8c8491aea6fa, type: 3}
+  _playerColliderPrefab: {fileID: 6183544471805500470, guid: d443b19e71266c840862d2a4773edee3, type: 3}
   _playerCameraPrefab: {fileID: 6974674559639081040, guid: 1dc1bad9eb262254fb4bb84bdce5b040, type: 3}
   _soulGroupPrefab: {fileID: 875631237982281265, guid: 7c8b32f072abf65438924fc4843f8018, type: 3}
   _soulPrefab: {fileID: 9199856799111944138, guid: 431803d8cd11d2643b87a2c89948ce08, type: 3}
