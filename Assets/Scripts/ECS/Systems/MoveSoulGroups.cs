@@ -75,7 +75,7 @@ public partial struct MoveSoulGroupJob : IJobEntity
             float3 currentPosition = localTransform.Position;
             float3 targetPosition = SoulGroupTargetPositions[entity];
 
-            currentPosition += math.normalizesafe(targetPosition - currentPosition) * math.max(math.distance(currentPosition, targetPosition) - 20f, 0f) * 0.05f;
+            currentPosition += math.normalizesafe(targetPosition - currentPosition) * math.max(math.distance(currentPosition, targetPosition) - 9f, 0f) * 0.05f;
             currentPosition.y += math.normalizesafe(targetPosition - currentPosition).y * math.distance(currentPosition, targetPosition) * 0.02f;
 
             Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPosition, Scale = 1f, Rotation = quaternion.identity });

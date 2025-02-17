@@ -53,14 +53,20 @@ partial struct HandleClientPlayerInput : ISystem
                 input.x += -1f;
             }
             math.normalizesafe(input);
+            playerInput.ValueRW.ClientInput = input;
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
                 Entity rpcEntity = ecb.CreateEntity();
                 ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
-            playerInput.ValueRW.ClientInput = input;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                playerInput.ValueRW.IsJumping = true;
+            }
+            else playerInput.ValueRW.IsJumping = false;
 
             _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -90f, 90f);
             _cameraRotation.y += Input.GetAxisRaw("Mouse X") * inputSettings.ValueRO.LookSensitivity;

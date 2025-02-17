@@ -50,6 +50,9 @@ public class LoadMenu : MonoBehaviour
         SetupEvents();
         await SignInAnonymouslyAsync();
 
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
         _loadingText.enabled = false;
         RaiseLoadMenuFinished?.Invoke();
         Cursor.lockState = CursorLockMode.Confined;

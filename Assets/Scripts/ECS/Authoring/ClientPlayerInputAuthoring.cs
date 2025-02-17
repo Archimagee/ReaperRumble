@@ -12,7 +12,7 @@ public class ClientPlayerInputAuthoring : MonoBehaviour
         public override void Bake(ClientPlayerInputAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.None);
-            AddComponent<ClientPlayerInput>(entity);
+            AddComponent(entity, new ClientPlayerInput { ClientInput = float2.zero, IsJumping = false, ClientPlayerRotation = quaternion.identity, ClientCameraRotation = quaternion.identity });
             AddComponent(entity, new ClientPlayerInputSettings { LookSensitivity = 1.3f });
         }
     }
@@ -23,8 +23,9 @@ public class ClientPlayerInputAuthoring : MonoBehaviour
 public struct ClientPlayerInput : IInputComponentData
 {
     public float2 ClientInput;
+    public bool IsJumping;
     public quaternion ClientPlayerRotation;
-    public Quaternion ClientCameraRotation;
+    public quaternion ClientCameraRotation;
 }
 
 public struct ClientPlayerInputSettings : IInputComponentData
