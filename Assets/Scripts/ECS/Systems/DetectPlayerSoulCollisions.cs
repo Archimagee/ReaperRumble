@@ -98,8 +98,8 @@ struct PlayerSoulCollisionJob : ITriggerEventsJob
     {
         if (SoulEntities[soul].MyGroup != PlayerSoulGroups[player])
         {
-            Debug.Log("Change!");
-            Ecb.AddComponent(soul, new ChangeSoulGroupPending { GroupToChangeTo = PlayerSoulGroups[player], SoulEntity = soul });
+            Debug.Log("Change requested");
+            Ecb.AddComponent(soul, new ChangeSoulGroup { SoulToMove = soul, SoulGroupToMoveTo = PlayerSoulGroups[player] });
         }
     }
 }
