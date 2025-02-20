@@ -30,3 +30,9 @@ public struct SoulFacingDirection : IComponentData
 {
     public float3 FacingDirection;
 }
+
+public struct ChangeSoulGroup : IComponentData
+{
+    public Entity SoulToMove;
+    public Entity SoulGroupToMoveTo;
+}

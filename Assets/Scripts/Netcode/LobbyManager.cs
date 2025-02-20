@@ -32,6 +32,7 @@ public class LobbyManager : MonoBehaviour
 
     private Lobby _currentLobby;
     private Player _player;
+    private bool _isGameStarting;
 
 
 
@@ -87,7 +88,7 @@ public class LobbyManager : MonoBehaviour
 
     public async void HeartbeatLobby()
     {
-        while (true)
+        while (!_isGameStarting)
         {
             if (_currentLobby == null) return;
 
@@ -138,6 +139,7 @@ public class LobbyManager : MonoBehaviour
         Debug.Log("Game is starting");
         _loadingText.enabled = true;
         _lobbyTab.SetActive(false);
+        _isGameStarting = true;
         RaiseGameCreatedFromLobby?.Invoke();
     }
 

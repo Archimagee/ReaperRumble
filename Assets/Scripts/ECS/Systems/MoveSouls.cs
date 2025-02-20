@@ -4,6 +4,7 @@ using Unity.Transforms;
 using Unity.Collections;
 using Unity.Burst;
 using UnityEngine;
+using Unity.Physics;
 
 
 
@@ -39,10 +40,24 @@ public partial class MoveSouls : SystemBase
         EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<Soul>().Build();
         NativeArray<Entity> souls = soulQuery.ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(souls.Length, Allocator.TempJob);
+        NativeHashMap<Entity, PhysicsVelocity> soulVelocities = new NativeHashMap<Entity, PhysicsVelocity>(souls.Length, Allocator.TempJob);
+
         foreach (Entity soul in souls)
         {
             soulPositions.Add(soul, SystemAPI.GetComponentRO<LocalTransform>(soul).ValueRO.Position);
+            soulVelocities.Add(soul, SystemAPI.GetComponent<PhysicsVelocity>(soul));
         }
+
+
+
+        //foreach (Entity soul in souls)
+        //{
+        //    LocalTransform transform = SystemAPI.GetComponent<LocalTransform>(soul);
+        //    float3 currentPos = transform.Position;
+        //    if (float.IsNaN(currentPos.x) || float.IsNaN(currentPos.y) || float.IsNaN(currentPos.z)) currentPos = float3.zero;
+        //    transform.Rotation = quaternion.identity;
+        //    transform.Position = currentPos;
+        //}
 
 
 
@@ -54,7 +69,9 @@ public partial class MoveSouls : SystemBase
             Ecb = ecb.AsParallelWriter(),
             SoulBufferLookup = _lookup,
             GroupPositions = groupPositions,
-            SoulPositions = soulPositions
+            SoulPositions = soulPositions,
+            SoulVelocities = soulVelocities,
+            DeltaTime = SystemAPI.Time.DeltaTime
         }.ScheduleParallel();
         this.CompleteDependency();
         ecb.Playback(EntityManager);
@@ -74,6 +91,8 @@ public partial struct MoveSoulJob : IJobEntity
     [ReadOnly] public NativeHashMap<Entity, float3> GroupPositions;
     [ReadOnly] public NativeHashMap<Entity, float3> SoulPositions;
     [ReadOnly] public BufferLookup<SoulBufferElement> SoulBufferLookup;
+    [ReadOnly] public NativeHashMap<Entity, PhysicsVelocity> SoulVelocities;
+    [ReadOnly] public float DeltaTime;
 
 
 
@@ -81,9 +100,9 @@ public partial struct MoveSoulJob : IJobEntity
     public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulFacingDirection facingComponent, in Entity entity)
     {
         float3 separation = float3.zero;
-        float3 currentPos = transform.Position;
         Entity group = soul.MyGroup;
         float3 groupPosition = GroupPositions[group];
+        float3 currentPos = transform.Position;
 
 
 
@@ -108,8 +127,11 @@ public partial struct MoveSoulJob : IJobEntity
         }
 
 
+        float3 resultantForce = separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f)));
 
-        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f))), Scale = 1f });
+
+        LocalTransform newTransform = new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f))), Scale = 1f };
+        Ecb.SetComponent<PhysicsVelocity>(index, entity, new PhysicsVelocity { Linear = resultantForce });
         Ecb.SetComponent<SoulFacingDirection>(index, entity, new SoulFacingDirection { FacingDirection = facing });
         }
 }
