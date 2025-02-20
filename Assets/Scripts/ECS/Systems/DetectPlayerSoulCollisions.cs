@@ -2,7 +2,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Physics;
 using Unity.Collections;
-using UnityEngine;
 using Unity.Physics.Systems;
 using Unity.NetCode;
 
@@ -98,8 +97,7 @@ struct PlayerSoulCollisionJob : ITriggerEventsJob
     {
         if (SoulEntities[soul].MyGroup != PlayerSoulGroups[player])
         {
-            Debug.Log("Change requested");
-            Ecb.AddComponent(soul, new ChangeSoulGroup { SoulToMove = soul, SoulGroupToMoveTo = PlayerSoulGroups[player] });
+            Ecb.AddComponent(soul, new ChangeSoulGroup { SoulGroupToMoveTo = PlayerSoulGroups[player] });
         }
     }
 }

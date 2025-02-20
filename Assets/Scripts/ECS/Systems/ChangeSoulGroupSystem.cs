@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Collections;
 using UnityEngine;
 using Unity.Physics.Systems;
+using Unity.NetCode;
 
 
 
@@ -25,17 +26,42 @@ public partial struct ChangeSoulGroupSystem : ISystem
 
 
 
-        foreach ((RefRO<ChangeSoulGroup> changeRequest, RefRW<Soul> soul, Entity entity) in SystemAPI.Query<RefRO<ChangeSoulGroup>, RefRW<Soul>>().WithEntityAccess())
+        foreach ((RefRO<ChangeSoulGroup> changeRequest, RefRW<Soul> soul, Entity soulEntity) in SystemAPI.Query<RefRO<ChangeSoulGroup>, RefRW<Soul>>().WithEntityAccess())
         {
-            Entity soulToMove = changeRequest.ValueRO.SoulToMove;
             Entity groupToMoveTo = changeRequest.ValueRO.SoulGroupToMoveTo;
-            Debug.Log("Changing " + soulToMove + " to " + groupToMoveTo);
+            Entity groupToMoveFrom = soul.ValueRO.MyGroup;
+            //DynamicBuffer<SoulBufferElement> _soulBuffer = SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom);
+
+            Debug.Log("Changing " + soulEntity + " to " + groupToMoveTo);
+
+
 
             if (!SystemAPI.HasBuffer<SoulBufferElement>(groupToMoveTo)) ecb.AddBuffer<SoulBufferElement>(groupToMoveTo);
-            ecb.AppendToBuffer<SoulBufferElement>(groupToMoveTo, new SoulBufferElement { Soul = soulToMove });
+            ecb.AppendToBuffer<SoulBufferElement>(groupToMoveTo, new SoulBufferElement { Soul = soulEntity });
             soul.ValueRW.MyGroup = groupToMoveTo;
 
-            ecb.RemoveComponent<ChangeSoulGroup>(entity);
+
+
+            //NativeArray<SoulBufferElement> soulArray = _soulBuffer.ToNativeArray(Allocator.Temp);
+
+            //_soulBuffer.Clear();
+            //Debug.Log(SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Length);
+               
+
+            //soulArray.Dispose();
+
+
+
+            ecb.RemoveComponent<ChangeSoulGroup>(soulEntity);
+
+
+
+            //Entity rpcEntity = ecb.CreateEntity();
+            //ecb.AddComponent(rpcEntity, new ChangeSoulGroupRequestRPC {
+            //    GroupIDFrom = SystemAPI.GetComponent<GhostInstance>(groupToMoveFrom).ghostId,
+            //    GroupIDTo = SystemAPI.GetComponent<GhostInstance>(groupToMoveTo).ghostId,
+            //    Amount = 1 });
+            //ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
         }
 
 
@@ -43,6 +69,13 @@ public partial struct ChangeSoulGroupSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
+}
 
 
+
+public struct ChangeSoulGroupRequestRPC : IRpcCommand
+{
+    public int GroupIDFrom;
+    public int GroupIDTo;
+    public int Amount;
 }
