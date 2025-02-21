@@ -4,11 +4,15 @@ using Unity.Physics;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
+using Unity.NetCode;
+using UnityEditor;
 
 
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+//[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class DetectPlayerGrounded : SystemBase
 {
     protected override void OnUpdate()
@@ -17,48 +21,52 @@ public partial class DetectPlayerGrounded : SystemBase
 
 
 
-        EntityQuery query = SystemAPI.QueryBuilder().WithAll<Player>().Build();
-
-        NativeArray<Entity> players = query.ToEntityArray(Allocator.Temp);
-
-        NativeHashMap<Entity, float> playerGroundDistances = new(players.Length, Allocator.TempJob);
-        foreach (Entity entity in players)
+        foreach ((RefRO<LocalTransform> localTransform, Entity entity) in SystemAPI.Query<RefRO<LocalTransform>>().WithEntityAccess().WithAll<GhostOwnerIsLocal>())
         {
-            float3 playerPos = SystemAPI.GetComponent<LocalTransform>(entity).Position;
+            //RaycastInput raycastInput = new RaycastInput()
+            //{
+            //    Start = localTransform.ValueRO.Position + new float3(0f, -0.9f, 0f),
+            //    End = localTransform.ValueRO.Position + new float3(0f, -1.1f, 0f),
+            //    Filter = new CollisionFilter { BelongsTo = ~0u, CollidesWith = 3 }
+            //};
 
-            RaycastInput raycastInput = new RaycastInput()
+            //Unity.Physics.RaycastHit hit = new Unity.Physics.RaycastHit();
+            //bool hasHit = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CastRay(raycastInput, out hit);
+
+            NativeList<DistanceHit> hits = new NativeList<DistanceHit>(Allocator.Temp);
+            bool hasHit = SystemAPI.GetSingleton<PhysicsWorldSingleton>().OverlapSphere(localTransform.ValueRO.Position + new float3(0f, -1f, 0f), 0.1f, ref hits, new CollisionFilter()
             {
-                Start = playerPos + new float3(0f, 1f, 0f),
-                End = playerPos + new float3(0f, -5f, 0f),
-                Filter = new CollisionFilter { BelongsTo = ~0u, CollidesWith = 1, GroupIndex = 0 }
-            };
+                BelongsTo = ~0u,
+                CollidesWith = 3
+            });
+            Debug.Log(hasHit);
 
-            RaycastHit hit = new RaycastHit();
-            bool hasHit = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CastRay(raycastInput, out hit);
-
-            float distance = 100f;
             if (hasHit)
             {
-                distance = (hit.Fraction * 6f) - 2f;
+                ecb.SetComponent<IsPlayerGrounded>(entity, new IsPlayerGrounded { IsGrounded = true });
             }
-
-            playerGroundDistances.Add(entity, distance);
+            hits.Dispose();
         }
 
-        players.Dispose();
 
 
+        //EntityQuery query = SystemAPI.QueryBuilder().WithAll<GroundTag>().Build();
+        //NativeArray<Entity> groundEntities = query.ToEntityArray(Allocator.TempJob);
 
-        var job = new PlayerCheckGroundedJob
-        {
-            PlayerGroundDistances = playerGroundDistances,
-            Ecb = ecb
-        };
+        //foreach ((RefRO<IsPlayerGrounded> playerGrounded, Entity playerEntity) in SystemAPI.Query<RefRO<IsPlayerGrounded>>().WithEntityAccess().WithAll<GhostOwnerIsLocal>())
+        //{
+        //    var job = new PlayerGroundCollisionJob
+        //    {
+        //        GroundEntities = groundEntities,
+        //        Player = playerEntity,
+        //        Ecb = ecb
+        //    };
 
-        Dependency = job.Schedule(Dependency);
-        Dependency.Complete();
+        //    Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), Dependency);
+        //    Dependency.Complete();
+        //}
 
-        playerGroundDistances.Dispose();
+        //groundEntities.Dispose();
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
@@ -68,14 +76,33 @@ public partial class DetectPlayerGrounded : SystemBase
 
 
 [BurstCompile]
-partial struct PlayerCheckGroundedJob : IJobEntity
+struct PlayerGroundCollisionJob : ICollisionEventsJob
 {
-    public NativeHashMap<Entity, float> PlayerGroundDistances;
+    public NativeArray<Entity> GroundEntities;
+    public Entity Player;
     public EntityCommandBuffer Ecb;
 
-    public void Execute(in Entity entity, in IsPlayerGrounded player)
+    public void Execute(CollisionEvent collisionEvent)
     {
-        float distance = PlayerGroundDistances[entity];
-        if (distance != 100f && distance <= 0.2f) Ecb.SetComponent<IsPlayerGrounded>(entity, new IsPlayerGrounded { IsGrounded = true });
+        Entity entityA = collisionEvent.EntityA;
+        Entity entityB = collisionEvent.EntityB;
+
+
+
+        if (GroundEntities.Contains(entityA) && Player == entityB)
+        {
+            HandleGroundCollision(entityB);
+        }
+        else if (GroundEntities.Contains(entityB) && Player == entityA)
+        {
+            HandleGroundCollision(entityA);
+        }
+    }
+
+
+
+    public void HandleGroundCollision(Entity player)
+    {
+        Ecb.SetComponent(player, new IsPlayerGrounded() { IsGrounded = true });
     }
 }

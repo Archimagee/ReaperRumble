@@ -2,11 +2,10 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 
 
 
-//[BurstCompile]
+[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class SpawnSoulWorldColliderClientSystem : SystemBase
 {
@@ -17,7 +16,7 @@ public partial class SpawnSoulWorldColliderClientSystem : SystemBase
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);

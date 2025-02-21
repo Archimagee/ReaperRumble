@@ -1,9 +1,8 @@
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
-using UnityEngine;
+using Unity.NetCode;
 
 
 
@@ -21,7 +20,7 @@ public partial class MovePlayerCollider : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        foreach ((RefRO<PlayerCollider> playerCollider, RefRW<LocalTransform> colliderTransform) in SystemAPI.Query<RefRO<PlayerCollider>, RefRW<LocalTransform>>())
+        foreach ((RefRO<PlayerCollider> playerCollider, RefRW<LocalTransform> colliderTransform) in SystemAPI.Query<RefRO<PlayerCollider>, RefRW<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
         {
             float3 targetPos = SystemAPI.GetComponent<LocalTransform>(playerCollider.ValueRO.FollowTarget).Position;
             colliderTransform.ValueRW.Position = targetPos;

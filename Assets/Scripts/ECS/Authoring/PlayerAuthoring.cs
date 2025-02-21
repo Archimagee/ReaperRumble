@@ -8,13 +8,7 @@ public class PlayerAuthoring : MonoBehaviour
 {
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _playerJumpSpeed;
-    //[SerializeField] private PhysicsCategoryTags _belongsTo;
-    //[SerializeField] private PhysicsCategoryTags _collidesWith;
-    //private CollisionFilter _collisionFilter => new()
-    //{
-    //    BelongsTo = _belongsTo.Value,
-    //    CollidesWith = _collidesWith.Value
-    //};
+    [SerializeField] private float _playerAttackCooldownSeconds;
 
 
 
@@ -23,7 +17,7 @@ public class PlayerAuthoring : MonoBehaviour
         public override void Bake(PlayerAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new Player { Speed = authoring._playerSpeed, JumpSpeed = authoring._playerJumpSpeed });
+            AddComponent(entity, new Player { Speed = authoring._playerSpeed, JumpSpeed = authoring._playerJumpSpeed, AttackCooldownSeconds = authoring._playerAttackCooldownSeconds });
             AddComponent<PlayerSoulGroup>(entity);
             AddComponent<CameraRequired>(entity);
             AddComponent<FreezeRotationTag>(entity);
@@ -39,6 +33,7 @@ public struct Player : IComponentData
 {
     public float Speed;
     public float JumpSpeed;
+    public float AttackCooldownSeconds;
 }
 
 [GhostComponent]

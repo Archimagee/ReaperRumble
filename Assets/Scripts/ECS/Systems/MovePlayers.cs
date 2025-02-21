@@ -17,7 +17,7 @@ public partial struct MovePlayers : ISystem
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach ((RefRO<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW <LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
         {
             float3 playerPos = playerTransform.ValueRO.Position;
             if (float.IsNaN(playerPos.x) || float.IsNaN(playerPos.y) || float.IsNaN(playerPos.z)) playerTransform.ValueRW.Position = new float3 (0f, 10f, 0f);
@@ -34,6 +34,7 @@ public partial struct MovePlayers : ISystem
             if (playerInput.ValueRO.IsJumping && grounded.ValueRW.IsGrounded)
             {
                 newVelocity.y = player.ValueRO.JumpSpeed;
+                playerInput.ValueRW.IsJumping = false;
                 grounded.ValueRW.IsGrounded = false;
             }
             //else if (!grounded.ValueRO.IsGrounded)

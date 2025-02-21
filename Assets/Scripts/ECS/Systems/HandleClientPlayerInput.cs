@@ -33,7 +33,7 @@ partial struct HandleClientPlayerInput : ISystem
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>>().WithAll<GhostOwnerIsLocal>())
         {
             float2 input = new float2();
             if (Input.GetKey(KeyCode.W))
@@ -62,17 +62,16 @@ partial struct HandleClientPlayerInput : ISystem
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                playerInput.ValueRW.IsJumping = true;
-            }
-            else playerInput.ValueRW.IsJumping = false;
+            if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true;
+            if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds) playerInput.ValueRW.IsAttacking = true;
 
             _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -90f, 90f);
             _cameraRotation.y += Input.GetAxisRaw("Mouse X") * inputSettings.ValueRO.LookSensitivity;
             _playerRotation.y = _cameraRotation.y;
             playerInput.ValueRW.ClientPlayerRotation = Quaternion.Euler(_playerRotation);
+            playerInput.ValueRW.ClientPlayerRotationEuler = _playerRotation;
             playerInput.ValueRW.ClientCameraRotation = Quaternion.Euler(_cameraRotation);
+            playerInput.ValueRW.ClientCameraRotationEuler = _cameraRotation;
         }
 
 
