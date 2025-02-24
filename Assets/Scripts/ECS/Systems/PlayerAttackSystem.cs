@@ -23,6 +23,10 @@ partial struct PlayerAttackSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        EntityCommandBuffer ecb = new(Allocator.Temp);
+
+
+
         foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<LocalTransform> localTransform, Entity playerEntity) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>().WithEntityAccess())
         {
             if (playerInput.ValueRO.IsAttacking)
@@ -33,11 +37,9 @@ partial struct PlayerAttackSystem : ISystem
 
                 float3 point1 = localTransform.ValueRO.Position + playerForward;
                 point1 += localTransform.ValueRO.Right();
-                //Debug.Log(point1);
 
                 float3 point2 = localTransform.ValueRO.Position + playerForward;
                 point2 -= localTransform.ValueRO.Right();
-                //Debug.Log(point2);
 
                 NativeList<DistanceHit> hits = new NativeList<DistanceHit>(Allocator.Temp);
 
@@ -53,7 +55,19 @@ partial struct PlayerAttackSystem : ISystem
 
                     if (hitEntity != playerEntity)
                     {
-                        Debug.Log("Hit " + hitEntity);
+                        Unity.Mathematics.Random rand = new();
+                        rand.InitState(123455u);
+
+
+
+                        Entity rpcEntity = ecb.CreateEntity();
+                        ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                        {
+                            GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup).ghostId,
+                            Amount = 3,
+                            Velocity = new float3(rand.NextFloat(-1f, 1), 5f, rand.NextFloat(-1f, 1f))
+                        });
+                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                     }
                 }
 
@@ -63,5 +77,20 @@ partial struct PlayerAttackSystem : ISystem
                 playerInput.ValueRW.IsAttacking = false;
             }
         }
+
+
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
+}
+
+
+
+public struct OrphanSoulsRequestRPC : IRpcCommand
+{
+    public int GroupID;
+    public int Amount;
+    public float3 Velocity;
+    public int NewGroupID;
 }

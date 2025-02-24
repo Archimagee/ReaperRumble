@@ -21,7 +21,6 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent<PlayerSoulGroup>(entity);
             AddComponent<CameraRequired>(entity);
             AddComponent<FreezeRotationTag>(entity);
-            AddComponent<SoulWorldColliderRequired>(entity);
             AddComponent(entity, new IsPlayerGrounded { IsGrounded = true });
         }
     }
@@ -53,5 +52,5 @@ public struct SoulWorldCollider : IComponentData
 }
 
 public struct CameraRequired : IComponentData { }
-public struct SoulWorldColliderRequired : IComponentData { }
+public struct ColliderRequiredTag : IComponentData { }
 public struct FreezeRotationTag : IComponentData { }

@@ -39,7 +39,7 @@ public partial class DetectPlayerGrounded : SystemBase
                 BelongsTo = ~0u,
                 CollidesWith = 3
             });
-            Debug.Log(hasHit);
+            //Debug.Log(hasHit);
 
             if (hasHit)
             {

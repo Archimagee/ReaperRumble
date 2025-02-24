@@ -7,7 +7,7 @@ using Unity.NetCode;
 
 
 
-[BurstCompile]
+//[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class SpawnSoulsClientSystem : SystemBase
 {
@@ -22,7 +22,7 @@ public partial class SpawnSoulsClientSystem : SystemBase
 
 
 
-    [BurstCompile]
+    //[BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -48,7 +48,8 @@ public partial class SpawnSoulsClientSystem : SystemBase
                 Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
                 ecb.SetName(soul, "Soul");
                 ecb.SetComponent(soul, new LocalTransform { Position = spawnPos, Scale = 1f, Rotation = quaternion.identity });
-                ecb.SetComponent(soul, new Soul { Speed = 7.5f, SeparationForce = 1.125f, MyGroup = _playerGroup });
+                ecb.SetComponent(soul, new Soul { Speed = 7.5f, SeparationForce = 1.125f });
+                ecb.AddComponent(soul, new SoulGroupMember { MyGroup = _playerGroup });
 
                 ecb.AppendToBuffer(_playerGroup, new SoulBufferElement { Soul = soul });
             }

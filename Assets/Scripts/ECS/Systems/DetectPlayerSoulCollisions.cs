@@ -38,10 +38,10 @@ public partial class DetectPlayerSoulCollisions : SystemBase
 
         query = SystemAPI.QueryBuilder().WithAll<Soul>().Build();
         NativeArray<Entity> soulEntities = query.ToEntityArray(Allocator.Temp);
-        NativeHashMap<Entity, Soul> souls = new(soulEntities.Length, Allocator.TempJob);
+        NativeHashMap<Entity, SoulGroupMember> souls = new(soulEntities.Length, Allocator.TempJob);
         foreach (Entity soulEntity in soulEntities)
         {
-            souls.Add(soulEntity, SystemAPI.GetComponent<Soul>(soulEntity));
+            if (SystemAPI.HasComponent<SoulGroupMember>(soulEntity)) souls.Add(soulEntity, SystemAPI.GetComponent<SoulGroupMember>(soulEntity));
         }
 
 
@@ -71,7 +71,7 @@ public partial class DetectPlayerSoulCollisions : SystemBase
 struct PlayerSoulCollisionJob : ITriggerEventsJob
 {
     public NativeHashMap<Entity, Entity> PlayerSoulGroups;
-    public NativeHashMap<Entity, Soul> SoulEntities;
+    public NativeHashMap<Entity, SoulGroupMember> SoulEntities;
     public EntityCommandBuffer Ecb;
 
     public void Execute(TriggerEvent triggerEvent)

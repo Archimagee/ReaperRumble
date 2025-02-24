@@ -12,6 +12,7 @@ public class SoulGroupAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new SoulGroupTarget { });
+            AddComponent(entity, new SoulGroupTag { });
         }
     }
 }
@@ -33,3 +34,5 @@ public struct SoulGroupTarget : IComponentData
 {
     [GhostField] public Entity MyTarget;
 }
+
+public struct SoulGroupTag : IComponentData { }

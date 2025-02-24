@@ -21,9 +21,12 @@ public class SoulAuthoring : MonoBehaviour
 
 public struct Soul : IComponentData
 {
-    public Entity MyGroup;
     public float Speed;
     public float SeparationForce;
+}
+public struct SoulGroupMember : IComponentData
+{
+    public Entity MyGroup;
 }
 
 public struct SoulFacingDirection : IComponentData

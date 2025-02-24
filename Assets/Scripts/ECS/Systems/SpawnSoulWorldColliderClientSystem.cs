@@ -11,7 +11,7 @@ public partial class SpawnSoulWorldColliderClientSystem : SystemBase
 {
     protected override void OnCreate()
     {
-        RequireForUpdate<SoulWorldColliderRequired>();
+        RequireForUpdate<Player>();
     }
 
 
@@ -23,15 +23,17 @@ public partial class SpawnSoulWorldColliderClientSystem : SystemBase
 
         Entity colliderPrefabEntity = SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerColliderPrefabEntity;
 
-        foreach ((RefRO<SoulWorldColliderRequired> colliderRequired, Entity player) in SystemAPI.Query<RefRO<SoulWorldColliderRequired>>().WithEntityAccess().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRO<Player> colliderRequired, Entity player) in SystemAPI.Query<RefRO<Player>>().WithEntityAccess().WithNone<SoulWorldCollider>().WithAll<GhostOwnerIsLocal>())
         {
-            ecb.RemoveComponent<SoulWorldColliderRequired>(player);
+            //ecb.RemoveComponent<ColliderRequiredTag>(player);
 
             Entity newColliderEntity = ecb.Instantiate(colliderPrefabEntity);
 
             ecb.SetName(colliderPrefabEntity, "Player Collider");
             ecb.AddComponent(player, new SoulWorldCollider { ColliderEntity = newColliderEntity });
             ecb.AddComponent(newColliderEntity, new PlayerCollider { FollowTarget = player });
+
+            this.Enabled = false;
         }
 
 

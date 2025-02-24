@@ -5,10 +5,11 @@ using Unity.Collections;
 using Unity.Burst;
 using UnityEngine;
 using Unity.Physics;
+using Unity.VisualScripting;
 
 
 
-[BurstCompile]
+//[BurstCompile]
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
@@ -26,10 +27,10 @@ public partial class MoveSouls : SystemBase
 
 
 
-    [BurstCompile]
+    //[BurstCompile]
     protected override void OnUpdate()
     {
-        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTarget>().Build();
+        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build();
         NativeArray<Entity> groups = groupQuery.ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> groupPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
         foreach (Entity group in groups)
@@ -73,10 +74,9 @@ public partial class MoveSouls : SystemBase
             SoulVelocities = soulVelocities,
             DeltaTime = SystemAPI.Time.DeltaTime
         }.ScheduleParallel();
+
         this.CompleteDependency();
         ecb.Playback(EntityManager);
-
-        ecb.Dispose();
         groupPositions.Dispose();
         soulPositions.Dispose();
     }
@@ -97,12 +97,12 @@ public partial struct MoveSoulJob : IJobEntity
 
 
     [BurstCompile]
-    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulFacingDirection facingComponent, in Entity entity)
+    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulGroupMember soulGroupMember, in SoulFacingDirection facingComponent, in Entity entity)
     {
         float3 separation = float3.zero;
-        Entity group = soul.MyGroup;
-        float3 groupPosition = GroupPositions[group];
+        Entity group = soulGroupMember.MyGroup;
         float3 currentPos = transform.Position;
+        float3 groupPosition = GroupPositions[group];
 
 
 
@@ -133,7 +133,7 @@ public partial struct MoveSoulJob : IJobEntity
         LocalTransform newTransform = new LocalTransform { Position = currentPos + separation + (facing * soul.Speed * (1 + (math.distance(currentPos, groupPosition) / 45f))), Scale = 1f };
         Ecb.SetComponent<PhysicsVelocity>(index, entity, new PhysicsVelocity { Linear = resultantForce });
         Ecb.SetComponent<SoulFacingDirection>(index, entity, new SoulFacingDirection { FacingDirection = facing });
-        }
+    }
 }
 
 

@@ -39,6 +39,7 @@ partial struct GoInGameServerSystem : ISystem
 
             ecb.SetComponent<PlayerSoulGroup>(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
             ecb.SetComponent<SoulGroupTarget>(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
+            ecb.AddBuffer<SoulBufferElement>(newSoulGroup);
 
             ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
             ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
