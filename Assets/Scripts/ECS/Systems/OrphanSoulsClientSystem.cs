@@ -10,12 +10,11 @@ using Unity.Mathematics;
 
 
 [BurstCompile]
-[UpdateInGroup(typeof(AfterPhysicsSystemGroup))]
-[UpdateAfter(typeof(DetectPlayerSoulCollisions))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial struct OrphanSoulsClientSystem : ISystem
 {
     Entity _groupToOrphanFrom;
+    Entity _newGroup;
 
 
 
@@ -37,13 +36,13 @@ public partial struct OrphanSoulsClientSystem : ISystem
             foreach ((RefRO<GhostInstance> ghost, Entity ghostEntity) in SystemAPI.Query<RefRO<GhostInstance>>().WithEntityAccess())
             {
                 if (ghost.ValueRO.ghostId == orphanRequest.ValueRO.GroupID) _groupToOrphanFrom = ghostEntity;
+                if (ghost.ValueRO.ghostId == orphanRequest.ValueRO.NewGroupID) _newGroup = ghostEntity;
             }
-            Debug.Log("Orphaning " + orphanRequest.ValueRO.Amount + " souls from " + _groupToOrphanFrom);
 
             int amountToMove = orphanRequest.ValueRO.Amount;
             if (!SystemAPI.HasBuffer<SoulBufferElement>(_groupToOrphanFrom))
             {
-                Debug.Log("No Buffer");
+                Debug.LogWarning("No Buffer");
                 break;
             }
             NativeArray<SoulBufferElement> soulElements = SystemAPI.GetBuffer<SoulBufferElement>(_groupToOrphanFrom).ToNativeArray(Allocator.Temp);
@@ -70,21 +69,20 @@ public partial struct OrphanSoulsClientSystem : ISystem
 
 
 
-            //Entity newSoulGroup = group;
-            //ecb.RemoveComponent<SoulGroupTarget>(newSoulGroup);
-            //ecb.SetComponent(newSoulGroup, new LocalTransform() { Position = SystemAPI.GetComponent<LocalTransform>(_groupToOrphanFrom).Position + orphanRequest.ValueRO.Velocity, Rotation = quaternion.identity, Scale = 1f });
+            if (!SystemAPI.HasBuffer<SoulBufferElement>(_newGroup)) ecb.AddBuffer<SoulBufferElement>(_newGroup);
             foreach (Entity soulEntity in soulsToMove)
             {
-                ecb.RemoveComponent<SoulGroupMember>(soulEntity);
+                ecb.SetComponent(soulEntity, new SoulGroupMember() { MyGroup = _newGroup });
                 ecb.AddComponent<OrphanedTag>(soulEntity);
                 ecb.SetComponent(soulEntity, new PhysicsVelocity() { Linear = float3.zero });
+                ecb.AppendToBuffer(_newGroup, new SoulBufferElement() { Soul = soulEntity });
             }
 
 
 
             SystemAPI.GetBuffer<SoulBufferElement>(_groupToOrphanFrom).Clear();
             if (soulsToMove.Length == 0 && !SystemAPI.HasComponent<SoulGroupTarget>(_groupToOrphanFrom)) ecb.DestroyEntity(_groupToOrphanFrom);
-            foreach (Entity soul in soulsRemaining) ecb.AppendToBuffer<SoulBufferElement>(_groupToOrphanFrom, new SoulBufferElement() { Soul = soul });
+            foreach (Entity soul in soulsRemaining) ecb.AppendToBuffer(_groupToOrphanFrom, new SoulBufferElement() { Soul = soul });
 
 
 

@@ -55,17 +55,11 @@ partial struct PlayerAttackSystem : ISystem
 
                     if (hitEntity != playerEntity)
                     {
-                        Unity.Mathematics.Random rand = new();
-                        rand.InitState(123455u);
-
-
-
                         Entity rpcEntity = ecb.CreateEntity();
                         ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                         {
                             GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup).ghostId,
-                            Amount = 3,
-                            Velocity = new float3(rand.NextFloat(-1f, 1), 5f, rand.NextFloat(-1f, 1f))
+                            Amount = 3
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                     }

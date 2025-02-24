@@ -68,16 +68,16 @@ public partial class DetectPlayerSoulCollisions : SystemBase
 
 
 [BurstCompile]
-struct PlayerSoulCollisionJob : ITriggerEventsJob
+struct PlayerSoulCollisionJob : ICollisionEventsJob
 {
     public NativeHashMap<Entity, Entity> PlayerSoulGroups;
     public NativeHashMap<Entity, SoulGroupMember> SoulEntities;
     public EntityCommandBuffer Ecb;
 
-    public void Execute(TriggerEvent triggerEvent)
+    public void Execute(CollisionEvent collisionEvent)
     {
-        Entity entityA = triggerEvent.EntityA;
-        Entity entityB = triggerEvent.EntityB;
+        Entity entityA = collisionEvent.EntityA;
+        Entity entityB = collisionEvent.EntityB;
 
 
 
