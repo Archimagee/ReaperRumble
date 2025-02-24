@@ -71,7 +71,7 @@ public partial struct OrphanSoulsClientSystem : ISystem
 
 
             if (!SystemAPI.HasBuffer<SoulBufferElement>(_newGroup)) ecb.AddBuffer<SoulBufferElement>(_newGroup);
-            SystemAPI.SetComponent(_newGroup, new LocalTransform() { Position = SystemAPI.GetComponent<LocalTransform>(_groupToOrphanFrom).Position })
+            SystemAPI.SetComponent(_newGroup, new LocalTransform() { Position = SystemAPI.GetComponent<LocalTransform>(_groupToOrphanFrom).Position });
             foreach (Entity soulEntity in soulsToMove)
             {
                 ecb.SetComponent(soulEntity, new SoulGroupMember() { MyGroup = _newGroup });
