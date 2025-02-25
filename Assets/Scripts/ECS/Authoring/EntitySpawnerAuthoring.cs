@@ -5,11 +5,15 @@ using Unity.Entities;
 
 public class EntitySpawnerAuthoring : MonoBehaviour
 {
+    [Header("Entities")]
     [SerializeField] private PlayerAuthoring _playerPrefab;
     [SerializeField] private PlayerColliderAuthoring _playerColliderPrefab;
     [SerializeField] private PlayerCameraAuthoring _playerCameraPrefab;
     [SerializeField] private SoulGroupAuthoring _soulGroupPrefab;
     [SerializeField] private SoulAuthoring _soulPrefab;
+
+    [Header("Challenges")]
+    [SerializeField] private ChallengeAuthoring _parkourChallengePrefab;
 
 
 
@@ -24,7 +28,8 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 PlayerColliderPrefabEntity = GetEntity(authoring._playerColliderPrefab, TransformUsageFlags.Dynamic),
                 PlayerCameraPrefabEntity = GetEntity(authoring._playerCameraPrefab, TransformUsageFlags.Renderable),
                 SoulGroupPrefabEntity = GetEntity(authoring._soulGroupPrefab, TransformUsageFlags.Dynamic),
-                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Renderable)
+                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Renderable),
+                ParkourChallengePrefabEntity = GetEntity(authoring._parkourChallengePrefab, TransformUsageFlags.Dynamic),
             });
         }
     }
@@ -39,4 +44,6 @@ public struct EntitySpawnerPrefabs : IComponentData
     public Entity PlayerCameraPrefabEntity;
     public Entity SoulGroupPrefabEntity;
     public Entity SoulPrefabEntity;
+
+    public Entity ParkourChallengePrefabEntity;
 }
