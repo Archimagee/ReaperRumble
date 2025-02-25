@@ -15,9 +15,22 @@ public partial struct ChangeSoulGroupServerSystem : ISystem
 
         
 
-        // change this to add to a queue so it doesnt try to change the same soul when multiple rpcs recieved
         foreach ((RefRO<ChangeSoulGroupRequestRPC> changeRequest, RefRO<ReceiveRpcCommandRequest> rpc, Entity rpcEntity) in SystemAPI.Query<RefRO<ChangeSoulGroupRequestRPC>, RefRO<ReceiveRpcCommandRequest>>().WithEntityAccess())
         {
+            Entity source = rpc.ValueRO.SourceConnection;
+
+            foreach ((RefRO<NetworkStreamConnection> otherSource, Entity entity) in SystemAPI.Query<RefRO<NetworkStreamConnection>>().WithEntityAccess())
+            {
+                Entity newRpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(newRpcEntity, new ChangeSoulGroupRequestRPC
+                {
+                    GroupIDFrom = changeRequest.ValueRO.GroupIDFrom,
+                    GroupIDTo = changeRequest.ValueRO.GroupIDTo,
+                    Amount = 1
+                });
+                ecb.AddComponent(rpcEntity, new SendRpcCommandRequest() { TargetConnection = entity });
+            }
+
 
 
             ecb.DestroyEntity(rpcEntity);

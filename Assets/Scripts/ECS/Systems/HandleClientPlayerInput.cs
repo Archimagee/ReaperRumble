@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Transforms;
 using UnityEngine;
 
 
@@ -33,7 +34,7 @@ partial struct HandleClientPlayerInput : ISystem
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player, RefRO<LocalTransform> playerTransform) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
         {
             float2 input = new float2();
             if (Input.GetKey(KeyCode.W))
@@ -58,7 +59,7 @@ partial struct HandleClientPlayerInput : ISystem
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 Entity rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5 });
+                ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5, Position = playerTransform.ValueRO.Position });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
 
@@ -87,4 +88,5 @@ public struct SpawnSoulsRequestRPC : IRpcCommand
 {
     public int GroupID;
     public int Amount;
+    public float3 Position;
 }

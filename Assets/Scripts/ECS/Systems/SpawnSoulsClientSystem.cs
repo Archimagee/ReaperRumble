@@ -7,7 +7,7 @@ using Unity.NetCode;
 
 
 
-//[BurstCompile]
+[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class SpawnSoulsClientSystem : SystemBase
 {
@@ -22,7 +22,7 @@ public partial class SpawnSoulsClientSystem : SystemBase
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -38,12 +38,12 @@ public partial class SpawnSoulsClientSystem : SystemBase
             if (!EntityManager.HasBuffer<SoulBufferElement>(_playerGroup)) ecb.AddBuffer<SoulBufferElement>(_playerGroup);
 
 
-            float randomisation = 10f;
+            float randomisation = 0.5f;
 
             for (int i = 0; i < spawnRequest.ValueRO.Amount; i++)
             {
                 float3 spawnPos = new float3(UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation), UnityEngine.Random.Range(-randomisation, randomisation));
-                spawnPos.y += 4f;
+                spawnPos += spawnRequest.ValueRO.Position;
 
                 Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
                 ecb.SetName(soul, "Soul");

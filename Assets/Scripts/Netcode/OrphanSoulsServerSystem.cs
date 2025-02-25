@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.NetCode;
 using UnityEngine;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 
 
@@ -51,6 +52,7 @@ public partial class OrphanSoulsServerSystem : SystemBase
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<OrphanSoulsRequestRPC> orphanRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<OrphanSoulsRequestRPC>>().WithEntityAccess())
         {
             Entity newGroup = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
+            ecb.SetComponent(newGroup, new LocalTransform() { Scale = 1f, Rotation = quaternion.identity, Position = orphanRequest.ValueRO.Position });
             ecb.RemoveComponent<SoulGroupTarget>(newGroup);
             NewGroupQueue.Enqueue(newGroup);
             GroupQueue.Enqueue(orphanRequest.ValueRO.GroupID);

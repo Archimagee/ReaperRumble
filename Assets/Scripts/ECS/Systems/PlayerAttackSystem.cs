@@ -55,11 +55,13 @@ partial struct PlayerAttackSystem : ISystem
 
                     if (hitEntity != playerEntity)
                     {
+                        Entity groupToOrphanFrom = SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup;
                         Entity rpcEntity = ecb.CreateEntity();
                         ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                         {
-                            GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup).ghostId,
-                            Amount = 3
+                            GroupID = SystemAPI.GetComponent<GhostInstance>(groupToOrphanFrom).ghostId,
+                            Amount = 3,
+                            Position = SystemAPI.GetComponent<LocalTransform>(groupToOrphanFrom).Position
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                     }
@@ -86,5 +88,6 @@ public struct OrphanSoulsRequestRPC : IRpcCommand
     public int GroupID;
     public int Amount;
     public float3 Velocity;
+    public float3 Position;
     public int NewGroupID;
 }

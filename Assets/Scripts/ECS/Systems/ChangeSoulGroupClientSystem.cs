@@ -63,8 +63,8 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
         // change this to add to a queue so it doesnt try to change the same soul when multiple rpcs recieved
         foreach ((RefRO<ChangeSoulGroupRequestRPC> changeRequest, RefRO<ReceiveRpcCommandRequest> rpc, Entity rpcEntity) in SystemAPI.Query<RefRO<ChangeSoulGroupRequestRPC>, RefRO<ReceiveRpcCommandRequest>> ().WithEntityAccess())
         {
-            Entity groupToMoveTo = rpcEntity;
-            Entity groupToMoveFrom = rpcEntity;
+            Entity groupToMoveTo = Entity.Null;
+            Entity groupToMoveFrom = Entity.Null;
 
             foreach ((RefRO<GhostInstance> ghost, Entity ghostEntity) in SystemAPI.Query<RefRO<GhostInstance>>().WithEntityAccess())
             {

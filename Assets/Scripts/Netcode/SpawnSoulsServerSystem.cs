@@ -25,7 +25,7 @@ public partial class SpawnSoulsServerSystem : SystemBase
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<SpawnSoulsRequestRPC> spawnRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<SpawnSoulsRequestRPC>>().WithEntityAccess())
         {
             Entity sendRpcEntity = EntityManager.CreateEntity();
-            ecb.AddComponent(sendRpcEntity, new SpawnSoulsRequestRPC { GroupID = spawnRequest.ValueRO.GroupID, Amount = spawnRequest.ValueRO.Amount } );
+            ecb.AddComponent(sendRpcEntity, new SpawnSoulsRequestRPC { GroupID = spawnRequest.ValueRO.GroupID, Amount = spawnRequest.ValueRO.Amount, Position = spawnRequest.ValueRO.Position } );
             ecb.AddComponent<SendRpcCommandRequest>(sendRpcEntity);
             ecb.DestroyEntity(recieveRpcEntity);
         }
