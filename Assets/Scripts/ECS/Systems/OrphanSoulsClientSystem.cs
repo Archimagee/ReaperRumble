@@ -44,6 +44,7 @@ public partial struct OrphanSoulsClientSystem : ISystem
             if (!SystemAPI.HasBuffer<SoulBufferElement>(_groupToOrphanFrom))
             {
                 Debug.LogWarning("No Buffer");
+                ecb.DestroyEntity(recieveRpcEntity);
                 break;
             }
             NativeArray<SoulBufferElement> soulElements = SystemAPI.GetBuffer<SoulBufferElement>(_groupToOrphanFrom).ToNativeArray(Allocator.Temp);
@@ -51,6 +52,7 @@ public partial struct OrphanSoulsClientSystem : ISystem
             if (amountToMove <= 0)
             {
                 soulElements.Dispose();
+                ecb.DestroyEntity(recieveRpcEntity);
                 break;
             }
 

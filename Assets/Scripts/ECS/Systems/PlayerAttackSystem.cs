@@ -9,7 +9,7 @@ using Unity.NetCode;
 
 
 
-[BurstCompile]
+//[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct PlayerAttackSystem : ISystem
 {
@@ -20,7 +20,7 @@ partial struct PlayerAttackSystem : ISystem
 
 
 
-    [BurstCompile]
+    //[BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -64,6 +64,17 @@ partial struct PlayerAttackSystem : ISystem
                             Position = SystemAPI.GetComponent<LocalTransform>(groupToOrphanFrom).Position
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                        rpcEntity = ecb.CreateEntity();
+                        float3 knockback = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hitEntity).Position - localTransform.ValueRO.Position);
+                        //knockback.y += 0.2f;
+                        ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC
+                        {
+                            PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hitEntity).ghostId,
+                            KnockbackDirection = knockback,
+                            Strength = 9f
+                        });
+                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                     }
                 }
 
@@ -90,4 +101,11 @@ public struct OrphanSoulsRequestRPC : IRpcCommand
     public float3 Velocity;
     public float3 Position;
     public int NewGroupID;
+}
+
+public struct ApplyKnockbackToPlayerRequestRPC : IRpcCommand
+{
+    public int PlayerGhostID;
+    public float3 KnockbackDirection;
+    public float Strength;
 }

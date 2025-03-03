@@ -22,6 +22,7 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent<CameraRequired>(entity);
             AddComponent<FreezeRotationTag>(entity);
             AddComponent(entity, new IsPlayerGrounded { IsGrounded = true });
+            AddComponent<Knockback>(entity);
         }
     }
 }

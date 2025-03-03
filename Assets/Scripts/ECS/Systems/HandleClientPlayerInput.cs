@@ -20,7 +20,6 @@ partial struct HandleClientPlayerInput : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<NetworkId>();
         state.RequireForUpdate<NetworkStreamInGame>();
         state.RequireForUpdate<ClientPlayerInput>();
     }

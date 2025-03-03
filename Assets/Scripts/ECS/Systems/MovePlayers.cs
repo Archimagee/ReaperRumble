@@ -12,12 +12,23 @@ using Unity.Transforms;
 [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial struct MovePlayers : ISystem
 {
+    private float3 inputVelocity;
+
+
+
+    public void OnCreate(ref SystemState state)
+    {
+        inputVelocity = float3.zero;
+    }
+
+
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<Knockback> knockback, RefRW<LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<Knockback>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
         {
             float3 playerPos = playerTransform.ValueRO.Position;
             if (float.IsNaN(playerPos.x) || float.IsNaN(playerPos.y) || float.IsNaN(playerPos.z)) playerTransform.ValueRW.Position = new float3 (0f, 10f, 0f);
@@ -37,11 +48,17 @@ public partial struct MovePlayers : ISystem
                 playerInput.ValueRW.IsJumping = false;
                 grounded.ValueRW.IsGrounded = false;
             }
-            //else if (!grounded.ValueRO.IsGrounded)
-            //{
-            //    newVelocity.y -= 9.81f * SystemAPI.Time.DeltaTime;
-            //}
-            //else newVelocity.y = 0f;
+
+
+
+            if (knockback.ValueRO.Strength != 0f)
+            {
+                float newKnockbackStrength = math.clamp(knockback.ValueRO.Strength - knockback.ValueRO.Decay, 0f, knockback.ValueRO.Strength);
+                knockback.ValueRW.Strength = newKnockbackStrength;
+                newVelocity += knockback.ValueRO.KnockbackDirection * newKnockbackStrength;
+            }
+
+
 
             playerVelocity.ValueRW.Linear = newVelocity;
         }
