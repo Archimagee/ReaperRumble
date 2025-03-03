@@ -9,7 +9,7 @@ using Unity.NetCode;
 
 
 
-//[BurstCompile]
+[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct PlayerAttackSystem : ISystem
 {
@@ -20,7 +20,7 @@ partial struct PlayerAttackSystem : ISystem
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -31,8 +31,6 @@ partial struct PlayerAttackSystem : ISystem
         {
             if (playerInput.ValueRO.IsAttacking)
             {
-                Debug.Log("Attack");
-
                 float3 playerForward = localTransform.ValueRO.Forward();
 
                 float3 point1 = localTransform.ValueRO.Position + playerForward;
@@ -49,6 +47,19 @@ partial struct PlayerAttackSystem : ISystem
                     CollidesWith = 1
                 });
 
+
+
+                Entity rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new SpawnVFXRequest
+                {
+                    Effect = VisualEffect.ScytheSlash,
+                    Location = localTransform.ValueRO.Position,
+                    Rotation = localTransform.ValueRO.Rotation
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+
+
                 foreach (DistanceHit hit in hits)
                 {
                     Entity hitEntity = hit.Entity;
@@ -56,7 +67,7 @@ partial struct PlayerAttackSystem : ISystem
                     if (hitEntity != playerEntity)
                     {
                         Entity groupToOrphanFrom = SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup;
-                        Entity rpcEntity = ecb.CreateEntity();
+                        rpcEntity = ecb.CreateEntity();
                         ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                         {
                             GroupID = SystemAPI.GetComponent<GhostInstance>(groupToOrphanFrom).ghostId,
@@ -79,6 +90,8 @@ partial struct PlayerAttackSystem : ISystem
                 }
 
                 hits.Dispose();
+
+
 
                 playerInput.ValueRW.LastAttackedAt = SystemAPI.Time.ElapsedTime;
                 playerInput.ValueRW.IsAttacking = false;

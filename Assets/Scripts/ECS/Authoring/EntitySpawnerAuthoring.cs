@@ -15,6 +15,9 @@ public class EntitySpawnerAuthoring : MonoBehaviour
     [Header("Challenges")]
     [SerializeField] private ChallengeAuthoring _parkourChallengePrefab;
 
+    [Header("VFX")]
+    [SerializeField] private VFXAuthoring _scytheSlashVFX;
+
 
 
     public class Baker : Baker<EntitySpawnerAuthoring>
@@ -31,6 +34,11 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Renderable),
                 ParkourChallengePrefabEntity = GetEntity(authoring._parkourChallengePrefab, TransformUsageFlags.Dynamic),
             });
+
+            AddComponent(entity, new VFXPrefabs
+            {
+                ScytheSlashVFXPrefabEntity = GetEntity(authoring._scytheSlashVFX, TransformUsageFlags.Dynamic)
+            });
         }
     }
 }
@@ -46,4 +54,9 @@ public struct EntitySpawnerPrefabs : IComponentData
     public Entity SoulPrefabEntity;
 
     public Entity ParkourChallengePrefabEntity;
+}
+
+public struct VFXPrefabs : IComponentData
+{
+    public Entity ScytheSlashVFXPrefabEntity;
 }

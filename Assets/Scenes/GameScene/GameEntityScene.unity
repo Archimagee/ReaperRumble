@@ -1068,6 +1068,7 @@ MonoBehaviour:
   _soulGroupPrefab: {fileID: 875631237982281265, guid: 7c8b32f072abf65438924fc4843f8018, type: 3}
   _soulPrefab: {fileID: 9199856799111944138, guid: 431803d8cd11d2643b87a2c89948ce08, type: 3}
   _parkourChallengePrefab: {fileID: -2286785702756119782, guid: 0ba0b8aa6234e144881c2fc431cea758, type: 3}
+  _scytheSlashVFX: {fileID: 1154254178918114062, guid: e0b0433b4429f8349b2291419c5e3a24, type: 3}
 --- !u!4 &1120766919
 Transform:
   m_ObjectHideFlags: 0
