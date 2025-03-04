@@ -6,11 +6,11 @@ using Unity.Burst;
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-public partial class DestroyChallengesClientSystem : SystemBase
+public partial class DestroyEventsClientSystem : SystemBase
 {
     protected override void OnCreate()
     {
-        RequireForUpdate<ChallengeDestroyAt>();
+        RequireForUpdate<EventDestroyAt>();
     }
 
 
@@ -23,9 +23,9 @@ public partial class DestroyChallengesClientSystem : SystemBase
 
 
 
-        foreach ((RefRO<ChallengeDestroyAt> challenge, Entity challengeToDestroy) in SystemAPI.Query<RefRO<ChallengeDestroyAt>>().WithEntityAccess())
+        foreach ((RefRO<EventDestroyAt> eventTime, Entity eventToDestroy) in SystemAPI.Query<RefRO<EventDestroyAt>>().WithEntityAccess())
         {
-            if (currentTime >= challenge.ValueRO.TimeToDestroyAt) ecb.DestroyEntity(challengeToDestroy);
+            if (currentTime >= eventTime.ValueRO.TimeToDestroyAt) ecb.DestroyEntity(eventToDestroy);
         }
 
 

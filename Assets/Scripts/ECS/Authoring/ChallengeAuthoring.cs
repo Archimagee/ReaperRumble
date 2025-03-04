@@ -30,7 +30,7 @@ public struct ChallengeData : IComponentData
     public ChallengeType MyChallengeType;
 }
 
-public struct ChallengeDestroyAt : IComponentData
+public struct EventDestroyAt : IComponentData
 {
     public double TimeToDestroyAt;
 }

@@ -2,7 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 using Unity.Transforms;
 
 
@@ -26,7 +25,6 @@ public partial class SpawnVFXClientSystem : SystemBase
 
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<SpawnVFXRequest> vfxRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<SpawnVFXRequest>>().WithEntityAccess())
         {
-            Debug.Log("Spawning " + vfxRequest.ValueRO.Effect);
             Entity newVFX = ecb.Instantiate(GetVFXPrefab(vfxRequest.ValueRO.Effect));
             ecb.SetComponent(newVFX, new LocalTransform() { Position = vfxRequest.ValueRO.Location, Rotation = vfxRequest.ValueRO.Rotation, Scale = 1f });
             ecb.DestroyEntity(recieveRpcEntity);

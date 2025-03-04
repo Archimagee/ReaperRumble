@@ -8,7 +8,7 @@ using Unity.NetCode;
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-public partial class TriggerEventsClientSystem : SystemBase
+public partial class TriggerChallengeClientSystem : SystemBase
 {
     private Entity GetChallengePrefab(ChallengeType challengeType)
     {
@@ -35,7 +35,7 @@ public partial class TriggerEventsClientSystem : SystemBase
             Debug.Log("Spawning " + challenge.ValueRO.ChallengeType);
            
             Entity newChallenge = ecb.Instantiate(challengePrefab);
-            ecb.AddComponent(newChallenge, new ChallengeDestroyAt() {
+            ecb.AddComponent(newChallenge, new EventDestroyAt() {
                 TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<ChallengeData>(challengePrefab).TimeLastsForSeconds });
 
 
