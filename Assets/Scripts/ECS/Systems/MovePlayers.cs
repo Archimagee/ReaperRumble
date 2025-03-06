@@ -12,35 +12,32 @@ using Unity.Transforms;
 [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial struct MovePlayers : ISystem
 {
-    private float3 inputVelocity;
-
-
-
-    public void OnCreate(ref SystemState state)
-    {
-        inputVelocity = float3.zero;
-    }
-
-
-
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<Knockback> knockback, RefRW<LocalTransform> playerTransform, RefRO<Player> player) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<Knockback>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<Knockback> knockback, RefRW<LocalTransform> playerTransform, RefRO<Player> player)
+            in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<Knockback>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
         {
-            float3 playerPos = playerTransform.ValueRO.Position;
-            if (float.IsNaN(playerPos.x) || float.IsNaN(playerPos.y) || float.IsNaN(playerPos.z)) playerTransform.ValueRW.Position = new float3 (0f, 10f, 0f);
-
             float2 input = playerInput.ValueRO.ClientInput;
 
-            playerTransform.ValueRW.Rotation = playerInput.ValueRO.ClientPlayerRotation;
+            //float3 playerPos = playerTransform.ValueRO.Position;
+            //if (float.IsNaN(playerPos.x) || float.IsNaN(playerPos.y) || float.IsNaN(playerPos.z)) playerTransform.ValueRW.Position = new float3(0f, 10f, 0f);
+
+
+
+            playerTransform.ValueRW.Rotation = quaternion.EulerXYZ(playerInput.ValueRO.ClientPlayerRotationEuler);
+
 
 
             float3 newVelocity = ((playerTransform.ValueRO.Forward() * input.y)
-                        + (playerTransform.ValueRO.Right() * input.x)) * player.ValueRO.Speed;
+                        + (playerTransform.ValueRO.Right() * input.x))
+                        * player.ValueRO.Speed;
+
             newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y, 0f);
+
+
 
             if (playerInput.ValueRO.IsJumping && grounded.ValueRW.IsGrounded)
             {

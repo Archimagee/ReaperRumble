@@ -4,23 +4,31 @@ using Unity.Entities;
 using Unity.NetCode;
 using Unity.Transforms;
 using Unity.Mathematics;
-using UnityEngine;
 
 
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-partial struct GoInGameServerSystem : ISystem
+public partial class GoInGameServerSystem : SystemBase
 {
-    public void OnCreate(ref SystemState state)
+    private NativeArray<Entity> _connectedPlayers = new(4, Allocator.Persistent);
+    private NativeList<float3> _spawnPositions = new(4, Allocator.Persistent) {
+        new float3(-40f, 5.5f, -28f),
+        new float3(40f, 5.5f, 28f),
+        new float3(-40f, 5.5f, 28f),
+        new float3(40f, 5.5f, -28f) };
+
+
+
+    protected override void OnCreate()
     {
-        state.RequireForUpdate<NetworkId>();
+        RequireForUpdate<NetworkId>();
     }
 
 
 
     [BurstCompile]
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -28,8 +36,9 @@ partial struct GoInGameServerSystem : ISystem
 
         foreach ((RefRO<ReceiveRpcCommandRequest> recieveRpcCommandRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>>().WithAll<GoInGameRequestRPC>().WithEntityAccess())
         {
-            Debug.Log("Going in game");
             Entity sourceConnection = recieveRpcCommandRequest.ValueRO.SourceConnection;
+            int playerNumber = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value;
+
             ecb.AddComponent<NetworkStreamInGame>(sourceConnection);
 
             Entity newPlayer = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerPrefabEntity);
@@ -37,22 +46,27 @@ partial struct GoInGameServerSystem : ISystem
             ecb.SetName(newPlayer, "Player");
             ecb.SetName(newSoulGroup, "Soul Group");
 
-            ecb.SetComponent<PlayerSoulGroup>(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
-            ecb.SetComponent<SoulGroupTarget>(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
+            ecb.SetComponent(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
+            ecb.SetComponent(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
 
-            ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
-            ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value });
-
-            ecb.SetComponent<LocalTransform>(newPlayer, new LocalTransform { Position = new float3(UnityEngine.Random.Range(-10f, 10f), 6f, 0f), Scale = 1f, Rotation = quaternion.identity });
+            ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = playerNumber });
+            ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = playerNumber });
             
             ecb.AppendToBuffer(sourceConnection, new LinkedEntityGroup { Value = newPlayer });
+
+
+
+            _connectedPlayers[playerNumber - 1] = newPlayer;
+            ecb.SetComponent(newPlayer, new LocalTransform { Position = _spawnPositions[playerNumber - 1], Scale = 1f, Rotation = quaternion.identity });
+
+
 
             ecb.DestroyEntity(recieveRpcEntity);
         }
 
 
 
-        ecb.Playback(state.EntityManager);
+        ecb.Playback(EntityManager);
         ecb.Dispose();
     }
 }

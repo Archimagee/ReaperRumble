@@ -2,7 +2,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Physics;
-using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.NetCode;

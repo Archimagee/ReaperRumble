@@ -65,12 +65,11 @@ partial struct HandleClientPlayerInput : ISystem
             if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true;
             if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds) playerInput.ValueRW.IsAttacking = true;
 
-            _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -90f, 90f);
+            _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -1.6f, 1.6f);
             _cameraRotation.y += Input.GetAxisRaw("Mouse X") * inputSettings.ValueRO.LookSensitivity;
             _playerRotation.y = _cameraRotation.y;
-            playerInput.ValueRW.ClientPlayerRotation = Quaternion.Euler(_playerRotation);
             playerInput.ValueRW.ClientPlayerRotationEuler = _playerRotation;
-            playerInput.ValueRW.ClientCameraRotation = Quaternion.Euler(_cameraRotation);
+            playerInput.ValueRW.ClientCameraRotation = quaternion.EulerXYZ(_cameraRotation);
             playerInput.ValueRW.ClientCameraRotationEuler = _cameraRotation;
         }
 
