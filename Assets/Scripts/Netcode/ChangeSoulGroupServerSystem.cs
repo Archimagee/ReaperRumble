@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -9,6 +10,14 @@ using Unity.NetCode;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial struct ChangeSoulGroupServerSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<ChangeSoulGroupRequestRPC>();
+        state.RequireForUpdate<ReceiveRpcCommandRequest>();
+    }
+
+
+
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -19,16 +28,19 @@ public partial struct ChangeSoulGroupServerSystem : ISystem
         {
             Entity source = rpc.ValueRO.SourceConnection;
 
-            foreach ((RefRO<NetworkStreamConnection> otherSource, Entity entity) in SystemAPI.Query<RefRO<NetworkStreamConnection>>().WithEntityAccess())
+            foreach ((RefRO<NetworkId> networkId, Entity otherSource) in SystemAPI.Query<RefRO<NetworkId>>().WithEntityAccess())
             {
-                Entity newRpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(newRpcEntity, new ChangeSoulGroupRequestRPC
+                if (otherSource != source)
                 {
-                    GroupIDFrom = changeRequest.ValueRO.GroupIDFrom,
-                    GroupIDTo = changeRequest.ValueRO.GroupIDTo,
-                    Amount = 1
-                });
-                ecb.AddComponent(rpcEntity, new SendRpcCommandRequest() { TargetConnection = entity });
+                    Entity newRpcEntity = ecb.CreateEntity();
+                    ecb.AddComponent(newRpcEntity, new ChangeSoulGroupRequestRPC()
+                    {
+                        GroupIDFrom = changeRequest.ValueRO.GroupIDFrom,
+                        GroupIDTo = changeRequest.ValueRO.GroupIDTo,
+                        Amount = changeRequest.ValueRO.Amount
+                    });
+                    ecb.AddComponent(newRpcEntity, new SendRpcCommandRequest() { TargetConnection = otherSource });
+                }
             }
 
 
