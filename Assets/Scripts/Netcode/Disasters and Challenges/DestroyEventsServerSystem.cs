@@ -5,8 +5,8 @@ using Unity.Burst;
 
 
 [BurstCompile]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-public partial class DestroyEventsClientSystem : SystemBase
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+public partial class DestroyEventsServerSystem : SystemBase
 {
     protected override void OnCreate()
     {

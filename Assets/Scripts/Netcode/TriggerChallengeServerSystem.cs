@@ -37,17 +37,36 @@ public partial class TriggerChallengeServerSystem : SystemBase
             || currentTime >= _lastChallengeAt + _challengeCooldownSeconds)
         {
             _lastChallengeAt = currentTime;
-            ChallengeType newChallenge = (ChallengeType)_random.NextInt(0, System.Enum.GetValues(typeof(ChallengeType)).Length);
+            ChallengeType newChallengeType = (ChallengeType)_random.NextInt(0, System.Enum.GetValues(typeof(ChallengeType)).Length);
 
-            Entity rpc = EntityManager.CreateEntity();
-            ecb.AddComponent(rpc, new StartChallengeRequestRPC() { ChallengeType = newChallenge });
-            ecb.AddComponent<SendRpcCommandRequest>(rpc);
+            //Entity rpc = EntityManager.CreateEntity();
+            //ecb.AddComponent(rpc, new StartChallengeRequestRPC() { ChallengeType = newChallenge });
+            //ecb.AddComponent<SendRpcCommandRequest>(rpc);
+
+            Entity challengePrefab = GetChallengePrefab(newChallengeType);
+
+            Entity newChallengeEntity = ecb.Instantiate(challengePrefab);
+            ecb.AddComponent(newChallengeEntity, new EventDestroyAt()
+            {
+                TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<ChallengeData>(challengePrefab).TimeLastsForSeconds
+            });
         }
 
 
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
+    }
+
+
+
+    private Entity GetChallengePrefab(ChallengeType challengeType)
+    {
+        if (challengeType == ChallengeType.Parkour)
+        {
+            return SystemAPI.GetSingleton<EntitySpawnerPrefabs>().ParkourChallengePrefabEntity;
+        }
+        else return Entity.Null;
     }
 }
 
