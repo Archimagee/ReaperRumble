@@ -62,7 +62,7 @@ partial struct HandleClientPlayerInput : ISystem
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true;
+            if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true; else playerInput.ValueRW.IsJumping = false;
             if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds) playerInput.ValueRW.IsAttacking = true;
 
             _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -1.6f, 1.6f);

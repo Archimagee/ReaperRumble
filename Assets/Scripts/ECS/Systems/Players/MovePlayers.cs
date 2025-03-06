@@ -22,9 +22,6 @@ public partial struct MovePlayers : ISystem
         {
             float2 input = playerInput.ValueRO.ClientInput;
 
-            //float3 playerPos = playerTransform.ValueRO.Position;
-            //if (float.IsNaN(playerPos.x) || float.IsNaN(playerPos.y) || float.IsNaN(playerPos.z)) playerTransform.ValueRW.Position = new float3(0f, 10f, 0f);
-
 
 
             playerTransform.ValueRW.Rotation = quaternion.EulerXYZ(playerInput.ValueRO.ClientPlayerRotationEuler);

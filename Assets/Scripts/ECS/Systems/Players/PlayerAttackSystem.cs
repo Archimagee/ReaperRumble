@@ -77,7 +77,6 @@ partial struct PlayerAttackSystem : ISystem
 
                         rpcEntity = ecb.CreateEntity();
                         float3 knockback = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hitEntity).Position - localTransform.ValueRO.Position);
-                        //knockback.y += 0.2f;
                         ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC
                         {
                             PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hitEntity).ghostId,
