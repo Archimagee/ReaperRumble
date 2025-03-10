@@ -2,7 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using Unity.Physics;
 using Unity.Mathematics;
 
 
@@ -29,9 +28,12 @@ public partial class PlayerKnockbackServerSystem : SystemBase
         {
             foreach ((RefRO<GhostInstance> ghostInstance, RefRW<Knockback> knockback) in SystemAPI.Query<RefRO<GhostInstance>, RefRW<Knockback>>())
             {
+                float3 knockbackDirection = knockbackRequest.ValueRO.KnockbackDirection;
+                knockbackDirection.y *= 0.1f;
+
                 if (ghostInstance.ValueRO.ghostId == knockbackRequest.ValueRO.PlayerGhostID)
                 {
-                    knockback.ValueRW.KnockbackDirection = knockbackRequest.ValueRO.KnockbackDirection;
+                    knockback.ValueRW.KnockbackDirection = knockbackDirection;
                     knockback.ValueRW.Strength = knockbackRequest.ValueRO.Strength;
                     knockback.ValueRW.Decay = 0.4f;
                 }

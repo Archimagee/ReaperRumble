@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Mathematics;
 
 
@@ -16,22 +15,4 @@ public class ClientPlayerInputAuthoring : MonoBehaviour
             AddComponent(entity, new ClientPlayerInputSettings { LookSensitivity = 0.035f });
         }
     }
-}
-
-
-
-public struct ClientPlayerInput : IInputComponentData
-{
-    public float2 ClientInput;
-    public bool IsJumping;
-    public double LastAttackedAt;
-    public bool IsAttacking;
-    public float3 ClientPlayerRotationEuler;
-    public quaternion ClientCameraRotation;
-    public float3 ClientCameraRotationEuler;
-}
-
-public struct ClientPlayerInputSettings : IInputComponentData
-{
-    public float LookSensitivity;
 }

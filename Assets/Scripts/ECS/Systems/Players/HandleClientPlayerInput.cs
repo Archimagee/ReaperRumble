@@ -63,6 +63,7 @@ partial struct HandleClientPlayerInput : ISystem
             }
 
             if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true; else playerInput.ValueRW.IsJumping = false;
+            if (Input.GetKeyDown(KeyCode.Mouse1)) playerInput.ValueRW.IsUsingAbility = true; else playerInput.ValueRW.IsUsingAbility = false;
             if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds) playerInput.ValueRW.IsAttacking = true;
 
             _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -1.6f, 1.6f);
@@ -87,4 +88,27 @@ public struct SpawnSoulsRequestRPC : IRpcCommand
     public int GroupID;
     public int Amount;
     public float3 Position;
+}
+
+
+public struct ClientPlayerInput : IInputComponentData
+{
+    public float2 ClientInput;
+
+    public bool IsJumping;
+
+    public bool IsUsingAbility;
+    public double LastUsedAbilityAt;
+
+    public double LastAttackedAt;
+    public bool IsAttacking;
+
+    public float3 ClientPlayerRotationEuler;
+    public quaternion ClientCameraRotation;
+    public float3 ClientCameraRotationEuler;
+}
+
+public struct ClientPlayerInputSettings : IInputComponentData
+{
+    public float LookSensitivity;
 }

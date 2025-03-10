@@ -22,6 +22,7 @@ public class EntitySpawnerAuthoring : MonoBehaviour
     [SerializeField] private VFXAuthoring _scytheSlashVFX;
     [SerializeField] private VFXAuthoring _lightningStrikeIncomingVFX;
     [SerializeField] private VFXAuthoring _lightningStrikeVFX;
+    [SerializeField] private VFXAuthoring _sixShooterTracerVFX;
 
 
 
@@ -44,7 +45,8 @@ public class EntitySpawnerAuthoring : MonoBehaviour
             {
                 ScytheSlashVFXPrefabEntity = GetEntity(authoring._scytheSlashVFX, TransformUsageFlags.Dynamic),
                 LightningStrikeIncomingVFXPrefabEntity = GetEntity(authoring._lightningStrikeIncomingVFX, TransformUsageFlags.Dynamic),
-                LightningStrikeVFXPrefabEntity = GetEntity(authoring._lightningStrikeVFX, TransformUsageFlags.Dynamic)
+                LightningStrikeVFXPrefabEntity = GetEntity(authoring._lightningStrikeVFX, TransformUsageFlags.Dynamic),
+                SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic)
             });
 
             AddComponent(entity, new DisasterPrefabs
@@ -71,8 +73,11 @@ public struct EntitySpawnerPrefabs : IComponentData
 public struct VFXPrefabs : IComponentData
 {
     public Entity ScytheSlashVFXPrefabEntity;
+
     public Entity LightningStrikeIncomingVFXPrefabEntity;
     public Entity LightningStrikeVFXPrefabEntity;
+
+    public Entity SixShooterTracerVFXPrefabEntity;
 }
 public struct DisasterPrefabs : IComponentData
 {

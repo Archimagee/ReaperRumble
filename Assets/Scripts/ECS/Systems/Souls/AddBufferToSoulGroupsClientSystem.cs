@@ -18,20 +18,20 @@ public partial class AddBufferToSoulGroupsClientSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        //EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
 
-        foreach ((RefRO<SoulGroupTag> soulGroup, Entity soulGroupEntity) in SystemAPI.Query<RefRO<SoulGroupTag>>().WithNone<HasBufferTag>().WithEntityAccess())
-        {
-            ecb.AddBuffer<SoulBufferElement>(soulGroupEntity);
-            ecb.AddComponent<HasBufferTag>(soulGroupEntity);
-        }
+        //foreach ((RefRO<SoulGroupTag> soulGroup, Entity soulGroupEntity) in SystemAPI.Query<RefRO<SoulGroupTag>>().WithNone<HasBufferTag>().WithEntityAccess())
+        //{
+        //    ecb.AddBuffer<SoulBufferElement>(soulGroupEntity);
+        //    ecb.AddComponent<HasBufferTag>(soulGroupEntity);
+        //}
 
 
 
-        ecb.Playback(EntityManager);
-        ecb.Dispose();
+        //ecb.Playback(EntityManager);
+        //ecb.Dispose();
     }
 }
 

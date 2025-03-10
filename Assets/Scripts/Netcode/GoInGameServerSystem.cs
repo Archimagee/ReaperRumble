@@ -27,7 +27,7 @@ public partial class GoInGameServerSystem : SystemBase
 
 
 
-    [BurstCompile]
+    //[BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -41,23 +41,29 @@ public partial class GoInGameServerSystem : SystemBase
 
             ecb.AddComponent<NetworkStreamInGame>(sourceConnection);
 
-            Entity newPlayer = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerPrefabEntity);
-            Entity newSoulGroup = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
-            ecb.SetName(newPlayer, "Player");
-            ecb.SetName(newSoulGroup, "Soul Group");
+            Entity newPlayerEntity = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerPrefabEntity);
+            Entity newSoulGroupEntity = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
+            ecb.SetName(newPlayerEntity, "Player " + playerNumber);
+            ecb.SetName(newSoulGroupEntity, "Player " + playerNumber + "'s soul group");
 
-            ecb.SetComponent(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
-            ecb.AddComponent(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
+            ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
+            {
+                PlayerNumber = playerNumber,
+                PlayerAbility = PlayerAbility.SixShooter
+            });
 
-            ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = playerNumber });
-            ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = playerNumber });
+            ecb.AddComponent(newPlayerEntity, new PlayerSoulGroup { MySoulGroup = newSoulGroupEntity });
+            ecb.AddComponent(newSoulGroupEntity, new SoulGroupTarget { MyTarget = newPlayerEntity });
+
+            ecb.AddComponent(newPlayerEntity, new GhostOwner { NetworkId = playerNumber });
+            ecb.AddComponent(newSoulGroupEntity, new GhostOwner { NetworkId = playerNumber });
             
-            ecb.AppendToBuffer(sourceConnection, new LinkedEntityGroup { Value = newPlayer });
+            ecb.AppendToBuffer(sourceConnection, new LinkedEntityGroup { Value = newPlayerEntity });
 
 
 
-            _connectedPlayers[playerNumber - 1] = newPlayer;
-            ecb.SetComponent(newPlayer, new LocalTransform { Position = _spawnPositions[playerNumber - 1], Scale = 1f, Rotation = quaternion.identity });
+            _connectedPlayers[playerNumber - 1] = newPlayerEntity;
+            ecb.SetComponent(newPlayerEntity, new LocalTransform { Position = _spawnPositions[playerNumber - 1], Scale = 1f, Rotation = quaternion.identity });
 
 
 
@@ -69,4 +75,11 @@ public partial class GoInGameServerSystem : SystemBase
         ecb.Playback(EntityManager);
         ecb.Dispose();
     }
+}
+
+//[GhostComponent]
+public struct PlayerSetupRequired : IComponentData
+{
+    [GhostField] public int PlayerNumber;
+    [GhostField] public PlayerAbility PlayerAbility;
 }

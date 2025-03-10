@@ -1,4 +1,3 @@
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Transforms;
@@ -27,10 +26,6 @@ public partial class MovePlayerCamera : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
-
-
-
         foreach ((RefRO<PlayerCameraFollowTarget> cameraTarget, RefRW<LocalTransform> cameraTransform) in SystemAPI.Query<RefRO<PlayerCameraFollowTarget>, RefRW<LocalTransform>>())
         {
             cameraTransform.ValueRW.Rotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
@@ -40,10 +35,5 @@ public partial class MovePlayerCamera : SystemBase
             if (float.IsNaN(newPosition.x) || float.IsNaN(newPosition.y) || float.IsNaN(newPosition.z)) cameraTransform.ValueRW.Position = float3.zero;
             else cameraTransform.ValueRW.Position = newPosition;
         }
-
-
-
-        ecb.Playback(EntityManager);
-        ecb.Dispose();
     }
 }

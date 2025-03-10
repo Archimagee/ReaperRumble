@@ -18,11 +18,11 @@ public class PlayerAuthoring : MonoBehaviour
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new Player { Speed = authoring._playerSpeed, JumpSpeed = authoring._playerJumpSpeed, AttackCooldownSeconds = authoring._playerAttackCooldownSeconds });
-            AddComponent<PlayerSoulGroup>(entity);
-            AddComponent<CameraRequired>(entity);
             AddComponent<FreezeRotationTag>(entity);
             AddComponent(entity, new IsPlayerGrounded { IsGrounded = true });
             AddComponent<Knockback>(entity);
+            AddComponent<PlayerSetupRequired>(entity);
+            AddComponent<PlayerSoulGroup>(entity);
         }
     }
 }
@@ -36,7 +36,6 @@ public struct Player : IComponentData
     public float AttackCooldownSeconds;
 }
 
-[GhostComponent]
 public struct PlayerSoulGroup : IComponentData
 {
     [GhostField] public Entity MySoulGroup;
@@ -52,6 +51,5 @@ public struct SoulWorldCollider : IComponentData
     public Entity ColliderEntity;
 }
 
-public struct CameraRequired : IComponentData { }
 public struct ColliderRequiredTag : IComponentData { }
 public struct FreezeRotationTag : IComponentData { }

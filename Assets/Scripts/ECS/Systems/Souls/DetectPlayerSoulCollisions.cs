@@ -24,7 +24,7 @@ public partial class DetectPlayerSoulCollisions : SystemBase
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
 
-        EntityQuery query = SystemAPI.QueryBuilder().WithAll<Player>().WithAll<GhostOwnerIsLocal>().Build();
+        EntityQuery query = SystemAPI.QueryBuilder().WithAll<Player>().WithAll<GhostOwnerIsLocal>().WithAll<PlayerSoulGroup>().Build();
 
         NativeArray<Entity> players = query.ToEntityArray(Allocator.Temp);
 
@@ -40,7 +40,7 @@ public partial class DetectPlayerSoulCollisions : SystemBase
 
 
 
-        query = SystemAPI.QueryBuilder().WithAll<Soul>().Build();
+        query = SystemAPI.QueryBuilder().WithAll<Soul>().WithAll<SoulGroupMember>().Build();
         NativeArray<Entity> soulEntities = query.ToEntityArray(Allocator.Temp);
         NativeHashMap<Entity, SoulGroupMember> souls = new(soulEntities.Length, Allocator.TempJob);
         NativeHashMap<Entity, int> soulSoulGroupGhostIDs = new(soulEntities.Length, Allocator.TempJob);

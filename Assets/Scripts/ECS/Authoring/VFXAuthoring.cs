@@ -5,7 +5,10 @@ using Unity.Entities;
 
 public class VFXAuthoring : MonoBehaviour
 {
-    [SerializeField] private double _lifetimeSeconds;
+    [SerializeField] protected double _lifetimeSeconds;
+
+
+
     public class Baker : Baker<VFXAuthoring>
     {
         public override void Bake(VFXAuthoring authoring)
