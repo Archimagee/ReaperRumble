@@ -10,9 +10,13 @@ using Unity.NetCode;
 [UpdateInGroup(typeof(AfterPhysicsSystemGroup))]
 [UpdateAfter(typeof(DetectPlayerSoulCollisions))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-public partial struct ChangeSoulGroupClientSystem : ISystem
+public partial class ChangeSoulGroupClientSystem : SystemBase
 {
-    public void OnUpdate(ref SystemState state)
+    NativeQueue<ChangeSoulGroupData> _changeQueue = new NativeQueue<ChangeSoulGroupData>(Allocator.Persistent);
+
+
+
+    protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
@@ -37,7 +41,7 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
             soul.ValueRW.MyGroup = groupToMoveTo;
 
             SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
-            if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb, ref state);
+            if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb);
             else foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
 
             soulsToKeepArray.Dispose();
@@ -47,8 +51,47 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
             ecb.RemoveComponent<ChangeSoulGroup>(soulEntityToMove);
         }
 
-        // change this to add to a queue so it doesnt try to change the same soul when multiple rpcs recieved
-        foreach ((RefRO<ChangeSoulGroupRequestRPC> changeRequest, RefRO<ReceiveRpcCommandRequest> rpc, Entity rpcEntity) in SystemAPI.Query<RefRO<ChangeSoulGroupRequestRPC>, RefRO<ReceiveRpcCommandRequest>> ().WithEntityAccess())
+
+
+        if (_changeQueue.Count > 0)
+        {
+            ChangeSoulGroupData changeData = _changeQueue.Dequeue();
+
+            Entity groupToMoveTo = changeData.SoulGroupToMoveTo;
+            Entity groupToMoveFrom = changeData.SoulGroupToMoveFrom;
+
+            NativeArray<SoulBufferElement> soulElementArray = SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).ToNativeArray(Allocator.Temp);
+            NativeArray<Entity> soulsToMove = new(soulElementArray.Length, Allocator.Temp);
+
+
+
+            for (int i = 0; i < changeData.AmountOfSoulsToMove; i++)
+            {
+                Entity soul = soulElementArray[i].Soul;
+                soulsToMove[i] = soul;
+                ecb.AppendToBuffer(groupToMoveTo, new SoulBufferElement { Soul = soul });
+                SystemAPI.SetComponent(soul, new SoulGroupMember() { MyGroup = groupToMoveTo });
+            }
+
+            NativeList<Entity> soulsToKeep = new(Allocator.Temp);
+            foreach (SoulBufferElement soulBufferElement in soulElementArray) if (!soulsToMove.Contains(soulBufferElement.Soul)) soulsToKeep.Add(soulBufferElement.Soul);
+            soulElementArray.Dispose();
+
+
+            if (soulsToKeep.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb);
+            else
+            {
+                SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
+                foreach (Entity soulToKeep in soulsToKeep) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
+            }
+
+            soulsToKeep.Dispose();
+            soulsToMove.Dispose();
+        }
+
+
+
+        foreach ((RefRO<ChangeSoulGroupRequestRPC> changeRequest, RefRO<ReceiveRpcCommandRequest> rpc, Entity rpcEntity) in SystemAPI.Query<RefRO<ChangeSoulGroupRequestRPC>, RefRO<ReceiveRpcCommandRequest>>().WithEntityAccess())
         {
             Entity groupToMoveTo = Entity.Null;
             Entity groupToMoveFrom = Entity.Null;
@@ -59,46 +102,41 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
                 else if (ghost.ValueRO.ghostId == changeRequest.ValueRO.GroupIDFrom) groupToMoveFrom = ghostEntity;
             }
 
+            if (!SystemAPI.HasBuffer<SoulBufferElement>(groupToMoveFrom)) ecb.AddBuffer<SoulBufferElement>(groupToMoveFrom);
+            if (!SystemAPI.HasBuffer<SoulBufferElement>(groupToMoveTo)) ecb.AddBuffer<SoulBufferElement>(groupToMoveTo);
 
-
-            NativeArray<SoulBufferElement> soulElementArray = SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).ToNativeArray(Allocator.Temp);
-            Entity soulEntityToMove = soulElementArray[0].Soul;
-            NativeList<Entity> soulsToKeepArray = new(Allocator.Temp);
-            foreach (SoulBufferElement soulBufferElement in soulElementArray) if (soulBufferElement.Soul != soulEntityToMove) soulsToKeepArray.Add(soulBufferElement.Soul);
-            soulElementArray.Dispose();
-
-
-
-            ecb.AppendToBuffer(groupToMoveTo, new SoulBufferElement { Soul = soulEntityToMove });
-
-            SystemAPI.SetComponent(soulEntityToMove, new SoulGroupMember() { MyGroup = groupToMoveTo });
-
-            SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
-            if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb, ref state);
-            else foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
-
-            soulsToKeepArray.Dispose();
-
-
+            _changeQueue.Enqueue(new ChangeSoulGroupData() {
+                SoulGroupToMoveFrom = groupToMoveFrom,
+                SoulGroupToMoveTo = groupToMoveTo,
+                AmountOfSoulsToMove = changeRequest.ValueRO.Amount });
 
             ecb.DestroyEntity(rpcEntity);
         }
 
 
 
-        ecb.Playback(state.EntityManager);
+        ecb.Playback(EntityManager);
         ecb.Dispose();
     }
 
 
 
-    public void DestroySoulGroup(Entity soulGroup, EntityCommandBuffer ecb, ref SystemState state)
+    public void DestroySoulGroup(Entity soulGroup, EntityCommandBuffer ecb)
     {
         int ghostID = SystemAPI.GetComponent<GhostInstance>(soulGroup).ghostId;
 
         Entity rpcEntity = ecb.CreateEntity();
         ecb.AddComponent(rpcEntity, new DestroySoulGroupRequestRPC() { GroupToDestroyID = ghostID });
         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+    }
+
+
+
+    private struct ChangeSoulGroupData
+    {
+        public Entity SoulGroupToMoveFrom;
+        public Entity SoulGroupToMoveTo;
+        public int AmountOfSoulsToMove;
     }
 }
 
