@@ -47,7 +47,7 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.SetName(newSoulGroup, "Soul Group");
 
             ecb.SetComponent(newPlayer, new PlayerSoulGroup { MySoulGroup = newSoulGroup });
-            ecb.SetComponent(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
+            ecb.AddComponent(newSoulGroup, new SoulGroupTarget { MyTarget = newPlayer });
 
             ecb.AddComponent(newPlayer, new GhostOwner { NetworkId = playerNumber });
             ecb.AddComponent(newSoulGroup, new GhostOwner { NetworkId = playerNumber });

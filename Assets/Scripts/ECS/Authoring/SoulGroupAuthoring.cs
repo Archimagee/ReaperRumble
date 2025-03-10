@@ -11,7 +11,6 @@ public class SoulGroupAuthoring : MonoBehaviour
         public override void Bake(SoulGroupAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new SoulGroupTarget { });
             AddComponent(entity, new SoulGroupTag { });
         }
     }

@@ -53,7 +53,6 @@ public partial class OrphanSoulsServerSystem : SystemBase
         {
             Entity newGroup = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
             ecb.SetComponent(newGroup, new LocalTransform() { Scale = 1f, Rotation = quaternion.identity, Position = orphanRequest.ValueRO.Position });
-            ecb.RemoveComponent<SoulGroupTarget>(newGroup);
             NewGroupQueue.Enqueue(newGroup);
             GroupQueue.Enqueue(orphanRequest.ValueRO.GroupID);
             AmountQueue.Enqueue(orphanRequest.ValueRO.Amount);

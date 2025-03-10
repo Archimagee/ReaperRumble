@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -37,6 +38,8 @@ public partial class SpawnSoulsClientSystem : SystemBase
             }
             if (!EntityManager.HasBuffer<SoulBufferElement>(_playerGroup)) ecb.AddBuffer<SoulBufferElement>(_playerGroup);
 
+            Debug.Log(_playerGroup);
+
 
             float randomisation = 0.5f;
 
@@ -63,24 +66,3 @@ public partial class SpawnSoulsClientSystem : SystemBase
         ecb.Dispose();
     }
 }
-
-
-
-//[BurstCompile]
-//public partial struct SpawnSoulJob : IJobEntity
-//{
-//    public EntityCommandBuffer.ParallelWriter Ecb;
-//    [ReadOnly] public float3 SpawnPosition;
-//    [ReadOnly] public Entity Group;
-//    [ReadOnly] public Entity SoulPrefab;
-
-//    public void Execute([ChunkIndexInQuery] int index)
-//    {
-//        Entity soul = Ecb.Instantiate(index, SoulPrefab);
-
-//        LocalTransform soulTransform = new LocalTransform { Position = SpawnPosition, Scale = 1f };
-//        Ecb.SetComponent(index, soul, soulTransform);
-//        Ecb.SetComponent(index, soul, new Soul { Speed = 0.2f, SeparationForce = 0.03f, MyGroup = Group });
-//        Ecb.AppendToBuffer(index, Group, new SoulBufferElement { Soul = soul });
-//    }
-//}
