@@ -894,7 +894,7 @@ MonoBehaviour:
       m_Override: 0
       m_Value:
         Category00: 1
-        Category01: 0
+        Category01: 1
         Category02: 0
         Category03: 0
         Category04: 0
@@ -1069,7 +1069,6 @@ MonoBehaviour:
   _soulPrefab: {fileID: 9199856799111944138, guid: 431803d8cd11d2643b87a2c89948ce08, type: 3}
   _parkourChallengePrefab: {fileID: -2286785702756119782, guid: 0ba0b8aa6234e144881c2fc431cea758, type: 3}
   _lightningStormDisasterPrefab: {fileID: 7962082946490727139, guid: e2b9c69c5c939b04695b31c385632e4c, type: 3}
-  _lightningStrikePrefab: {fileID: -6442744219013261172, guid: e44fde5aaa1f8ba4abf0c1d9a26d91a1, type: 3}
   _scytheSlashVFX: {fileID: 1154254178918114062, guid: e0b0433b4429f8349b2291419c5e3a24, type: 3}
   _lightningStrikeIncomingVFX: {fileID: 777783325214638761, guid: c97ca23c0368d9e499e832fbe29d90ae, type: 3}
   _lightningStrikeVFX: {fileID: -6442744219013261172, guid: 22511ad2f1e15a444a14698f18be4ff1, type: 3}

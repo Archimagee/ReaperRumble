@@ -13,8 +13,8 @@ using Unity.Collections;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class SpawnSoulsOverTimeServerSystem : SystemBase
 {
-    private double _minTimeBetweenSpawns = 3.0;
-    private double _maxTimeBetweenSpawns = 6.0;
+    private readonly double _minTimeBetweenSpawns = 7.0;
+    private readonly double _maxTimeBetweenSpawns = 15.0;
     private double _nextSpawnAt = 5.0;
 
     private NativeQueue<Entity> _spawnQueue = new(Allocator.Persistent);
@@ -26,14 +26,13 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
     };
 
     private Entity _soulGroupPrefab;
-    Unity.Mathematics.Random _random;
+    Unity.Mathematics.Random _random = new();
 
 
 
     [BurstCompile]
     protected override void OnCreate()
     {
-        _random = new Unity.Mathematics.Random();
         _random.InitState(140783u);
 
         RequireForUpdate<EntitySpawnerPrefabs>();
@@ -56,10 +55,10 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
             Entity newSoulGroup = _spawnQueue.Dequeue();
 
             float3 spawnPosition = GetSpawnPosition();
+            spawnPosition.y += 1f;
             EntityManager.SetComponentData(newSoulGroup, new LocalTransform() { Position = spawnPosition });
 
             Entity rpcEntity = EntityManager.CreateEntity();
-            Debug.Log(SystemAPI.GetComponent<GhostInstance>(newSoulGroup).ghostId);
             EntityManager.AddComponentData(rpcEntity, new SpawnSoulsRequestRPC() { Amount = 3, GroupID = SystemAPI.GetComponent<GhostInstance>(newSoulGroup).ghostId, Position = spawnPosition });
             EntityManager.AddComponent<SendRpcCommandRequest>(rpcEntity);
         }

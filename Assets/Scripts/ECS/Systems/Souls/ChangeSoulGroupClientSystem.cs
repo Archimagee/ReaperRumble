@@ -37,7 +37,8 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
             soul.ValueRW.MyGroup = groupToMoveTo;
 
             SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
-            foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
+            if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb, ref state);
+            else foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
 
             soulsToKeepArray.Dispose();
 
@@ -73,7 +74,8 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
             SystemAPI.SetComponent(soulEntityToMove, new SoulGroupMember() { MyGroup = groupToMoveTo });
 
             SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
-            foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
+            if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb, ref state);
+            else foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
 
             soulsToKeepArray.Dispose();
 
@@ -86,6 +88,17 @@ public partial struct ChangeSoulGroupClientSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+
+
+    public void DestroySoulGroup(Entity soulGroup, EntityCommandBuffer ecb, ref SystemState state)
+    {
+        int ghostID = SystemAPI.GetComponent<GhostInstance>(soulGroup).ghostId;
+
+        Entity rpcEntity = ecb.CreateEntity();
+        ecb.AddComponent(rpcEntity, new DestroySoulGroupRequestRPC() { GroupToDestroyID = ghostID });
+        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
     }
 }
 

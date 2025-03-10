@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 
 
 
@@ -12,7 +11,7 @@ using UnityEngine;
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class SpawnSoulsClientSystem : SystemBase
 {
-    Entity _playerGroup;
+    Entity _groupToSpawnTo;
 
 
 
@@ -34,11 +33,10 @@ public partial class SpawnSoulsClientSystem : SystemBase
         {
             foreach ((RefRO<GhostInstance> ghost, Entity ghostEntity) in SystemAPI.Query<RefRO<GhostInstance>>().WithEntityAccess())
             {
-                if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID) _playerGroup = ghostEntity;
+                if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID) _groupToSpawnTo = ghostEntity;
             }
-            if (!EntityManager.HasBuffer<SoulBufferElement>(_playerGroup)) ecb.AddBuffer<SoulBufferElement>(_playerGroup);
+            if (!EntityManager.HasBuffer<SoulBufferElement>(_groupToSpawnTo)) ecb.AddBuffer<SoulBufferElement>(_groupToSpawnTo);
 
-            Debug.Log(_playerGroup);
 
 
             float randomisation = 0.5f;
@@ -52,9 +50,9 @@ public partial class SpawnSoulsClientSystem : SystemBase
                 ecb.SetName(soul, "Soul");
                 ecb.SetComponent(soul, new LocalTransform { Position = spawnPos, Scale = 1f, Rotation = quaternion.identity });
                 ecb.SetComponent(soul, new Soul { Speed = 7.5f, SeparationForce = 1.125f });
-                ecb.AddComponent(soul, new SoulGroupMember { MyGroup = _playerGroup });
+                ecb.AddComponent(soul, new SoulGroupMember { MyGroup = _groupToSpawnTo });
 
-                ecb.AppendToBuffer(_playerGroup, new SoulBufferElement { Soul = soul });
+                ecb.AppendToBuffer(_groupToSpawnTo, new SoulBufferElement { Soul = soul });
             }
 
             ecb.DestroyEntity(recieveRpcEntity);
