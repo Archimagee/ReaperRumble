@@ -11,7 +11,7 @@ using Unity.NetCode;
 public partial class TriggerDisasterServerSystem : SystemBase
 {
     private double _lastDisasterAt = 0f;
-    private readonly double _firstDisasterDelaySeconds = 30f;
+    private readonly double _firstDisasterDelaySeconds = 5f;
     private readonly double _disasterCooldownSeconds = 60f;
     private Random _random = new();
 

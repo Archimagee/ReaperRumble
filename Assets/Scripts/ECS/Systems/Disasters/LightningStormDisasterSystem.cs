@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
+using Unity.NetCode;
 
 
 
@@ -16,10 +17,11 @@ public partial class LightningStormDisasterSystem : SystemBase
     private NativeHashMap<double, float3> _upcomingLightningStrikes = new(500, Allocator.Persistent);
 
     private readonly double _firstStrikeDelaySeconds = 2.0;
-    private readonly double _minTimeBetweenStrikesSeconds = 0.2;
-    private readonly double _maxTimeBetweenStrikesSeconds = 0.5;
+    private readonly double _minTimeBetweenStrikesSeconds = 0.1;
+    private readonly double _maxTimeBetweenStrikesSeconds = 0.3;
     private readonly double _incomingTime = 1.0;
-    private readonly float _strikeDiameter = 2f;
+    private readonly float _strikeRadius = 8f;
+    private readonly float _strikeKnockbackStrength = 100f;
 
     private readonly AABB _strikeBounds = new() {
         Center = float3.zero,
@@ -101,9 +103,37 @@ public partial class LightningStormDisasterSystem : SystemBase
         {
             if (SystemAPI.Time.ElapsedTime >= strikeData.Key)
             {
-                Entity newLightningStrike = ecb.Instantiate(_lightningStrikeVFXPrefab);
-                ecb.SetComponent(newLightningStrike, new LocalTransform() { Position = strikeData.Value, Scale = 1f, Rotation = quaternion.identity });
+                float3 strikePosition = strikeData.Value;
 
+                Entity newLightningStrike = ecb.Instantiate(_lightningStrikeVFXPrefab);
+                ecb.SetComponent(newLightningStrike, new LocalTransform() { Position = strikePosition, Scale = 1f, Rotation = quaternion.identity });
+
+
+
+                //float3 maxPos = strikePosition + new float3(_strikeDiameter, _strikeDiameter, _strikeDiameter);
+                //float3 minPos = strikePosition - new float3(_strikeDiameter, 0f, _strikeDiameter);
+
+                //Unity.Physics.OverlapAabbInput overlapInput = new Unity.Physics.OverlapAabbInput() {
+                //    Aabb = new Aabb() { Max = maxPos, Min = minPos },
+                //    Filter = new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 }
+                //};
+
+                NativeList<DistanceHit> hits = new(Allocator.Temp);
+                SystemAPI.GetSingleton<PhysicsWorldSingleton>().OverlapSphere(strikePosition, _strikeRadius, ref hits, new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 });
+
+                foreach (DistanceHit hit in hits)
+                {
+                    Entity rpcEntity = ecb.CreateEntity();
+                    ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC() {
+                        KnockbackDirection = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hit.Entity).Position - strikePosition),
+                        Strength = _strikeKnockbackStrength,
+                        PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hit.Entity).ghostId });
+                    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                }
+
+
+
+                hits.Dispose();
                 completedStrikes.Add(strikeData.Key);
             }
         }
