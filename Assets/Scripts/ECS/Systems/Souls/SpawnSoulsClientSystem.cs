@@ -58,8 +58,6 @@ public partial class SpawnSoulsClientSystem : SystemBase
                 if (ghost.ValueRO.ghostId == spawnRequest.ValueRO.GroupID)
                 {
                     Entity groupToSpawnTo = ghostEntity;
-                    Debug.Log(ghostEntity);
-                    Debug.Log(spawnRequest.ValueRO.Amount);
                     if (!EntityManager.HasBuffer<SoulBufferElement>(groupToSpawnTo)) ecb.AddBuffer<SoulBufferElement>(groupToSpawnTo);
 
                     _soulsToSpawn.Enqueue(new SoulSpawnData { SoulGroupToSpawnTo = groupToSpawnTo, AmountOfSoulsToSpawn = spawnRequest.ValueRO.Amount });

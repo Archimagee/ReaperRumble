@@ -19,7 +19,7 @@ public partial class TriggerDisasterServerSystem : SystemBase
 
     protected override void OnCreate()
     {
-        _random.InitState(56789);
+        _random.InitState(153478);
     }
 
 
@@ -27,7 +27,7 @@ public partial class TriggerDisasterServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
 
 
 
@@ -55,7 +55,8 @@ public partial class TriggerDisasterServerSystem : SystemBase
 
 public enum DisasterType
 {
-    LightningStorm = 0
+    LightningStorm,
+    MeteorShower
 }
 
 public struct StartDisasterRequestRPC : IRpcCommand

@@ -844,7 +844,7 @@ MonoBehaviour:
     m_Template: {fileID: 0}
     m_CollisionResponse:
       m_Override: 0
-      m_Value: 0
+      m_Value: 1
     m_Friction:
       m_Override: 0
       m_Value:
@@ -897,7 +897,7 @@ MonoBehaviour:
         Category01: 1
         Category02: 0
         Category03: 0
-        Category04: 0
+        Category04: 1
         Category05: 0
         Category06: 0
         Category07: 0
@@ -1069,9 +1069,12 @@ MonoBehaviour:
   _soulPrefab: {fileID: 9199856799111944138, guid: 431803d8cd11d2643b87a2c89948ce08, type: 3}
   _parkourChallengePrefab: {fileID: -2286785702756119782, guid: 0ba0b8aa6234e144881c2fc431cea758, type: 3}
   _lightningStormDisasterPrefab: {fileID: 7962082946490727139, guid: e2b9c69c5c939b04695b31c385632e4c, type: 3}
+  _meteorShowerDisasterPrefab: {fileID: 6552752887713790240, guid: 00b4c8e7d9fcde6478d9d107b72dfa91, type: 3}
+  _meteorPrefab: {fileID: 1139366034430314029, guid: 930521f79aa1547428c71885983440ad, type: 3}
   _scytheSlashVFX: {fileID: 1154254178918114062, guid: e0b0433b4429f8349b2291419c5e3a24, type: 3}
   _lightningStrikeIncomingVFX: {fileID: -728151816038665384, guid: 948dc695ac19bbf4f93a108393452557, type: 3}
   _lightningStrikeVFX: {fileID: -6442744219013261172, guid: 22511ad2f1e15a444a14698f18be4ff1, type: 3}
+  _meteorImpactVFX: {fileID: 0}
   _sixShooterTracerVFX: {fileID: -104828565209009609, guid: a23ec52a1059ac94d8f9734384a3f8c4, type: 3}
 --- !u!4 &1120766919
 Transform:
@@ -1329,7 +1332,7 @@ MonoBehaviour:
         Category01: 0
         Category02: 0
         Category03: 0
-        Category04: 0
+        Category04: 1
         Category05: 0
         Category06: 0
         Category07: 0

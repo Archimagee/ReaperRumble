@@ -58,9 +58,6 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
             spawnPosition.y += 1f;
             EntityManager.SetComponentData(newSoulGroup, new LocalTransform() { Position = spawnPosition });
 
-            Debug.Log(newSoulGroup);
-            Debug.Log(SystemAPI.GetComponent<GhostInstance>(newSoulGroup).ghostId);
-
             Entity rpcEntity = EntityManager.CreateEntity();
             EntityManager.AddComponentData(rpcEntity, new SpawnSoulsRequestRPC() { Amount = 3, GroupID = SystemAPI.GetComponent<GhostInstance>(newSoulGroup).ghostId, Position = spawnPosition });
             EntityManager.AddComponent<SendRpcCommandRequest>(rpcEntity);

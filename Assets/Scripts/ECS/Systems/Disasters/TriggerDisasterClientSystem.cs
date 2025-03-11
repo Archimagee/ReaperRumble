@@ -12,10 +12,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
 {
     private Entity GetDisasterPrefab(DisasterType disasterType)
     {
-        if (disasterType == DisasterType.LightningStorm)
-        {
-            return SystemAPI.GetSingleton<DisasterPrefabs>().LightningStormDisasterPrefabEntity;
-        }
+        if (disasterType == DisasterType.LightningStorm) return SystemAPI.GetSingleton<DisasterPrefabs>().LightningStormDisasterPrefabEntity;
+        else if (disasterType == DisasterType.MeteorShower) return SystemAPI.GetSingleton<DisasterPrefabs>().MeteorShowerDisasterPrefabEntity;
         else return Entity.Null;
     }
 
@@ -39,6 +37,7 @@ public partial class TriggerDisasterClientSystem : SystemBase
                 TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<DisasterData>(disasterPrefab).TimeLastsForSeconds });
             ecb.AddComponent(newDisaster, new EventSeed() { Seed = disaster.ValueRO.Seed });
             ecb.SetName(newDisaster, disaster.ValueRO.DisasterType.ToString());
+
 
 
             ecb.DestroyEntity(recieveRpcEntity);

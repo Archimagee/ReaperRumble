@@ -5,11 +5,10 @@ using Unity.Collections;
 using Unity.Burst;
 using UnityEngine;
 using Unity.Physics;
-using Unity.VisualScripting;
 
 
 
-//[BurstCompile]
+[BurstCompile]
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
@@ -27,7 +26,7 @@ public partial class MoveSouls : SystemBase
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     protected override void OnUpdate()
     {
         EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build();

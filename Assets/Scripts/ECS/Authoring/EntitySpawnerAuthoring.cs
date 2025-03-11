@@ -17,11 +17,14 @@ public class EntitySpawnerAuthoring : MonoBehaviour
 
     [Header("Disasters")]
     [SerializeField] private DisasterAuthoring _lightningStormDisasterPrefab;
+    [SerializeField] private DisasterAuthoring _meteorShowerDisasterPrefab;
+    [SerializeField] private GameObject _meteorPrefab;
 
     [Header("VFX")]
     [SerializeField] private VFXAuthoring _scytheSlashVFX;
     [SerializeField] private VFXAuthoring _lightningStrikeIncomingVFX;
     [SerializeField] private VFXAuthoring _lightningStrikeVFX;
+    [SerializeField] private VFXAuthoring _meteorImpactVFX;
     [SerializeField] private VFXAuthoring _sixShooterTracerVFX;
 
 
@@ -46,12 +49,15 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 ScytheSlashVFXPrefabEntity = GetEntity(authoring._scytheSlashVFX, TransformUsageFlags.Dynamic),
                 LightningStrikeIncomingVFXPrefabEntity = GetEntity(authoring._lightningStrikeIncomingVFX, TransformUsageFlags.Dynamic),
                 LightningStrikeVFXPrefabEntity = GetEntity(authoring._lightningStrikeVFX, TransformUsageFlags.Dynamic),
+                MeteorImpactVFXPrefabEntity = GetEntity(authoring._meteorImpactVFX, TransformUsageFlags.Dynamic),
                 SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic)
             });
 
             AddComponent(entity, new DisasterPrefabs
             {
                 LightningStormDisasterPrefabEntity = GetEntity(authoring._lightningStormDisasterPrefab, TransformUsageFlags.None),
+                MeteorShowerDisasterPrefabEntity = GetEntity(authoring._meteorShowerDisasterPrefab, TransformUsageFlags.None),
+                MeteorPrefabEntity = GetEntity(authoring._meteorPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -77,9 +83,13 @@ public struct VFXPrefabs : IComponentData
     public Entity LightningStrikeIncomingVFXPrefabEntity;
     public Entity LightningStrikeVFXPrefabEntity;
 
+    public Entity MeteorImpactVFXPrefabEntity;
+
     public Entity SixShooterTracerVFXPrefabEntity;
 }
 public struct DisasterPrefabs : IComponentData
 {
     public Entity LightningStormDisasterPrefabEntity;
+    public Entity MeteorShowerDisasterPrefabEntity;
+    public Entity MeteorPrefabEntity;
 }
