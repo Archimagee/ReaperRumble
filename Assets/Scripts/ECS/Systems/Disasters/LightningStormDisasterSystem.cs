@@ -15,11 +15,12 @@ public partial class LightningStormDisasterSystem : SystemBase
     private Entity _lightningStrikeVFXPrefab = Entity.Null;
     private Entity _incomingLightningStrikeVFXPrefab = Entity.Null;
     private NativeHashMap<double, float3> _upcomingLightningStrikes = new(500, Allocator.Persistent);
+    private NativeHashMap<double, float3> _upcomingIncomingVFX = new(500, Allocator.Persistent);
 
     private readonly double _firstStrikeDelaySeconds = 2.0;
     private readonly double _minTimeBetweenStrikesSeconds = 0.1;
     private readonly double _maxTimeBetweenStrikesSeconds = 0.3;
-    private readonly double _incomingTime = 1.0;
+    private readonly double _incomingTime = 1.6;
     private readonly float _strikeRadius = 8f;
     private readonly float _strikeKnockbackStrength = 100f;
 
@@ -82,10 +83,8 @@ public partial class LightningStormDisasterSystem : SystemBase
 
 
                 if (hasHit)
-                {
-                    //Entity newIncomingVFX = ecb.Instantiate(_incomingLightningStrikeVFXPrefab);
-                    //ecb.SetComponent(newIncomingVFX, new LocalTransform() { Position = hit.Position, Scale = 1f, Rotation = quaternion.identity });
-
+                {                    
+                    _upcomingIncomingVFX.Add(time, hit.Position);
                     _upcomingLightningStrikes.Add(time + _incomingTime, hit.Position);
                 }
 
@@ -98,6 +97,17 @@ public partial class LightningStormDisasterSystem : SystemBase
 
 
         NativeList<double> completedStrikes = new(Allocator.Temp);
+        NativeList<double> completedIncomingVFX = new(Allocator.Temp);
+
+        foreach (KVPair<double, float3> strikeData in _upcomingIncomingVFX)
+        {
+            if (SystemAPI.Time.ElapsedTime >= strikeData.Key)
+            {
+                Entity newIncomingVFX = ecb.Instantiate(_incomingLightningStrikeVFXPrefab);
+                ecb.SetComponent(newIncomingVFX, new LocalTransform() { Position = strikeData.Value, Scale = 1f, Rotation = quaternion.identity });
+                completedIncomingVFX.Add(strikeData.Key);
+            }
+        }
 
         foreach (KVPair<double, float3> strikeData in _upcomingLightningStrikes)
         {
@@ -138,7 +148,9 @@ public partial class LightningStormDisasterSystem : SystemBase
             }
         }
 
+        foreach (double strike in completedIncomingVFX) _upcomingIncomingVFX.Remove(strike);
         foreach (double strike in completedStrikes) _upcomingLightningStrikes.Remove(strike);
+        completedIncomingVFX.Dispose();
         completedStrikes.Dispose();
 
 
