@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8742139259d555c4a8460118c94bf1d2
+guid: d946081547ff4bc4e82e89225cf9704b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: _Tpose
-      takeName: _Tpose
-      internalID: -5975137403209164131
+      name: CowboyTPoseAnim
+      takeName: CowboyArmature|_Tpose
+      internalID: -8891440634218488407
       firstFrame: 0
-      lastFrame: 1
+      lastFrame: 0
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -60,9 +60,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: GetHit
-      takeName: GetHit
-      internalID: 7055355079433224739
+      name: CowboyGetHitAnim
+      takeName: CowboyArmature|GetHit
+      internalID: -4253422908173221354
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -89,9 +89,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Idle
-      takeName: Idle
-      internalID: -3100369314251171874
+      name: CowboyIdleAnim
+      takeName: CowboyArmature|Idle
+      internalID: -4534758019773592910
       firstFrame: 0
       lastFrame: 39
       wrapMode: 0
@@ -118,9 +118,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Jump
-      takeName: Jump
-      internalID: 5539831331247536789
+      name: CowboyJumpAnim
+      takeName: CowboyArmature|Jump
+      internalID: -8613653696639954962
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -147,38 +147,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Run
-      takeName: Run
-      internalID: 5522812681064789136
-      firstFrame: 0
-      lastFrame: 16
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: Shoot
-      takeName: Shoot
-      internalID: -3704289112126983070
+      name: CowboyRunAnim
+      takeName: CowboyArmature|Run
+      internalID: 4596607833769513417
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -205,9 +176,9 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Swing
-      takeName: Swing
-      internalID: -4738338977195520429
+      name: CowboyShootAnim
+      takeName: CowboyArmature|Shoot
+      internalID: -8817858441098683925
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -234,9 +205,38 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Walk
-      takeName: Walk
-      internalID: 2667949614841947897
+      name: CowboySwingAnim
+      takeName: CowboyArmature|Swing
+      internalID: 1449963978925020689
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: CowboyWalkAnim
+      takeName: CowboyArmature|Walk
+      internalID: 8969035513572843303
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -321,7 +321,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: 
+    rootMotionBoneName: Pelvis
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
@@ -329,7 +329,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
