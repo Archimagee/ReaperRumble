@@ -19,10 +19,10 @@ public partial class LightningStormDisasterSystem : SystemBase
 
     private readonly double _firstStrikeDelaySeconds = 2.0;
     private readonly double _minTimeBetweenStrikesSeconds = 0.1;
-    private readonly double _maxTimeBetweenStrikesSeconds = 0.3;
+    private readonly double _maxTimeBetweenStrikesSeconds = 0.4;
     private readonly double _incomingTime = 1.6;
     private readonly float _strikeRadius = 8f;
-    private readonly float _strikeKnockbackStrength = 100f;
+    private readonly float _strikeKnockbackStrength = 5f;
 
     private readonly AABB _strikeBounds = new() {
         Center = float3.zero,
