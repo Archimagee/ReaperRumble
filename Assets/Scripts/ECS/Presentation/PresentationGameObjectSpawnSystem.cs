@@ -1,0 +1,37 @@
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
+using UnityEngine;
+
+
+
+[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+public partial struct PresentationGameObjectSpawnSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        foreach (Entity entity in SystemAPI.QueryBuilder().WithAll<LocalToWorld, PresentationGameObjectPrefab>()
+            .WithNone<PresentationGameObjectCleanup>()
+            .Build().ToEntityArray(Allocator.Temp))
+        {
+            PresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<PresentationGameObjectPrefab>(entity);
+            GameObject newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);
+
+
+
+            foreach (Component component in newGameObject.GetComponents(typeof(Component)))
+            {
+                if (component != null) state.EntityManager.AddComponentObject(entity, component);
+            }
+
+
+
+            newGameObject.AddComponent<PresentationGameObject>().Assign(entity, state.World);
+            state.EntityManager.AddComponentData(entity, new PresentationGameObjectCleanup() { Instance = newGameObject });
+
+            LocalToWorld localToWorld = SystemAPI.GetComponent<LocalToWorld>(entity);
+            newGameObject.transform.position = localToWorld.Position;
+            newGameObject.transform.rotation = localToWorld.Rotation;
+        }
+    }
+}
