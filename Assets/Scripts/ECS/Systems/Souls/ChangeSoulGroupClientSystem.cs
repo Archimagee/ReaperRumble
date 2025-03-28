@@ -3,10 +3,11 @@ using Unity.Entities;
 using Unity.Collections;
 using Unity.Physics.Systems;
 using Unity.NetCode;
+using UnityEngine.VFX;
+using UnityEngine;
 
 
 
-[BurstCompile]
 [UpdateInGroup(typeof(AfterPhysicsSystemGroup))]
 [UpdateAfter(typeof(DetectPlayerSoulCollisions))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
@@ -39,6 +40,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             ecb.AppendToBuffer(groupToMoveTo, new SoulBufferElement { Soul = soulEntityToMove });
 
             soul.ValueRW.MyGroup = groupToMoveTo;
+            SetSoulColor(soulEntityToMove, SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget);
 
             SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
             if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb);
@@ -71,6 +73,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
                 soulsToMove[i] = soul;
                 ecb.AppendToBuffer(groupToMoveTo, new SoulBufferElement { Soul = soul });
                 SystemAPI.SetComponent(soul, new SoulGroupMember() { MyGroup = groupToMoveTo });
+                SetSoulColor(soul, SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget);
             }
 
             NativeList<Entity> soulsToKeep = new(Allocator.Temp);
@@ -128,6 +131,21 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
         Entity rpcEntity = ecb.CreateEntity();
         ecb.AddComponent(rpcEntity, new DestroySoulGroupRequestRPC() { GroupToDestroyID = ghostID });
         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+    }
+
+
+
+    public void SetSoulColor(Entity soul, Entity owner)
+    {
+        VisualEffect vfx = EntityManager.GetComponentObject<VisualEffect>(soul);
+        Vector4 color = Vector4.zero;
+
+        if (owner == Entity.Null) color = new Vector4(0.32f, 0.2f, 0.7f, 1f);
+        else
+        {
+            color = SystemAPI.GetComponent<PlayerClass>(owner).MyColour;
+        }
+        Debug.Log(color);
     }
 
 

@@ -34,14 +34,14 @@ public partial class SpawnVFXClientSystem : SystemBase
         ecb.Dispose();
     }
 
-    private Entity GetVFXPrefab(VisualEffect effect)
+    private Entity GetVFXPrefab(RRVFX effect)
     {
-        if (effect == VisualEffect.ScytheSlash) return SystemAPI.GetSingleton<VFXPrefabs>().ScytheSlashVFXPrefabEntity;
+        if (effect == RRVFX.ScytheSlash) return SystemAPI.GetSingleton<VFXPrefabs>().ScytheSlashVFXPrefabEntity;
         else return Entity.Null;
     }
 }
 
-public enum VisualEffect
+public enum RRVFX
 {
     ScytheSlash
 }

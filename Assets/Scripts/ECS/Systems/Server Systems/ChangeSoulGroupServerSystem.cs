@@ -2,7 +2,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.NetCode;
-using UnityEngine;
 
 
 
@@ -15,8 +14,6 @@ public partial struct ChangeSoulGroupServerSystem : ISystem
         state.RequireForUpdate<ChangeSoulGroupRequestRPC>();
         state.RequireForUpdate<ReceiveRpcCommandRequest>();
     }
-
-
 
     public void OnUpdate(ref SystemState state)
     {

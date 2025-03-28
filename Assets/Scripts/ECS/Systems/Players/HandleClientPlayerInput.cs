@@ -1,14 +1,13 @@
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
 using UnityEngine;
+using static Unity.Entities.SystemAPI.ManagedAPI;
 
 
 
-[BurstCompile]
 [UpdateInGroup(typeof(GhostInputSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct HandleClientPlayerInput : ISystem
@@ -26,14 +25,13 @@ partial struct HandleClientPlayerInput : ISystem
 
 
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player, RefRO<LocalTransform> playerTransform) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<ClientPlayerInput> playerInput, UnityEngineComponent<Animator> animator, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player, RefRO<LocalTransform> playerTransform) in SystemAPI.Query<RefRW<ClientPlayerInput>, UnityEngineComponent<Animator>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
         {
             float2 input = new float2();
             if (Input.GetKey(KeyCode.W))
@@ -54,17 +52,35 @@ partial struct HandleClientPlayerInput : ISystem
             }
             math.normalizesafe(input);
             playerInput.ValueRW.ClientInput = input;
+            if (input.x != 0f || input.y != 0f) animator.Value.SetBool("IsRunning", true);
+            else animator.Value.SetBool("IsRunning", false);
 
-            if (Input.GetKeyDown(KeyCode.Return))
+            //if (Input.GetKeyDown(KeyCode.Return))
+            //{
+            //    Entity rpcEntity = ecb.CreateEntity();
+            //    ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5, Position = playerTransform.ValueRO.Position });
+            //    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+            //}
+
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Entity rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5, Position = playerTransform.ValueRO.Position });
-                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                playerInput.ValueRW.IsJumping = true;
+                animator.Value.SetTrigger("Jump");
             }
+            else playerInput.ValueRW.IsJumping = false;
 
-            if (Input.GetKeyDown(KeyCode.Space)) playerInput.ValueRW.IsJumping = true; else playerInput.ValueRW.IsJumping = false;
-            if (Input.GetKeyDown(KeyCode.Mouse1)) playerInput.ValueRW.IsUsingAbility = true; else playerInput.ValueRW.IsUsingAbility = false;
-            if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds) playerInput.ValueRW.IsAttacking = true;
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                playerInput.ValueRW.IsUsingAbility = true;
+                animator.Value.SetTrigger("Shoot");
+            }
+            else playerInput.ValueRW.IsUsingAbility = false;
+
+            if (Input.GetKeyDown(KeyCode.Mouse0) && playerInput.ValueRO.LastAttackedAt <= SystemAPI.Time.ElapsedTime - player.ValueRO.AttackCooldownSeconds)
+            {
+                playerInput.ValueRW.IsAttacking = true;
+                animator.Value.SetTrigger("Attack");
+            }
 
             _cameraRotation.x = Mathf.Clamp(_cameraRotation.x - (Input.GetAxisRaw("Mouse Y") * inputSettings.ValueRO.LookSensitivity), -1.6f, 1.6f);
             _cameraRotation.y += Input.GetAxisRaw("Mouse X") * inputSettings.ValueRO.LookSensitivity;

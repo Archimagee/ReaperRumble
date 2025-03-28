@@ -51,7 +51,7 @@ partial struct PlayerAttackSystem : ISystem
                 Entity rpcEntity = ecb.CreateEntity();
                 ecb.AddComponent(rpcEntity, new SpawnVFXRequest
                 {
-                    Effect = VisualEffect.ScytheSlash,
+                    Effect = RRVFX.ScytheSlash,
                     Location = localTransform.ValueRO.Position,
                     Rotation = localTransform.ValueRO.Rotation
                 });

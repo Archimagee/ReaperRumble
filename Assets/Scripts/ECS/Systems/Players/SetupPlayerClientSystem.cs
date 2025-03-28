@@ -38,7 +38,9 @@ public partial class SetupPlayerClientSystem : SystemBase
             ecb.SetName(newCameraEntity, "Player camera");
             ecb.AddComponent(newCameraEntity, new PlayerCameraFollowTarget { Target = playerEntity });
 
-            ecb.AddComponent(playerEntity, new PlayerClass() { MyAbility = playerSetup.ValueRO.PlayerAbility });
+            ecb.AddComponent(playerEntity, new PlayerClass() {
+                MyAbility = playerSetup.ValueRO.PlayerAbility,
+                MyColour = playerSetup.ValueRO.PlayerColor });
 
             Entity playerSoulGroup = soulGroup.ValueRO.MySoulGroup;
             ecb.SetName(playerSoulGroup, "Player " + playerSetup.ValueRO.PlayerNumber + "'s soul group");

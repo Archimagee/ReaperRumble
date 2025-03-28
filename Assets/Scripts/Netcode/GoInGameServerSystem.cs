@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.NetCode;
 using Unity.Transforms;
 using Unity.Mathematics;
+using UnityEngine;
 
 
 
@@ -18,6 +19,12 @@ public partial class GoInGameServerSystem : SystemBase
         new float3(-40f, 5.5f, 28f),
         new float3(40f, 5.5f, -28f) };
 
+    private NativeList<Color> _playerColors = new(4, Allocator.Persistent) {
+        new Color(1f, 0f, 0f, 1f),
+        new Color(1f, 1f, 0f, 1f),
+        new Color(0f, 1f, 1f, 1f),
+        new Color(1f, 0f, 1f, 1f) };
+
 
 
     protected override void OnCreate()
@@ -27,7 +34,7 @@ public partial class GoInGameServerSystem : SystemBase
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -46,14 +53,8 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.SetName(newPlayerEntity, "Player " + playerNumber);
             ecb.SetName(newSoulGroupEntity, "Player " + playerNumber + "'s soul group");
 
-            ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
-            {
-                PlayerNumber = playerNumber,
-                PlayerAbility = PlayerAbility.SixShooter
-            });
-
             ecb.AddComponent(newPlayerEntity, new PlayerSoulGroup { MySoulGroup = newSoulGroupEntity });
-            ecb.AddComponent(newSoulGroupEntity, new SoulGroupTarget { MyTarget = newPlayerEntity });
+            ecb.SetComponent(newSoulGroupEntity, new SoulGroupTarget { MyTarget = newPlayerEntity });
 
             ecb.AddComponent(newPlayerEntity, new GhostOwner { NetworkId = playerNumber });
             ecb.AddComponent(newSoulGroupEntity, new GhostOwner { NetworkId = playerNumber });
@@ -64,6 +65,12 @@ public partial class GoInGameServerSystem : SystemBase
 
             _connectedPlayers[playerNumber - 1] = newPlayerEntity;
             ecb.SetComponent(newPlayerEntity, new LocalTransform { Position = _spawnPositions[playerNumber - 1], Scale = 1f, Rotation = quaternion.identity });
+            ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
+            {
+                PlayerNumber = playerNumber,
+                PlayerAbility = PlayerAbility.SixShooter,
+                PlayerColor = _playerColors[playerNumber - 1]
+            });
 
 
 
@@ -77,9 +84,9 @@ public partial class GoInGameServerSystem : SystemBase
     }
 }
 
-//[GhostComponent]
 public struct PlayerSetupRequired : IComponentData
 {
     [GhostField] public int PlayerNumber;
     [GhostField] public PlayerAbility PlayerAbility;
+    [GhostField] public Color PlayerColor;
 }

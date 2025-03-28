@@ -38,7 +38,7 @@ public partial class SpawnVFXServerSystem : SystemBase
 
 public struct SpawnVFXRequest : IRpcCommand
 {
-    public VisualEffect Effect;
+    public RRVFX Effect;
     public float3 Location;
     public quaternion Rotation;
 }

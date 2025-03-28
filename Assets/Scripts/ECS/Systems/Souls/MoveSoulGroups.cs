@@ -39,7 +39,7 @@ public partial struct MoveSoulGroups : ISystem
         {
             Entity groupTarget = target.ValueRO.MyTarget;
 
-            if (groupTarget != null)
+            if (groupTarget != Entity.Null)
                 soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(groupTarget).Position + new float3 (0f, _groupHeightOffset, 0f));
             else soulGroupTargetPositions.Add(soulGroupEntity, SystemAPI.GetComponent<LocalTransform>(soulGroupEntity).Position);
         }
