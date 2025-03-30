@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 
 
@@ -29,7 +30,6 @@ public partial class PlayerKnockbackServerSystem : SystemBase
             foreach ((RefRO<GhostInstance> ghostInstance, RefRW<Knockback> knockback) in SystemAPI.Query<RefRO<GhostInstance>, RefRW<Knockback>>())
             {
                 float3 knockbackDirection = knockbackRequest.ValueRO.KnockbackDirection;
-                knockbackDirection.y *= 0.1f;
 
                 if (ghostInstance.ValueRO.ghostId == knockbackRequest.ValueRO.PlayerGhostID)
                 {

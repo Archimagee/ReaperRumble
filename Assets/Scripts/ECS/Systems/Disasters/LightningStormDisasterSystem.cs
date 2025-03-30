@@ -22,7 +22,7 @@ public partial class LightningStormDisasterSystem : SystemBase
     private readonly double _maxTimeBetweenStrikesSeconds = 0.4;
     private readonly double _incomingTime = 1.6;
     private readonly float _strikeRadius = 8f;
-    private readonly float _strikeKnockbackStrength = 5f;
+    private readonly float _strikeKnockbackStrength = 30f;
 
     private readonly AABB _strikeBounds = new() {
         Center = float3.zero,
