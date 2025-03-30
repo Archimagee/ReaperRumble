@@ -109,9 +109,9 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: -428
-    y: -493
-    width: 1584
-    height: 1764
+    y: -492
+    width: 1583
+    height: 1770
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1548,7 +1548,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.AnimationCurve, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"frames":[{"time":-0.002684584818780422,"value":0.08095158636569977,"inTangent":-6.369881629943848,"outTangent":-6.369881629943848,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.22831669449806214,"value":-0.507915735244751,"inTangent":-0.5688020586967468,"outTangent":-0.5688020586967468,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.9947600364685059,"value":-0.6813501119613648,"inTangent":-0.16711536049842835,"outTangent":-0.16711536049842835,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false}],"preWrapMode":8,"postWrapMode":8,"version":1}'
+      m_SerializableObject: '{"frames":[{"time":-0.002684584818780422,"value":0.08095158636569977,"inTangent":-1.753960132598877,"outTangent":-1.753960132598877,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.13946473598480225,"value":-0.603191614151001,"inTangent":-0.21212315559387208,"outTangent":-0.21212315559387208,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false},{"time":0.9947600364685059,"value":-0.6813501119613648,"inTangent":-0.16711536049842835,"outTangent":-0.16711536049842835,"tangentMode":0,"leftTangentMode":0,"rightTangentMode":0,"broken":false}],"preWrapMode":8,"postWrapMode":8,"version":1}'
     m_Space: -1
   m_Property:
     name: curve
@@ -1905,7 +1905,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":-100.0,"y":90.0,"z":-55.0}'
+      m_SerializableObject: '{"x":-100.0,"y":105.0,"z":-55.0}'
     m_Space: -1
   m_Property:
     name: 
@@ -2758,7 +2758,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.0,"y":0.0,"z":1.0}'
+      m_SerializableObject: '{"x":0.0,"y":0.0,"z":70.0}'
     m_Space: -1
   m_Property:
     name: b
