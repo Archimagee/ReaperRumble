@@ -60,6 +60,9 @@ VisualEffect:
       - m_Value: {x: 0.32, y: 0.2, z: 0.7, w: 1}
         m_Name: Color
         m_Overridden: 1
+      - m_Value: {x: 0.32, y: 0.2, z: 0.7, w: 1}
+        m_Name: SoulColor
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:

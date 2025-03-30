@@ -107,17 +107,18 @@ public struct SpawnSoulsRequestRPC : IRpcCommand
 }
 
 
+[GhostComponent]
 public struct ClientPlayerInput : IInputComponentData
 {
-    public float2 ClientInput;
+    [GhostField] public float2 ClientInput;
 
-    public bool IsJumping;
+    [GhostField] public bool IsJumping;
 
     public bool IsUsingAbility;
     public double LastUsedAbilityAt;
 
     public double LastAttackedAt;
-    public bool IsAttacking;
+    [GhostField] public bool IsAttacking;
 
     public float3 ClientPlayerRotationEuler;
     public quaternion ClientCameraRotation;

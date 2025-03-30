@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6394681233637755628}
   - component: {fileID: -5523365839375043125}
   - component: {fileID: 2827677537998696405}
+  - component: {fileID: -1551575074108070889}
   m_Layer: 0
   m_Name: CowboyPresentationParent
   m_TagString: Untagged
@@ -68,6 +69,14 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!81 &-1551575074108070889
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5116871203107847583}
+  m_Enabled: 1
 --- !u!1001 &5422337180345155887
 PrefabInstance:
   m_ObjectHideFlags: 0

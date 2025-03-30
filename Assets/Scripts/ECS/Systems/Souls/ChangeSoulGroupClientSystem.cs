@@ -145,7 +145,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
         {
             color = SystemAPI.GetComponent<PlayerClass>(owner).MyColour;
         }
-        Debug.Log(color);
+        vfx.SetVector4("SoulColor", color);
     }
 
 
