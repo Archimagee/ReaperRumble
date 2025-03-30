@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
 using Unity.Transforms;
+using UnityEngine;
 
 
 
@@ -32,13 +33,15 @@ public partial struct MovePlayers : ISystem
                         + (playerTransform.ValueRO.Right() * input.x))
                         * player.ValueRO.Speed;
 
-            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y, 0f);
+            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y - (knockback.ValueRO.KnockbackDirection.y * knockback.ValueRO.Strength), 0f);
 
 
 
             if (playerInput.ValueRO.IsJumping && grounded.ValueRW.IsGrounded)
             {
-                newVelocity.y = player.ValueRO.JumpSpeed;
+                if (playerVelocity.ValueRO.Linear.y <= 0f - player.ValueRO.JumpSpeed * 2) newVelocity.y = player.ValueRO.JumpSpeed / 3;
+                else if (playerVelocity.ValueRO.Linear.y <= 0f) newVelocity.y = player.ValueRO.JumpSpeed;
+                else newVelocity.y += player.ValueRO.JumpSpeed / 3;
                 playerInput.ValueRW.IsJumping = false;
                 grounded.ValueRW.IsGrounded = false;
             }
