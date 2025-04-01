@@ -1,4 +1,3 @@
-using UnityEngine;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -13,8 +12,8 @@ using Unity.Collections;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class SpawnSoulsOverTimeServerSystem : SystemBase
 {
-    private readonly double _minTimeBetweenSpawns = 7.0;
-    private readonly double _maxTimeBetweenSpawns = 15.0;
+    private readonly double _minTimeBetweenSpawns = 15.0;
+    private readonly double _maxTimeBetweenSpawns = 25.0;
     private double _nextSpawnAt = 5.0;
 
     private NativeQueue<Entity> _spawnQueue = new(Allocator.Persistent);

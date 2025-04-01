@@ -17,11 +17,11 @@ public partial class LightningStormDisasterSystem : SystemBase
     private NativeHashMap<double, float3> _upcomingLightningStrikes = new(500, Allocator.Persistent);
     private NativeHashMap<double, float3> _upcomingIncomingVFX = new(500, Allocator.Persistent);
 
-    private readonly double _firstStrikeDelaySeconds = 2.0;
+    private readonly double _firstStrikeDelaySeconds = 4.0;
     private readonly double _minTimeBetweenStrikesSeconds = 0.1;
     private readonly double _maxTimeBetweenStrikesSeconds = 0.4;
     private readonly double _incomingTime = 1.6;
-    private readonly float _strikeRadius = 8f;
+    private readonly float _strikeRadius = 4f;
     private readonly float _strikeKnockbackStrength = 30f;
 
     private readonly AABB _strikeBounds = new() {
@@ -117,16 +117,6 @@ public partial class LightningStormDisasterSystem : SystemBase
 
                 Entity newLightningStrike = ecb.Instantiate(_lightningStrikeVFXPrefab);
                 ecb.SetComponent(newLightningStrike, new LocalTransform() { Position = strikePosition, Scale = 1f, Rotation = quaternion.identity });
-
-
-
-                //float3 maxPos = strikePosition + new float3(_strikeDiameter, _strikeDiameter, _strikeDiameter);
-                //float3 minPos = strikePosition - new float3(_strikeDiameter, 0f, _strikeDiameter);
-
-                //Unity.Physics.OverlapAabbInput overlapInput = new Unity.Physics.OverlapAabbInput() {
-                //    Aabb = new Aabb() { Max = maxPos, Min = minPos },
-                //    Filter = new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 }
-                //};
 
                 NativeList<DistanceHit> hits = new(Allocator.Temp);
                 SystemAPI.GetSingleton<PhysicsWorldSingleton>().OverlapSphere(strikePosition, _strikeRadius, ref hits, new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 });

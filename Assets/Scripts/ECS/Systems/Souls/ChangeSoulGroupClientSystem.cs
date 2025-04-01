@@ -1,4 +1,3 @@
-using Unity.Burst;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.Physics.Systems;
@@ -81,7 +80,10 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             soulElementArray.Dispose();
 
 
-            if (soulsToKeep.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb);
+            if (soulsToKeep.Length == 0)
+            {
+                //DestroySoulGroup(groupToMoveFrom, ecb);
+            }
             else
             {
                 SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();

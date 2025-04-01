@@ -2,7 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 using Unity.Mathematics;
 using Unity.Transforms;
 
@@ -33,17 +32,13 @@ public partial class OrphanSoulsServerSystem : SystemBase
 
         if (GroupQueue.Count > 0)
         {
-            Unity.Mathematics.Random rand = new();
-            rand.InitState(123455u);
-            float3 randVelocity = new float3(rand.NextFloat(-1f, 1), 5f, rand.NextFloat(-1f, 1f));
 
             Entity sendRpcEntity = EntityManager.CreateEntity();
-            ecb.AddComponent(sendRpcEntity, new OrphanSoulsRequestRPC
+            ecb.AddComponent(sendRpcEntity, new ChangeSoulGroupRequestRPC
             {
-                GroupID = GroupQueue.Dequeue(),
+                GroupIDFrom = GroupQueue.Dequeue(),
                 Amount = AmountQueue.Dequeue(),
-                NewGroupID = SystemAPI.GetComponent<GhostInstance>(NewGroupQueue.Dequeue()).ghostId,
-                Velocity = randVelocity
+                GroupIDTo = SystemAPI.GetComponent<GhostInstance>(NewGroupQueue.Dequeue()).ghostId
             });
             ecb.AddComponent<SendRpcCommandRequest>(sendRpcEntity);
         }

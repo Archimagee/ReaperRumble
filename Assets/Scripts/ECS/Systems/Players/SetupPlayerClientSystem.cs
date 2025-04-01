@@ -1,7 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
-using UnityEngine;
 using Unity.NetCode;
 
 
@@ -41,6 +40,25 @@ public partial class SetupPlayerClientSystem : SystemBase
             ecb.AddComponent(playerEntity, new PlayerClass() {
                 MyAbility = playerSetup.ValueRO.PlayerAbility,
                 MyColour = playerSetup.ValueRO.PlayerColor });
+
+            Entity playerSoulGroup = soulGroup.ValueRO.MySoulGroup;
+            ecb.SetName(playerSoulGroup, "Player " + playerSetup.ValueRO.PlayerNumber + "'s soul group");
+            if (!SystemAPI.HasBuffer<SoulBufferElement>(playerSoulGroup)) ecb.AddBuffer<SoulBufferElement>(playerSoulGroup);
+
+
+
+            ecb.RemoveComponent<PlayerSetupRequired>(playerEntity);
+        }
+
+        foreach ((RefRO<PlayerSetupRequired> playerSetup, RefRO<PlayerSoulGroup> soulGroup, Entity playerEntity) in SystemAPI.Query<RefRO<PlayerSetupRequired>, RefRO<PlayerSoulGroup>>().WithEntityAccess().WithNone<GhostOwnerIsLocal>())
+        {
+            ecb.SetName(playerEntity, "Player " + playerSetup.ValueRO.PlayerNumber);
+
+            ecb.AddComponent(playerEntity, new PlayerClass()
+            {
+                MyAbility = playerSetup.ValueRO.PlayerAbility,
+                MyColour = playerSetup.ValueRO.PlayerColor
+            });
 
             Entity playerSoulGroup = soulGroup.ValueRO.MySoulGroup;
             ecb.SetName(playerSoulGroup, "Player " + playerSetup.ValueRO.PlayerNumber + "'s soul group");
