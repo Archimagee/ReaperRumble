@@ -129,6 +129,15 @@ public partial class LightningStormDisasterSystem : SystemBase
                         Strength = _strikeKnockbackStrength,
                         PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hit.Entity).ghostId });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                    rpcEntity = ecb.CreateEntity();
+                    ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                    {
+                        GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                        Amount = 2,
+                        Position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Position
+                    });
+                    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                 }
 
 
