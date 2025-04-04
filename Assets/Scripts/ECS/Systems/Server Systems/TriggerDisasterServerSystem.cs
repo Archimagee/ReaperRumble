@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -20,6 +21,7 @@ public partial class TriggerDisasterServerSystem : SystemBase
     protected override void OnCreate()
     {
         _random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
+        //Debug.Log((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
     }
 
 
