@@ -13,13 +13,13 @@ public partial class TriggerDisasterServerSystem : SystemBase
     private double _lastDisasterAt = 0f;
     private readonly double _firstDisasterDelaySeconds = 5f;
     private readonly double _disasterCooldownSeconds = 60f;
-    private Random _random = new();
+    private Unity.Mathematics.Random _random = new();
 
 
 
     protected override void OnCreate()
     {
-        _random.InitState(153478);
+        _random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
     }
 
 

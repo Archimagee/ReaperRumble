@@ -19,7 +19,7 @@ public partial class TriggerChallengeServerSystem : SystemBase
 
     protected override void OnCreate()
     {
-        _random.InitState(56789);
+        _random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
     }
 
 
