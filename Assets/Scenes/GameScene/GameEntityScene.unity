@@ -1074,7 +1074,7 @@ MonoBehaviour:
   _scytheSlashVFX: {fileID: 1154254178918114062, guid: e0b0433b4429f8349b2291419c5e3a24, type: 3}
   _lightningStrikeIncomingVFX: {fileID: -728151816038665384, guid: 948dc695ac19bbf4f93a108393452557, type: 3}
   _lightningStrikeVFX: {fileID: -6442744219013261172, guid: 22511ad2f1e15a444a14698f18be4ff1, type: 3}
-  _meteorImpactVFX: {fileID: 0}
+  _meteorImpactVFX: {fileID: 6715641109509012986, guid: c3e319b8d47397349b0a0d25c0125fd6, type: 3}
   _sixShooterTracerVFX: {fileID: -104828565209009609, guid: a23ec52a1059ac94d8f9734384a3f8c4, type: 3}
 --- !u!4 &1120766919
 Transform:

@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using UnityEngine;
 
 
 
@@ -21,8 +20,8 @@ public partial class MeteorShowerDisasterSystem : SystemBase
     private readonly double _minTimeBetweenMeteorsSeconds = 1.0;
     private readonly double _maxTimeBetweenMeteorsSeconds = 1.5;
     private readonly float _spawnDistance = 25f;
-    private readonly float _impactRadius = 8f;
-    private readonly float _impactKnockbackStrength = 100f;
+    private readonly float _impactRadius = 6f;
+    private readonly float _impactKnockbackStrength = 35f;
 
     private readonly AABB _impactBounds = new()
     {
@@ -128,11 +127,12 @@ public partial class MeteorShowerDisasterSystem : SystemBase
 }
 
 
+
 public struct MeteorData : IComponentData
 {
     public float3 MovementDirection;
     public float MovementSpeed;
-    public double KnockbackStrength;
+    public float KnockbackStrength;
     public int SoulsOrphanedOnImpact;
     public float ImpactRadius;
 }

@@ -32,7 +32,7 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
     [BurstCompile]
     protected override void OnCreate()
     {
-        _random.InitState(140783u);
+        _random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
 
         RequireForUpdate<EntitySpawnerPrefabs>();
     }

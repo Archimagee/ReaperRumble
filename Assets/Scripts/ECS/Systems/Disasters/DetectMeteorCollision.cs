@@ -3,7 +3,9 @@ using Unity.Entities;
 using Unity.Physics;
 using Unity.Collections;
 using Unity.Physics.Systems;
-using UnityEngine;
+using Unity.Mathematics;
+using Unity.Transforms;
+using Unity.NetCode;
 
 
 
@@ -34,19 +36,55 @@ public partial class DetectMeteorCollision : SystemBase
 
 
 
-        NativeArray<Entity> meteorEntities = SystemAPI.QueryBuilder().WithAll<MeteorData>().Build().ToEntityArray(Allocator.TempJob);
+        NativeArray<Entity> meteorEntities = SystemAPI.QueryBuilder().WithAll<MeteorData>().Build().ToEntityArray(Allocator.Temp);
+        NativeHashMap<Entity, float3> meteorPositions = new(meteorEntities.Length, Allocator.TempJob);
+        foreach (Entity meteor in meteorEntities) meteorPositions.Add(meteor, SystemAPI.GetComponent<LocalTransform>(meteor).Position);
+        meteorEntities.Dispose();
 
         var job = new MeteorCollisionJob()
         {
             Ecb = ecb,
-            MeteorEntities = meteorEntities,
-            MeteorImpactVFXPrefab = _meteorImpactVFXPrefabEntity
+            MeteorPositions = meteorPositions
         };
 
         Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), Dependency);
         Dependency.Complete();
 
-        meteorEntities.Dispose();
+        meteorPositions.Dispose();
+
+
+
+        foreach ((RefRO<MeteorImpact> impact, RefRO<MeteorData> meteorData, Entity meteorEntity) in SystemAPI.Query<RefRO<MeteorImpact>, RefRO<MeteorData>>().WithEntityAccess())
+        {
+            Entity impactVFX = ecb.Instantiate(_meteorImpactVFXPrefabEntity);
+            ecb.SetComponent(impactVFX, new LocalTransform() { Position = impact.ValueRO.Position, Rotation = quaternion.identity, Scale = 4f });
+
+            NativeList<DistanceHit> hits = new(Allocator.Temp);
+            SystemAPI.GetSingleton<PhysicsWorldSingleton>().OverlapSphere(impact.ValueRO.Position, meteorData.ValueRO.ImpactRadius, ref hits, new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 });
+
+            foreach (DistanceHit hit in hits)
+            {
+                Entity rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC()
+                {
+                    KnockbackDirection = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hit.Entity).Position - impact.ValueRO.Position),
+                    Strength = meteorData.ValueRO.KnockbackStrength,
+                    PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hit.Entity).ghostId
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                {
+                    GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                    Amount = 4,
+                    Position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Position
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+            }
+
+            ecb.DestroyEntity(meteorEntity);
+        }
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
@@ -59,27 +97,31 @@ public partial class DetectMeteorCollision : SystemBase
 struct MeteorCollisionJob : ICollisionEventsJob
 {
     public EntityCommandBuffer Ecb;
-    public NativeArray<Entity> MeteorEntities;
-    public Entity MeteorImpactVFXPrefab;
+    public NativeHashMap<Entity, float3> MeteorPositions;
 
     public void Execute(CollisionEvent collisionEvent)
     {
-        if (MeteorEntities.Contains(collisionEvent.EntityA))
+        if (MeteorPositions.ContainsKey(collisionEvent.EntityA))
         {
-            HandleMeteorCollision(collisionEvent.EntityA);
+            Ecb.AddComponent(collisionEvent.EntityA, new MeteorImpact() { Position = MeteorPositions[collisionEvent.EntityA] });
         }
-        else if (MeteorEntities.Contains(collisionEvent.EntityB))
+        else if (MeteorPositions.ContainsKey(collisionEvent.EntityB))
         {
-            HandleMeteorCollision(collisionEvent.EntityB);
+            Ecb.AddComponent(collisionEvent.EntityB, new MeteorImpact() { Position = MeteorPositions[collisionEvent.EntityB] });
         }
-
-
     }
 
 
 
-    public void HandleMeteorCollision(Entity meteor)
+    public void HandleMeteorCollision(Entity meteor, float3 position)
     {
-        Ecb.DestroyEntity(meteor);
+        Ecb.AddComponent<MeteorImpact>(meteor);
     }
+}
+
+
+
+public struct MeteorImpact : IComponentData
+{
+    public float3 Position;
 }
