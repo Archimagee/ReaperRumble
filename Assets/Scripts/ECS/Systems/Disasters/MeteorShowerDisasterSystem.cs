@@ -20,7 +20,7 @@ public partial class MeteorShowerDisasterSystem : SystemBase
     private readonly double _minTimeBetweenMeteorsSeconds = 1.0;
     private readonly double _maxTimeBetweenMeteorsSeconds = 1.5;
     private readonly float _spawnDistance = 25f;
-    private readonly float _impactRadius = 6f;
+    private readonly float _impactRadius = 10f;
     private readonly float _impactKnockbackStrength = 55f;
 
     private readonly AABB _impactBounds = new()
