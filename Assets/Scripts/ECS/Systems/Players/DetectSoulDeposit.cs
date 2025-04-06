@@ -20,6 +20,7 @@ public partial class DetectSoulDeposit : SystemBase
 
 
 
+    [BurstCompile]
     protected override void OnUpdate()
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);

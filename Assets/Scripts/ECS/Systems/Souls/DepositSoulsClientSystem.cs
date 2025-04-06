@@ -2,7 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 
 
 
@@ -33,7 +32,7 @@ public partial class DepositSoulsClientSystem : SystemBase
             foreach (Entity player in players)
                 if (SystemAPI.GetComponent<PlayerData>(player).PlayerNumber == depositRequest.ValueRO.PlayerNumber)
                 {
-                    DepositSouls(player, ecb);
+                    DepositSouls(player, depositRequest.ValueRO.PlayerNumber, ecb);
                 }
 
             ecb.DestroyEntity(recieveRpcEntity);
@@ -48,18 +47,37 @@ public partial class DepositSoulsClientSystem : SystemBase
 
 
     [BurstCompile]
-    private void DepositSouls(Entity player, EntityCommandBuffer ecb)
+    private void DepositSouls(Entity player, int PlayerNumber, EntityCommandBuffer ecb)
     {
         DynamicBuffer<SoulBufferElement> soulGroupBuffer = SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(player).MySoulGroup);
+        int amountRemoved = 0;
 
         foreach (SoulBufferElement soulBufferElement in soulGroupBuffer)
         {
             ecb.DestroyEntity(soulBufferElement.Soul);
+            amountRemoved++;
         }
 
         soulGroupBuffer.Clear();
-        ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 30000 });
 
-        Debug.Log("Deposit!");
+        if (SystemAPI.HasComponent<GhostOwnerIsLocal>(player))
+        {
+            ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 30000 });
+
+            if (amountRemoved > 0)
+            {
+                Entity newRpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(newRpcEntity, new AddScoreRequestRPC() { PlayerNumber = PlayerNumber, Amount = amountRemoved });
+                ecb.AddComponent<SendRpcCommandRequest>(newRpcEntity);
+            }
+        }
     }
+}
+
+
+
+public partial struct AddScoreRequestRPC : IRpcCommand
+{
+    public int PlayerNumber;
+    public int Amount;
 }
