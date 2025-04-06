@@ -145,7 +145,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
         if (owner == Entity.Null) color = new Vector4(0.32f, 0.2f, 0.7f, 1f);
         else
         {
-            color = SystemAPI.GetComponent<PlayerClass>(owner).MyColour;
+            color = SystemAPI.GetComponent<PlayerData>(owner).MyColour;
         }
         vfx.SetVector4("SoulColor", color);
     }

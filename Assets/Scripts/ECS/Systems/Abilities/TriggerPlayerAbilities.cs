@@ -27,8 +27,8 @@ public partial class TriggerPlayerAbilities : SystemBase
 
 
 
-        foreach ((RefRO<ClientPlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PlayerClass> playerClass)
-            in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<PlayerClass>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRO<ClientPlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PlayerData> playerClass)
+            in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
         {
             if (!playerInput.ValueRO.IsUsingAbility) break;
 
@@ -101,8 +101,9 @@ public enum PlayerAbility
     SixShooter
 }
 
-public partial struct PlayerClass : IComponentData
+public partial struct PlayerData : IComponentData
 {
+    public int PlayerNumber;
     public PlayerAbility MyAbility;
     public Color MyColour;
 }

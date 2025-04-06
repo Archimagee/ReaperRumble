@@ -37,7 +37,7 @@ public partial class SetupPlayerClientSystem : SystemBase
             ecb.SetName(newCameraEntity, "Player camera");
             ecb.AddComponent(newCameraEntity, new PlayerCameraFollowTarget { Target = playerEntity });
 
-            ecb.AddComponent(playerEntity, new PlayerClass() {
+            ecb.AddComponent(playerEntity, new PlayerData() {
                 MyAbility = playerSetup.ValueRO.PlayerAbility,
                 MyColour = playerSetup.ValueRO.PlayerColor });
 
@@ -54,8 +54,9 @@ public partial class SetupPlayerClientSystem : SystemBase
         {
             ecb.SetName(playerEntity, "Player " + playerSetup.ValueRO.PlayerNumber);
 
-            ecb.AddComponent(playerEntity, new PlayerClass()
+            ecb.AddComponent(playerEntity, new PlayerData()
             {
+                PlayerNumber = playerSetup.ValueRO.PlayerNumber,
                 MyAbility = playerSetup.ValueRO.PlayerAbility,
                 MyColour = playerSetup.ValueRO.PlayerColor
             });
