@@ -62,13 +62,16 @@ public partial class DepositSoulsClientSystem : SystemBase
 
         if (SystemAPI.HasComponent<GhostOwnerIsLocal>(player))
         {
-            ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 30000 });
-
             if (amountRemoved > 0)
             {
                 Entity newRpcEntity = ecb.CreateEntity();
                 ecb.AddComponent(newRpcEntity, new AddScoreRequestRPC() { PlayerNumber = PlayerNumber, Amount = amountRemoved });
                 ecb.AddComponent<SendRpcCommandRequest>(newRpcEntity);
+
+                ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 60000 });
+
+                UIManager.Instance.SetSoulCount(0);
+                UIManager.Instance.SetDepositCooldown(60000);
             }
         }
     }

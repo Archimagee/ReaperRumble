@@ -6,13 +6,6 @@ using UnityEngine;
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial struct PresentationGameObjectCleanupSystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<BeginInitializationEntityCommandBufferSystem>();
-    }
-
-
-
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecbbi = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
@@ -23,7 +16,8 @@ public partial struct PresentationGameObjectCleanupSystem : ISystem
         {
             if (cleanup.Instance == null) continue;
 
-            PresentationGameObjectDestructionManager destructionManager = cleanup.Instance.GetComponent<PresentationGameObjectDestructionManager>();
+            PresentationGameObjectDestructionManager destructionManager;
+            cleanup.Instance.TryGetComponent<PresentationGameObjectDestructionManager>(out destructionManager);
 
             if (destructionManager != null) destructionManager.Destroy(cleanup.Instance);
             else Object.Destroy(cleanup.Instance.gameObject);

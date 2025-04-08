@@ -45,6 +45,19 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             if (soulsToKeepArray.Length == 0) DestroySoulGroup(groupToMoveFrom, ecb);
             else foreach (Entity soulToKeep in soulsToKeepArray) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
 
+
+
+            if (SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget != Entity.Null && SystemAPI.HasComponent<GhostOwnerIsLocal>(SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget))
+            {
+                UIManager.Instance.SetSoulCount(SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveTo).Length + 1);
+            }
+            if (SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveFrom).MyTarget != Entity.Null && SystemAPI.HasComponent<GhostOwnerIsLocal>(SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget))
+            {
+                UIManager.Instance.SetSoulCount(SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Length + 1);
+            }
+
+
+
             soulsToKeepArray.Dispose();
 
 
@@ -89,6 +102,18 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
                 SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Clear();
                 foreach (Entity soulToKeep in soulsToKeep) ecb.AppendToBuffer(groupToMoveFrom, new SoulBufferElement() { Soul = soulToKeep });
             }
+
+
+
+            if (SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget != Entity.Null && SystemAPI.HasComponent<GhostOwnerIsLocal>(SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget))
+            {
+                UIManager.Instance.SetSoulCount(SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveTo).Length + 1);
+            }
+            if (SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveFrom).MyTarget != Entity.Null && SystemAPI.HasComponent<GhostOwnerIsLocal>(SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveTo).MyTarget))
+            {
+                UIManager.Instance.SetSoulCount(SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Length + 1);
+            }
+
 
             soulsToKeep.Dispose();
             soulsToMove.Dispose();

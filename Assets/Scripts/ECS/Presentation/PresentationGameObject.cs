@@ -20,6 +20,6 @@ public class PresentationGameObject : MonoBehaviour
 
     public void OnDestroy()
     {
-        if (_world.IsCreated && _world.EntityManager.Exists(_entityToPresent)) _world.EntityManager.DestroyEntity(_entityToPresent); 
+        if (_entityToPresent != Entity.Null && _world.IsCreated && _world.EntityManager.Exists(_entityToPresent)) _world.EntityManager.DestroyEntity(_entityToPresent); 
     }
 }

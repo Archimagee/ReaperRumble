@@ -17,6 +17,13 @@ public partial class TriggerDisasterClientSystem : SystemBase
         else return Entity.Null;
     }
 
+    private string GetDisasterAnnouncement(DisasterType disasterType)
+    {
+        if (disasterType == DisasterType.LightningStorm) return "Lightning storm incoming!";
+        else if (disasterType == DisasterType.MeteorShower) return "Meteor shower incoming!";
+        else return "";
+    }
+
 
 
     [BurstCompile]
@@ -37,6 +44,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
                 TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<DisasterData>(disasterPrefab).TimeLastsForSeconds });
             ecb.AddComponent(newDisaster, new EventSeed() { Seed = disaster.ValueRO.Seed });
             ecb.SetName(newDisaster, disaster.ValueRO.DisasterType.ToString());
+
+            UIManager.Instance.SendAnnouncement(GetDisasterAnnouncement(disaster.ValueRO.DisasterType), 3f);
 
 
 

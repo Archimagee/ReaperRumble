@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -25,7 +26,7 @@ public partial class SetupPlayerClientSystem : SystemBase
     {
         if (_cameraPrefabEntity == Entity.Null) _cameraPrefabEntity = SystemAPI.GetSingleton<EntitySpawnerPrefabs>().PlayerCameraPrefabEntity;
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
 

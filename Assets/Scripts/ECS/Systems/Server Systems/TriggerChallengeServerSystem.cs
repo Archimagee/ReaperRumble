@@ -39,9 +39,9 @@ public partial class TriggerChallengeServerSystem : SystemBase
             _lastChallengeAt = currentTime;
             ChallengeType newChallengeType = (ChallengeType)_random.NextInt(0, System.Enum.GetValues(typeof(ChallengeType)).Length);
 
-            //Entity rpc = EntityManager.CreateEntity();
-            //ecb.AddComponent(rpc, new StartChallengeRequestRPC() { ChallengeType = newChallenge });
-            //ecb.AddComponent<SendRpcCommandRequest>(rpc);
+            Entity rpc = EntityManager.CreateEntity();
+            ecb.AddComponent(rpc, new StartChallengeRequestRPC() { ChallengeType = newChallengeType });
+            ecb.AddComponent<SendRpcCommandRequest>(rpc);
 
             Entity challengePrefab = GetChallengePrefab(newChallengeType);
 
