@@ -4,6 +4,7 @@ using Unity.Physics;
 using Unity.Collections;
 using Unity.NetCode;
 using Unity.Physics.Systems;
+using UnityEngine;
 
 
 
@@ -29,6 +30,7 @@ public partial class DetectSoulDeposit : SystemBase
 
         foreach ((RefRO<DepositSoulCooldown> cooldown, Entity entity) in SystemAPI.Query<RefRO<DepositSoulCooldown>>().WithEntityAccess())
         {
+            Debug.Log(SystemAPI.Time.ElapsedTime - cooldown.ValueRO.CanDepositAt);
             if (cooldown.ValueRO.CanDepositAt <= SystemAPI.Time.ElapsedTime) ecb.RemoveComponent<DepositSoulCooldown>(entity);
         }
 

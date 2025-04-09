@@ -27,6 +27,7 @@ public partial class AddScoreClientSystem : SystemBase
         foreach ((RefRO<AddScoreRequestRPC> scoreRequest, RefRO<ReceiveRpcCommandRequest> rpc, Entity rpcEntity) in SystemAPI.Query<RefRO<AddScoreRequestRPC>, RefRO<ReceiveRpcCommandRequest>>().WithEntityAccess())
         {
             UIManager.Instance.AddScore(scoreRequest.ValueRO.PlayerNumber, scoreRequest.ValueRO.Amount);
+            UIManager.Instance.SendAnnouncement("Player " + scoreRequest.ValueRO.PlayerNumber + " scored " + scoreRequest.ValueRO.Amount + " souls!", 3);
 
             ecb.DestroyEntity(rpcEntity);
         }

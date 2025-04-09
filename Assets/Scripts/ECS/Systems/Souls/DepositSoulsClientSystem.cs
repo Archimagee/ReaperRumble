@@ -68,7 +68,7 @@ public partial class DepositSoulsClientSystem : SystemBase
                 ecb.AddComponent(newRpcEntity, new AddScoreRequestRPC() { PlayerNumber = PlayerNumber, Amount = amountRemoved });
                 ecb.AddComponent<SendRpcCommandRequest>(newRpcEntity);
 
-                ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 60000 });
+                ecb.AddComponent(player, new DepositSoulCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 60 });
 
                 UIManager.Instance.SetSoulCount(0);
                 UIManager.Instance.SetDepositCooldown(60000);
