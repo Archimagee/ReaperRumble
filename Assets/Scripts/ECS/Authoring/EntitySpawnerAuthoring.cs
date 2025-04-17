@@ -19,6 +19,7 @@ public class EntitySpawnerAuthoring : MonoBehaviour
     [SerializeField] private DisasterAuthoring _lightningStormDisasterPrefab;
     [SerializeField] private DisasterAuthoring _meteorShowerDisasterPrefab;
     [SerializeField] private GameObject _meteorPrefab;
+    [SerializeField] private DisasterAuthoring _lavaFloodDisasterPrefab;
 
     [Header("VFX")]
     [SerializeField] private VFXAuthoring _scytheSlashVFX;
@@ -57,7 +58,8 @@ public class EntitySpawnerAuthoring : MonoBehaviour
             {
                 LightningStormDisasterPrefabEntity = GetEntity(authoring._lightningStormDisasterPrefab, TransformUsageFlags.None),
                 MeteorShowerDisasterPrefabEntity = GetEntity(authoring._meteorShowerDisasterPrefab, TransformUsageFlags.None),
-                MeteorPrefabEntity = GetEntity(authoring._meteorPrefab, TransformUsageFlags.Dynamic)
+                MeteorPrefabEntity = GetEntity(authoring._meteorPrefab, TransformUsageFlags.Dynamic),
+                LavaFloodDisasterPrefabEntity = GetEntity(authoring._lavaFloodDisasterPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -92,4 +94,5 @@ public struct DisasterPrefabs : IComponentData
     public Entity LightningStormDisasterPrefabEntity;
     public Entity MeteorShowerDisasterPrefabEntity;
     public Entity MeteorPrefabEntity;
+    public Entity LavaFloodDisasterPrefabEntity;
 }

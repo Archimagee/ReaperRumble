@@ -14,6 +14,7 @@ public partial class TriggerDisasterClientSystem : SystemBase
     {
         if (disasterType == DisasterType.LightningStorm) return SystemAPI.GetSingleton<DisasterPrefabs>().LightningStormDisasterPrefabEntity;
         else if (disasterType == DisasterType.MeteorShower) return SystemAPI.GetSingleton<DisasterPrefabs>().MeteorShowerDisasterPrefabEntity;
+        else if (disasterType == DisasterType.LavaFlood) return SystemAPI.GetSingleton<DisasterPrefabs>().LavaFloodDisasterPrefabEntity;
         else return Entity.Null;
     }
 
@@ -21,7 +22,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
     {
         if (disasterType == DisasterType.LightningStorm) return "Lightning storm incoming!";
         else if (disasterType == DisasterType.MeteorShower) return "Meteor shower incoming!";
-        else return "";
+        else if (disasterType == DisasterType.LavaFlood) return "Lava flood rising!";
+        else return "Undefined disaster announcement";
     }
 
 
