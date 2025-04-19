@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -12,6 +13,10 @@ using Unity.NetCode;
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial class TornadoDisasterSystem : SystemBase
 {
+    Unity.Mathematics.Random random;
+
+
+
     protected override void OnCreate()
     {
         RequireForUpdate<TornadoDisasterData>();
@@ -26,12 +31,24 @@ public partial class TornadoDisasterSystem : SystemBase
 
 
 
-        foreach ((RefRO<DisasterData> disasterData, RefRW<TornadoDisasterData> tornadoData, RefRW<LocalTransform> localTransformTornado, Entity disasterEntity) in
-            SystemAPI.Query<RefRO<DisasterData>, RefRW<TornadoDisasterData>, RefRW<LocalTransform>>().WithEntityAccess())
+        foreach ((RefRO<DisasterData> disasterData, RefRW<TornadoDisasterData> tornadoData, RefRO <EventSeed> seed, RefRW <LocalTransform> localTransformTornado, Entity disasterEntity) in
+            SystemAPI.Query<RefRO<DisasterData>, RefRW<TornadoDisasterData>, RefRO<EventSeed>, RefRW<LocalTransform>>().WithEntityAccess())
         {
             double currentTime = SystemAPI.Time.ElapsedTime;
 
-            if (tornadoData.ValueRO.StartTime == 0.0) tornadoData.ValueRW.StartTime = currentTime;
+            if (tornadoData.ValueRO.StartTime == 0.0)
+            {
+                tornadoData.ValueRW.StartTime = currentTime;
+                random = new Unity.Mathematics.Random();
+                random.InitState(seed.ValueRO.Seed);
+
+                localTransformTornado.ValueRW.Position = GetNewTarget(tornadoData.ValueRO.MovementBounds);
+                tornadoData.ValueRW.CurrentDirection = math.normalizesafe(tornadoData.ValueRO.CurrentTarget - localTransformTornado.ValueRO.Position);
+            }
+
+
+
+            HandleMovement(tornadoData, localTransformTornado, currentTime);
 
 
 
@@ -80,5 +97,30 @@ public partial class TornadoDisasterSystem : SystemBase
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
+    }
+
+
+
+    private float3 GetNewTarget(AABB bounds)
+    {
+        float3 target = random.NextFloat3(bounds.Min, bounds.Max);
+        target.y = 0f;
+        return target;
+    }
+
+    private void HandleMovement(RefRW<TornadoDisasterData> tornado, RefRW<LocalTransform> transform, double currentTime)
+    {
+        if (currentTime >= tornado.ValueRO.ChangeTargetAt)
+        {
+            tornado.ValueRW.CurrentTarget = GetNewTarget(tornado.ValueRO.MovementBounds);
+            tornado.ValueRW.ChangeTargetAt = currentTime + random.NextDouble(tornado.ValueRO.MinTargetChangeTimeSeconds, tornado.ValueRO.MaxTargetChangeTimeSeconds);
+        }
+
+        tornado.ValueRW.CurrentDirection = math.normalize((float3)Vector3.RotateTowards(
+            tornado.ValueRO.CurrentDirection,
+            tornado.ValueRO.CurrentTarget - transform.ValueRO.Position,
+            tornado.ValueRO.RotationAmountRadians, 10f));
+
+        transform.ValueRW.Position += tornado.ValueRO.CurrentDirection * tornado.ValueRO.TornadoMoveSpeed;
     }
 }
