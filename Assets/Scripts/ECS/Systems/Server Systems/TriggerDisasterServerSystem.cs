@@ -57,7 +57,8 @@ public enum DisasterType
 {
     LightningStorm,
     MeteorShower,
-    LavaFlood
+    LavaFlood,
+    Tornado
 }
 
 public struct StartDisasterRequestRPC : IRpcCommand

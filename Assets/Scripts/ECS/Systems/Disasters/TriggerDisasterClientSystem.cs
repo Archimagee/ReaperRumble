@@ -15,14 +15,16 @@ public partial class TriggerDisasterClientSystem : SystemBase
         if (disasterType == DisasterType.LightningStorm) return SystemAPI.GetSingleton<DisasterPrefabs>().LightningStormDisasterPrefabEntity;
         else if (disasterType == DisasterType.MeteorShower) return SystemAPI.GetSingleton<DisasterPrefabs>().MeteorShowerDisasterPrefabEntity;
         else if (disasterType == DisasterType.LavaFlood) return SystemAPI.GetSingleton<DisasterPrefabs>().LavaFloodDisasterPrefabEntity;
+        else if (disasterType == DisasterType.Tornado) return SystemAPI.GetSingleton<DisasterPrefabs>().TornadoDisasterPrefabEntity;
         else return Entity.Null;
     }
 
     private string GetDisasterAnnouncement(DisasterType disasterType)
     {
-        if (disasterType == DisasterType.LightningStorm) return "Lightning storm incoming!";
-        else if (disasterType == DisasterType.MeteorShower) return "Meteor shower incoming!";
-        else if (disasterType == DisasterType.LavaFlood) return "Lava flood rising!";
+        if (disasterType == DisasterType.LightningStorm) return "A Storm Brews...";
+        else if (disasterType == DisasterType.MeteorShower) return "Incoming Meteor Shower OF DOOOOM!";
+        else if (disasterType == DisasterType.LavaFlood) return "The Floor is LAVA!";
+        else if (disasterType == DisasterType.Tornado) return "Beware the Tornado of Terror!";
         else return "Undefined disaster announcement";
     }
 

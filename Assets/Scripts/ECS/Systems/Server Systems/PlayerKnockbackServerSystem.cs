@@ -33,7 +33,7 @@ public partial class PlayerKnockbackServerSystem : SystemBase
 
                 if (ghostInstance.ValueRO.ghostId == knockbackRequest.ValueRO.PlayerGhostID)
                 {
-                    knockback.ValueRW.KnockbackDirection = knockbackDirection;
+                    knockback.ValueRW.KnockbackDirection = math.normalize(knockbackDirection);
                     knockback.ValueRW.Strength = knockbackRequest.ValueRO.Strength;
                     knockback.ValueRW.Decay = 0.4f;
                 }
