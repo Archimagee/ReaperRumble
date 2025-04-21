@@ -47,7 +47,7 @@ public partial struct PoisonVialSystem : ISystem
         foreach ((RefRO<PoisonVialImpact> impact, Entity vialEntity) in SystemAPI.Query<RefRO<PoisonVialImpact>>().WithEntityAccess())
         {
             Entity poisonField = ecb.Instantiate(SystemAPI.GetSingleton<AbilityPrefabs>().PoisonFieldPrefabEntity);
-            ecb.SetComponent(poisonField, new LocalTransform() { Position = impact.ValueRO.Position, Scale = 1f, Rotation = quaternion.identity });
+            ecb.SetComponent(poisonField, new LocalTransform() { Position = impact.ValueRO.Position, Scale = 2f, Rotation = quaternion.identity });
             ecb.DestroyEntity(vialEntity);
         }
 

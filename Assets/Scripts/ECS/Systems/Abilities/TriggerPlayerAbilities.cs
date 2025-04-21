@@ -29,13 +29,13 @@ public partial class TriggerPlayerAbilities : SystemBase
 
 
 
-        foreach ((RefRO<ClientPlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PlayerData> playerClass)
-            in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRO<ClientPlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PhysicsVelocity> playerVelocity, RefRO<PlayerData> playerClass)
+            in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<PhysicsVelocity>, RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
         {
             if (!playerInput.ValueRO.IsUsingAbility) break;
 
             if (playerClass.ValueRO.MyAbility == PlayerAbility.SixShooter) UseSixShooter(playerTransform.ValueRO.Position, math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)), ecb);
-            else if (playerClass.ValueRO.MyAbility == PlayerAbility.PoisonVial) UsePoisonVial(playerTransform.ValueRO.Position, math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)), ecb);
+            else if (playerClass.ValueRO.MyAbility == PlayerAbility.PoisonVial) UsePoisonVial(playerTransform.ValueRO.Position, math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)), playerVelocity.ValueRO.Linear, ecb);
         }
 
 
@@ -89,12 +89,12 @@ public partial class TriggerPlayerAbilities : SystemBase
 
     #region PoisonVial
 
-    public void UsePoisonVial(float3 playerPosition, float3 playerFacingDirection, EntityCommandBuffer ecb)
+    public void UsePoisonVial(float3 playerPosition, float3 playerFacingDirection, float3 playerVelocity, EntityCommandBuffer ecb)
     {
         Entity rpcEntity = ecb.CreateEntity();
         ecb.AddComponent(rpcEntity, new SpawnGhostProjectileCommandRequest {
             Ability = PlayerAbility.PoisonVial,
-            VelocityLinear = playerFacingDirection * 14,
+            VelocityLinear = (playerFacingDirection * 14) + playerVelocity,
             VelocityAngular = new float3(0f, 0f, 0f),
             Position = playerPosition,
             Scale = 0.08f
