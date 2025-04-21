@@ -10,7 +10,9 @@ using Unity.Physics;
 
 
 [BurstCompile]
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+[UpdateInGroup(typeof(GhostInputSystemGroup))]
+[UpdateAfter(typeof(HandleClientPlayerInput))]
+[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class TriggerPlayerAbilities : SystemBase
 {
     protected override void OnCreate()
@@ -33,6 +35,7 @@ public partial class TriggerPlayerAbilities : SystemBase
             if (!playerInput.ValueRO.IsUsingAbility) break;
 
             if (playerClass.ValueRO.MyAbility == PlayerAbility.SixShooter) UseSixShooter(playerTransform.ValueRO.Position, math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)), ecb);
+            else if (playerClass.ValueRO.MyAbility == PlayerAbility.PoisonVial) UsePoisonVial(playerTransform.ValueRO.Position, math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)), ecb);
         }
 
 
@@ -40,6 +43,7 @@ public partial class TriggerPlayerAbilities : SystemBase
         ecb.Playback(EntityManager);
         ecb.Dispose();
     }
+
 
 
     #region SixShooter
@@ -51,16 +55,6 @@ public partial class TriggerPlayerAbilities : SystemBase
 
     public void UseSixShooter(float3 playerPosition, float3 playerFacingDirection, EntityCommandBuffer ecb)
     {
-        //Entity tracer = EntityManager.Instantiate(SystemAPI.GetSingleton<VFXPrefabs>().SixShooterTracerVFXPrefabEntity);
-        //LineRenderer lineRenderer = EntityManager.GetComponentObject<LineRenderer>(tracer);
-
-        //Vector3[] positions = new Vector3[2];
-        //positions[0] = playerPosition + playerFacingDirection * 2f;
-        //positions[1] = playerPosition + playerFacingDirection * _sixShooterRange;
-        //lineRenderer.SetPositions(positions);
-
-
-
         RaycastInput raycastInput = new RaycastInput()
         {
             Start = playerPosition + playerFacingDirection,
@@ -92,13 +86,31 @@ public partial class TriggerPlayerAbilities : SystemBase
     }
 
     #endregion
+
+    #region PoisonVial
+
+    public void UsePoisonVial(float3 playerPosition, float3 playerFacingDirection, EntityCommandBuffer ecb)
+    {
+        Entity rpcEntity = ecb.CreateEntity();
+        ecb.AddComponent(rpcEntity, new SpawnGhostProjectileCommandRequest {
+            Ability = PlayerAbility.PoisonVial,
+            VelocityLinear = playerFacingDirection * 14,
+            VelocityAngular = new float3(0f, 0f, 0f),
+            Position = playerPosition,
+            Scale = 0.08f
+        });
+        ecb.AddComponent(rpcEntity, new SendRpcCommandRequest());
+    }
+
+    #endregion
 }
 
 
 
 public enum PlayerAbility
 {
-    SixShooter
+    SixShooter,
+    PoisonVial
 }
 
 public partial struct PlayerData : IComponentData

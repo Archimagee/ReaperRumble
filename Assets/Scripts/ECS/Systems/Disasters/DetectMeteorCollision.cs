@@ -110,13 +110,6 @@ struct MeteorCollisionJob : ICollisionEventsJob
             Ecb.AddComponent(collisionEvent.EntityB, new MeteorImpact() { Position = MeteorPositions[collisionEvent.EntityB] });
         }
     }
-
-
-
-    public void HandleMeteorCollision(Entity meteor, float3 position)
-    {
-        Ecb.AddComponent<MeteorImpact>(meteor);
-    }
 }
 
 

@@ -68,7 +68,7 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
             {
                 PlayerNumber = playerNumber,
-                PlayerAbility = PlayerAbility.SixShooter,
+                PlayerAbility = PlayerAbility.PoisonVial,
                 PlayerColor = _playerColors[playerNumber - 1]
             });
 
