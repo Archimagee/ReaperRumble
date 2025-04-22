@@ -60,14 +60,14 @@ public partial class TornadoDisasterSystem : SystemBase
                 {
                     if (playerDistance <= tornadoData.ValueRO.TornadoInnerRange)
                     {
-                        if (SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).Length > 0)
+                        if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).IsEmpty)
                         {
                             Entity rpcEntity = ecb.CreateEntity();
                             ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                             {
                                 GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).ghostId,
-                                Amount = tornadoData.ValueRO.SoulsOrphaned,
-                                Position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).Position
+                                Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).Length, tornadoData.ValueRO.SoulsOrphaned),
+                                Position = localTransformTornado.ValueRO.Position
                             });
                             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                         }
@@ -87,6 +87,8 @@ public partial class TornadoDisasterSystem : SystemBase
                         PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(playerEntity).ghostId
                     });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                    Debug.Log("Tornado at " + localTransformTornado.ValueRO.Position + " with range " + tornadoData.ValueRO.TornadoOuterRange + " pulling player " + math.length(localTransformTornado.ValueRO.Position - localTransformPlayer.ValueRO.Position) + " units away.");
                 }
             }
 

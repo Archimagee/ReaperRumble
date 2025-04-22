@@ -21,7 +21,8 @@ public class PoisonFieldAuthoring : MonoBehaviour
                 DurationSeconds = authoring._durationSeconds,
                 TickTimeSeconds = authoring._tickTimeSeconds,
                 SoulsOrphaned = authoring._soulsOrphaned,
-                StartTime = 0.0
+                StartTime = 0.0,
+                LastTickedAt = 0.0
             });
         }
     }
@@ -36,4 +37,5 @@ public partial struct PoisonFieldData : IComponentData
     public int SoulsOrphaned;
 
     public double StartTime;
+    public double LastTickedAt;
 }

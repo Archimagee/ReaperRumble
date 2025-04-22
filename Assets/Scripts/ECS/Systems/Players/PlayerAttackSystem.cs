@@ -66,14 +66,17 @@ partial struct PlayerAttackSystem : ISystem
                     if (hitEntity != playerEntity)
                     {
                         Entity groupToOrphanFrom = SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup;
-                        rpcEntity = ecb.CreateEntity();
-                        ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                        if (!SystemAPI.GetBuffer<SoulBufferElement>(groupToOrphanFrom).IsEmpty)
                         {
-                            GroupID = SystemAPI.GetComponent<GhostInstance>(groupToOrphanFrom).ghostId,
-                            Amount = 3,
-                            Position = SystemAPI.GetComponent<LocalTransform>(groupToOrphanFrom).Position
-                        });
-                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                            rpcEntity = ecb.CreateEntity();
+                            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                            {
+                                GroupID = SystemAPI.GetComponent<GhostInstance>(groupToOrphanFrom).ghostId,
+                                Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(groupToOrphanFrom).Length, 3),
+                                Position = SystemAPI.GetComponent<LocalTransform>(groupToOrphanFrom).Position
+                            });
+                            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                        }
 
                         rpcEntity = ecb.CreateEntity();
                         float3 knockback = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hitEntity).Position - localTransform.ValueRO.Position);
