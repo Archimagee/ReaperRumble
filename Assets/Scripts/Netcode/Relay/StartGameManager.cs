@@ -101,6 +101,10 @@ public class StartGameManager : MonoBehaviour
         clientWorld.EntityManager.SetName(networkStreamEntity, "NetworkStreamRequestConnect");
         clientWorld.EntityManager.SetComponentData(networkStreamEntity, new NetworkStreamRequestConnect { Endpoint = _relayClientData.Endpoint });
 
+        PlayerLobbyData playerLobbyData = LobbyManager.Instance.GetPlayerData();
+        Entity playerDataEntity = clientWorld.EntityManager.CreateEntity();
+        clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
+
         Debug.Log("Host started");
     }
 
@@ -127,6 +131,10 @@ public class StartGameManager : MonoBehaviour
         Entity networkStreamEntity = clientWorld.EntityManager.CreateEntity(ComponentType.ReadWrite<NetworkStreamRequestConnect>());
         clientWorld.EntityManager.SetName(networkStreamEntity, "NetworkStreamRequestConnect");
         clientWorld.EntityManager.SetComponentData(networkStreamEntity, new NetworkStreamRequestConnect { Endpoint = _relayClientData.Endpoint });
+
+        PlayerLobbyData playerLobbyData = LobbyManager.Instance.GetPlayerData();
+        Entity playerDataEntity = clientWorld.EntityManager.CreateEntity();
+        clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
 
         Debug.Log("Client started");
     }

@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
+using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
@@ -33,6 +36,7 @@ public class LobbyManager : MonoBehaviour
     private Lobby _currentLobby;
     private Player _player;
     private bool _isGameStarting;
+    [SerializeField] private PlayerLobbyData _thisPlayerData = new();
 
 
 
@@ -61,6 +65,7 @@ public class LobbyManager : MonoBehaviour
             Debug.LogWarning(e);
         }
         IsHost = true;
+        _thisPlayerData.PlayerNumber = 0;
         _loadingText.enabled = false;
         _lobbyTab.SetActive(true);
 
@@ -79,7 +84,10 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.LogWarning(e);
         }
+
         IsHost = false;
+        _thisPlayerData.PlayerNumber = _currentLobby.Players.Count - 1;
+
         _loadingText.enabled = false;
         _lobbyTab.SetActive(true);
 
@@ -123,6 +131,28 @@ public class LobbyManager : MonoBehaviour
         Debug.Log("Join code sent");
         var lobby = await LobbyService.Instance.UpdateLobbyAsync(_currentLobby.Id, lobbyOptions);
     }
+    public async void SetPlayerAbility(PlayerAbility playerAbility)
+    {
+        UpdatePlayerOptions playerOptions = new();
+
+        playerOptions.Data = new Dictionary<string, PlayerDataObject>()
+        {
+            { "Ability", new PlayerDataObject(
+                visibility: PlayerDataObject.VisibilityOptions.Public,
+                value: playerAbility.ToString()) }
+        };
+
+        string playerId = AuthenticationService.Instance.PlayerId;
+
+        await LobbyService.Instance.UpdatePlayerAsync(_currentLobby.Id, playerId, playerOptions);
+        _thisPlayerData.PlayerAbility = playerAbility;
+    }
+    public void SetPlayerAbility(string playerAbility)
+    {
+        SetPlayerAbility((PlayerAbility)Enum.Parse(typeof(PlayerAbility), playerAbility));
+    }
+
+
 
     public void StartGame()
     {
@@ -145,6 +175,13 @@ public class LobbyManager : MonoBehaviour
 
 
 
+    public PlayerLobbyData GetPlayerData()
+    {
+        return _thisPlayerData;
+    }
+
+
+
     private async void Setup(string displayName)
     {
         UpdatePlayerOptions playerOptions = new();
@@ -158,7 +195,9 @@ public class LobbyManager : MonoBehaviour
 
         string playerId = AuthenticationService.Instance.PlayerId;
 
-        var lobby = await LobbyService.Instance.UpdatePlayerAsync(_currentLobby.Id, playerId, playerOptions);
+        await LobbyService.Instance.UpdatePlayerAsync(_currentLobby.Id, playerId, playerOptions);
+        _thisPlayerData.PlayerName = displayName;
+        SetPlayerAbility(PlayerAbility.SixShooter);
 
         _lobbyCodeText.text = _currentLobby.LobbyCode;
         _lobbyNameText.text = _currentLobby.Name;
@@ -244,4 +283,15 @@ public class LobbyManager : MonoBehaviour
             }
         }
     }
+}
+
+
+
+[System.Serializable]
+public class PlayerLobbyData
+{
+    public PlayerAbility PlayerAbility;
+    public float4 PlayerColour;
+    public string PlayerName;
+    public int PlayerNumber;
 }

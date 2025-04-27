@@ -41,7 +41,7 @@ public partial class GoInGameServerSystem : SystemBase
 
 
 
-        foreach ((RefRO<ReceiveRpcCommandRequest> recieveRpcCommandRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>>().WithAll<GoInGameRequestRPC>().WithEntityAccess())
+        foreach ((RefRO<ReceiveRpcCommandRequest> recieveRpcCommandRequest, RefRO<GoInGameRequestRPC> goInGameRequestRPC, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<GoInGameRequestRPC>>().WithEntityAccess())
         {
             Entity sourceConnection = recieveRpcCommandRequest.ValueRO.SourceConnection;
             int playerNumber = SystemAPI.GetComponent<NetworkId>(sourceConnection).Value;
@@ -68,7 +68,7 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
             {
                 PlayerNumber = playerNumber,
-                PlayerAbility = PlayerAbility.PoisonVial,
+                PlayerAbility = goInGameRequestRPC.ValueRO.PlayerAbility,
                 PlayerColor = _playerColors[playerNumber - 1]
             });
 

@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Mathematics;
 
 
 
@@ -12,6 +13,7 @@ partial struct GoInGameClientSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<NetworkId>();
+        state.RequireForUpdate<PlayerDataFromLobby>();
     }
 
 
@@ -28,8 +30,10 @@ partial struct GoInGameClientSystem : ISystem
             ecb.AddComponent<NetworkStreamInGame>(entity);
 
             Entity rpcEntity = ecb.CreateEntity();
-            ecb.AddComponent<GoInGameRequestRPC>(rpcEntity);
+            ecb.AddComponent(rpcEntity, new GoInGameRequestRPC() { PlayerAbility = SystemAPI.GetSingleton<PlayerDataFromLobby>().PlayerAbility });
             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+            ecb.DestroyEntity(SystemAPI.GetSingletonEntity<PlayerDataFromLobby>());
         }
 
 
@@ -41,4 +45,14 @@ partial struct GoInGameClientSystem : ISystem
 
 
 
-public struct GoInGameRequestRPC : IRpcCommand { }
+public struct GoInGameRequestRPC : IRpcCommand
+{
+    public PlayerAbility PlayerAbility;
+}
+
+public partial struct PlayerDataFromLobby : IComponentData
+{
+    public int PlayerNumber;
+    public PlayerAbility PlayerAbility;
+    public float4 PlayerColour;
+}

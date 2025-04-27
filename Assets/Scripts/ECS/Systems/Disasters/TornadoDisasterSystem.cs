@@ -54,7 +54,7 @@ public partial class TornadoDisasterSystem : SystemBase
 
             foreach ((RefRW<Player> player, RefRO<LocalTransform> localTransformPlayer, Entity playerEntity) in SystemAPI.Query<RefRW<Player>, RefRO<LocalTransform>>().WithEntityAccess())
             {
-                float playerDistance = math.length((localTransformPlayer.ValueRO.Position.x + localTransformPlayer.ValueRO.Position.z) - (localTransformTornado.ValueRO.Position.x + localTransformTornado.ValueRO.Position.z));
+                float playerDistance = math.distance(new float3(localTransformPlayer.ValueRO.Position.x, 0f, localTransformPlayer.ValueRO.Position.z), new float3(localTransformTornado.ValueRO.Position.x, 0f, localTransformTornado.ValueRO.Position.z));
 
                 if (currentTime >= tornadoData.ValueRO.LastTickedAt + tornadoData.ValueRO.TickTimeSeconds)
                 {
@@ -88,7 +88,7 @@ public partial class TornadoDisasterSystem : SystemBase
                     });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-                    Debug.Log("Tornado at " + localTransformTornado.ValueRO.Position + " with range " + tornadoData.ValueRO.TornadoOuterRange + " pulling player " + math.length(localTransformTornado.ValueRO.Position - localTransformPlayer.ValueRO.Position) + " units away.");
+                    //Debug.Log("Tornado at " + localTransformTornado.ValueRO.Position + " with range " + tornadoData.ValueRO.TornadoOuterRange + " pulling player " + playerDistance + " units away.");
                 }
             }
 

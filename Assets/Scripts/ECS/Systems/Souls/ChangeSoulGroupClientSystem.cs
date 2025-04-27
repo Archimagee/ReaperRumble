@@ -4,6 +4,7 @@ using Unity.Physics.Systems;
 using Unity.NetCode;
 using UnityEngine.VFX;
 using UnityEngine;
+using Unity.Mathematics;
 
 
 
@@ -138,7 +139,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             _changeQueue.Enqueue(new ChangeSoulGroupData() {
                 SoulGroupToMoveFrom = groupToMoveFrom,
                 SoulGroupToMoveTo = groupToMoveTo,
-                AmountOfSoulsToMove = changeRequest.ValueRO.Amount });
+                AmountOfSoulsToMove = math.min(changeRequest.ValueRO.Amount, SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Length) });
 
             ecb.DestroyEntity(rpcEntity);
         }
@@ -165,7 +166,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
     public void SetSoulColor(Entity soul, Entity owner)
     {
         VisualEffect vfx = EntityManager.GetComponentObject<VisualEffect>(soul);
-        Vector4 color = Vector4.zero;
+        Vector4 color;
 
         if (owner == Entity.Null) color = new Vector4(0.32f, 0.2f, 0.7f, 1f);
         else
