@@ -42,13 +42,18 @@ public partial class TornadoDisasterSystem : SystemBase
                 random = new Unity.Mathematics.Random();
                 random.InitState(seed.ValueRO.Seed);
 
+                localTransformTornado.ValueRW.Position = new float3(0f, -500f, 0f);
+            }
+            if (tornadoData.ValueRO.SpawnTime == 0.0 && SystemAPI.Time.ElapsedTime >= tornadoData.ValueRO.StartTime + tornadoData.ValueRO.SpawnDelaySeconds)
+            {
+                tornadoData.ValueRW.SpawnTime = currentTime;
                 localTransformTornado.ValueRW.Position = GetNewTarget(tornadoData.ValueRO.MovementBounds);
                 tornadoData.ValueRW.CurrentDirection = math.normalizesafe(tornadoData.ValueRO.CurrentTarget - localTransformTornado.ValueRO.Position);
             }
 
 
 
-            HandleMovement(tornadoData, localTransformTornado, currentTime);
+            if (tornadoData.ValueRO.SpawnTime != 0.0) HandleMovement(tornadoData, localTransformTornado, currentTime);
 
 
 

@@ -1,7 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
-using UnityEngine;
 using Unity.NetCode;
 
 
@@ -40,20 +39,34 @@ public partial class TriggerDisasterClientSystem : SystemBase
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<StartDisasterRequestRPC> disaster, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<StartDisasterRequestRPC>>().WithEntityAccess())
         {
             Entity disasterPrefab = GetDisasterPrefab(disaster.ValueRO.DisasterType);
-
-            Debug.Log("Spawning " + disaster.ValueRO.DisasterType);
            
             Entity newDisaster = ecb.Instantiate(disasterPrefab);
+            double timeDisasterLastsFor = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<DisasterData>(disasterPrefab).TimeLastsForSeconds;
             ecb.AddComponent(newDisaster, new EventDestroyAt() {
-                TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<DisasterData>(disasterPrefab).TimeLastsForSeconds });
+                TimeToDestroyAt = timeDisasterLastsFor});
             ecb.AddComponent(newDisaster, new EventSeed() { Seed = disaster.ValueRO.Seed });
             ecb.SetName(newDisaster, disaster.ValueRO.DisasterType.ToString());
 
+
+
             UIManager.Instance.SendAnnouncement(GetDisasterAnnouncement(disaster.ValueRO.DisasterType), 3f);
+
+            Entity musicChange = ecb.CreateEntity();
+            ecb.AddComponent(musicChange, new PlayFightMusicAt() { TimeToPlayAt = SystemAPI.Time.ElapsedTime + timeDisasterLastsFor });
+            FightMusicManager.Instance.SetMusicFromDisasterType(disaster.ValueRO.DisasterType);
 
 
 
             ecb.DestroyEntity(recieveRpcEntity);
+        }
+
+        foreach ((RefRO<PlayFightMusicAt> playFightMusic, Entity entity) in SystemAPI.Query<RefRO<PlayFightMusicAt>>().WithEntityAccess())
+        {
+            if (SystemAPI.Time.ElapsedTime >= playFightMusic.ValueRO.TimeToPlayAt)
+            {
+                FightMusicManager.Instance.PlayFightMusicNoTransition();
+                ecb.DestroyEntity(entity);
+            }
         }
 
 
@@ -66,4 +79,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
 public struct EventSeed : IComponentData
 {
     public uint Seed;
+}
+public struct PlayFightMusicAt : IComponentData
+{
+    public double TimeToPlayAt;
 }

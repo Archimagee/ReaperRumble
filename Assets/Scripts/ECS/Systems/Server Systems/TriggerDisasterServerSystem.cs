@@ -10,16 +10,16 @@ using Unity.Mathematics;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class TriggerDisasterServerSystem : SystemBase
 {
-    private double _lastDisasterAt = 0f;
-    private readonly double _firstDisasterDelaySeconds = 5f;
-    private readonly double _disasterCooldownSeconds = 60f;
+    private double _lastDisasterAt = 0d;
+    private readonly double _firstDisasterDelaySeconds = 5d;
+    private readonly double _disasterCooldownSeconds = 75d;
     private Random _random = new();
 
 
 
     protected override void OnCreate()
     {
-        _random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
+        _random.InitState((uint)(System.DateTime.Now.Millisecond * System.DateTime.Now.Second * System.DateTime.Now.Minute * 1000));
     }
 
 

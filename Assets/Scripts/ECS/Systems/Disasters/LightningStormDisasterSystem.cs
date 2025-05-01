@@ -17,7 +17,7 @@ public partial class LightningStormDisasterSystem : SystemBase
     private NativeHashMap<double, float3> _upcomingLightningStrikes = new(500, Allocator.Persistent);
     private NativeHashMap<double, float3> _upcomingIncomingVFX = new(500, Allocator.Persistent);
 
-    private readonly double _firstStrikeDelaySeconds = 4.0;
+    private readonly double _firstStrikeDelaySeconds = 8.0;
     private readonly double _minTimeBetweenStrikesSeconds = 0.1;
     private readonly double _maxTimeBetweenStrikesSeconds = 0.4;
     private readonly double _incomingTime = 1.6;

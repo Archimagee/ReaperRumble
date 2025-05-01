@@ -5,6 +5,7 @@ using Unity.Mathematics;
 
 public class TornadoDisasterAuthoring : MonoBehaviour
 {
+    [SerializeField] private double _spawnDelaySeconds;
     [SerializeField] private float _tornadoMoveSpeed = 1f;
     [SerializeField] private float _tornadoInnerRange;
     [SerializeField] private float _tornadoOuterRange;
@@ -26,6 +27,7 @@ public class TornadoDisasterAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(entity, new TornadoDisasterData()
             {
+                SpawnDelaySeconds = authoring._spawnDelaySeconds,
                 TornadoMoveSpeed = authoring._tornadoMoveSpeed,
                 TornadoInnerRange = authoring._tornadoInnerRange,
                 TornadoOuterRange = authoring._tornadoOuterRange,
@@ -37,6 +39,7 @@ public class TornadoDisasterAuthoring : MonoBehaviour
                 KnockbackStrength = authoring._knockbackStrength,
                 TickTimeSeconds = authoring._tickTimeSeconds,
                 StartTime = 0.0,
+                SpawnTime = 0.0,
                 LastTickedAt = 0.0,
                 ChangeTargetAt = 0.0,
                 CurrentTarget = float3.zero,
@@ -50,6 +53,7 @@ public class TornadoDisasterAuthoring : MonoBehaviour
 
 public partial struct TornadoDisasterData : IComponentData
 {
+    public double SpawnDelaySeconds;
     public float TornadoMoveSpeed;
     public float TornadoInnerRange;
     public float TornadoOuterRange;
@@ -63,6 +67,7 @@ public partial struct TornadoDisasterData : IComponentData
     public float TickTimeSeconds;
 
     public double StartTime;
+    public double SpawnTime;
     public double LastTickedAt;
     public double ChangeTargetAt;
     public float3 CurrentTarget;
