@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a6ce8f7b6c00543a72652e1529206a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnDelaySeconds: 6
+  _spawnDelaySeconds: 8
   _tornadoMoveSpeed: 0.1
   _tornadoInnerRange: 11
   _tornadoOuterRange: 14
@@ -165,9 +165,9 @@ MonoBehaviour:
       y: 0
       z: 0
     Extents:
-      x: 42
+      x: 38
       y: 0
-      z: 33
+      z: 30
   _rotationAmountRadians: 0.01
   _minTargetChangeTimeSeconds: 10
   _maxTargetChangeTimeSeconds: 15

@@ -43,6 +43,6 @@ public partial class PlayAnnouncementSystem : SystemBase
 
 public partial struct PlayAnnouncementAt : IComponentData
 {
-    public FixedString32Bytes AnnouncementToPlay;
+    public FixedString64Bytes AnnouncementToPlay;
     public double TimeToPlayAt;
 }

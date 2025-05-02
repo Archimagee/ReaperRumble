@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
 using Unity.Mathematics;
-using Unity.VisualScripting;
+using Unity.Transforms;
 
 
 
@@ -27,7 +27,7 @@ public partial class PlayerKnockbackServerSystem : SystemBase
 
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<ApplyKnockbackToPlayerRequestRPC> knockbackRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<ApplyKnockbackToPlayerRequestRPC>>().WithEntityAccess())
         {
-            foreach ((RefRO<GhostInstance> ghostInstance, RefRW<Knockback> knockback) in SystemAPI.Query<RefRO<GhostInstance>, RefRW<Knockback>>())
+            foreach ((RefRO<GhostInstance> ghostInstance, RefRW<Knockback> knockback, RefRW<LocalTransform> localTransform) in SystemAPI.Query<RefRO<GhostInstance>, RefRW<Knockback>, RefRW<LocalTransform>>())
             {
                 float3 knockbackDirection = knockbackRequest.ValueRO.KnockbackDirection;
 
