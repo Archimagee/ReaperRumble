@@ -105,6 +105,8 @@ public class StartGameManager : MonoBehaviour
         Entity playerDataEntity = clientWorld.EntityManager.CreateEntity();
         clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
 
+        MenuMusicManager.Instance.StopPlaying();
+
         Debug.Log("Host started");
     }
 
@@ -135,6 +137,8 @@ public class StartGameManager : MonoBehaviour
         PlayerLobbyData playerLobbyData = LobbyManager.Instance.GetPlayerData();
         Entity playerDataEntity = clientWorld.EntityManager.CreateEntity();
         clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
+
+        MenuMusicManager.Instance.StopPlaying();
 
         Debug.Log("Client started");
     }

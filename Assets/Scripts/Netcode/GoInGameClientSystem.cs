@@ -34,6 +34,9 @@ partial struct GoInGameClientSystem : ISystem
             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
             ecb.DestroyEntity(SystemAPI.GetSingletonEntity<PlayerDataFromLobby>());
+
+            Entity announcementEntity = ecb.CreateEntity();
+            ecb.AddComponent(announcementEntity, new PlayAnnouncementAt() { AnnouncementToPlay = (FixedString32Bytes)"It's time to RUMBLE!", TimeToPlayAt = 7.0d });
         }
 
 

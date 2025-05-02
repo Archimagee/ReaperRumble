@@ -16,7 +16,7 @@ public partial class MeteorShowerDisasterSystem : SystemBase
 
     private readonly float3 _meteorAngle = new(15f, 35f, 0f);
     private readonly float _meteorSpeed = 2.5f;
-    private readonly double _firstMeteorDelaySeconds = 18.0;
+    private readonly double _firstMeteorDelaySeconds = 12.0;
     private readonly double _minTimeBetweenMeteorsSeconds = 1.0;
     private readonly double _maxTimeBetweenMeteorsSeconds = 1.5;
     private readonly float _spawnDistance = 25f;

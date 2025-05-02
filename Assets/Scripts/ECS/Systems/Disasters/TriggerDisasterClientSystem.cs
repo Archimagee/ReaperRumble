@@ -49,7 +49,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
 
 
 
-            UIManager.Instance.SendAnnouncement(GetDisasterAnnouncement(disaster.ValueRO.DisasterType), 3f);
+            Entity announcement = ecb.CreateEntity();
+            ecb.AddComponent(announcement, new PlayAnnouncementAt() { AnnouncementToPlay = GetDisasterAnnouncement(disaster.ValueRO.DisasterType), TimeToPlayAt = SystemAPI.Time.ElapsedTime + 1.5d });
 
             Entity musicChange = ecb.CreateEntity();
             ecb.AddComponent(musicChange, new PlayFightMusicAt() { TimeToPlayAt = SystemAPI.Time.ElapsedTime + timeDisasterLastsFor });
@@ -64,7 +65,7 @@ public partial class TriggerDisasterClientSystem : SystemBase
         {
             if (SystemAPI.Time.ElapsedTime >= playFightMusic.ValueRO.TimeToPlayAt)
             {
-                FightMusicManager.Instance.PlayFightMusicNoTransition();
+                FightMusicManager.Instance.PlayFightMusic();
                 ecb.DestroyEntity(entity);
             }
         }

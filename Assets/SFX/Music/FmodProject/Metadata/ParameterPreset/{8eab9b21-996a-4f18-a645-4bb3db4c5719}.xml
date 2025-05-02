@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="ParameterPreset" id="{8eab9b21-996a-4f18-a645-4bb3db4c5719}">
+		<property name="name">
+			<value>CurrentDisaster</value>
+		</property>
+		<relationship name="folder">
+			<destination>{926bdf1d-8986-4e79-b973-f4b05937f4b3}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{03f6e8f2-deb8-4df9-8562-04ec348488bb}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{03f6e8f2-deb8-4df9-8562-04ec348488bb}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>6</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>None</value>
+			<value>Eruption</value>
+			<value>LavaFlood</value>
+			<value>LightningStorm</value>
+			<value>MeteorShower</value>
+			<value>Tornado</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
