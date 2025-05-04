@@ -11,7 +11,7 @@ using Unity.NetCode;
 public partial class TriggerChallengeServerSystem : SystemBase
 {
     private double _lastChallengeAt = 0f;
-    private readonly double _firstChallengeDelaySeconds = 10f;
+    private readonly double _firstChallengeDelaySeconds = 3f;
     private readonly double _challengeCooldownSeconds = 45f;
     private Random _random = new();
 
@@ -50,6 +50,7 @@ public partial class TriggerChallengeServerSystem : SystemBase
             {
                 TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<ChallengeData>(challengePrefab).TimeLastsForSeconds
             });
+            ecb.SetName(newChallengeEntity, newChallengeType.ToString());
         }
 
 

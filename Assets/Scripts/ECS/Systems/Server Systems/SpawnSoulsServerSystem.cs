@@ -19,7 +19,7 @@ public partial class SpawnSoulsServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
         foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<SpawnSoulsRequestRPC> spawnRequest, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<SpawnSoulsRequestRPC>>().WithEntityAccess())

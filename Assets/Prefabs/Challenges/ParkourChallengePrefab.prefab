@@ -2015,6 +2015,7 @@ Transform:
   - {fileID: 5354128294642774821}
   - {fileID: 5089849628043807893}
   - {fileID: 8616669119681009810}
+  - {fileID: 1716065469703435637}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-2286785702756119782
@@ -2029,7 +2030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b6da07ff5c64d48a67cadefbd564bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeLastsForSeconds: 20
+  _timeLastsForSeconds: 35
   _challengeType: 0
 --- !u!114 &6918975940674332309
 MonoBehaviour:
@@ -2067,6 +2068,51 @@ MonoBehaviour:
   UsePreSerialization: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
+--- !u!1 &8323509524751073988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1716065469703435637}
+  - component: {fileID: 2898036104187525113}
+  m_Layer: 0
+  m_Name: SoulSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1716065469703435637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8323509524751073988}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.2650003, y: 1.59, z: -0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1865915945568154948}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2898036104187525113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8323509524751073988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5356c903856290740bdb91e9a4b76d3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _initialSoulAmount: 10
 --- !u!1 &8454179161913803004
 GameObject:
   m_ObjectHideFlags: 0
