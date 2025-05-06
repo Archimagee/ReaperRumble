@@ -14,8 +14,18 @@ public partial struct PresentationGameObjectSpawnSystem : ISystem
             .WithNone<PresentationGameObjectCleanup>()
             .Build().ToEntityArray(Allocator.Temp))
         {
-            PresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<PresentationGameObjectPrefab>(entity);
-            GameObject newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);
+            GameObject newGameObject;
+
+            if (SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity))
+            {
+                LocalPresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<LocalPresentationGameObjectPrefab>(entity);
+                newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);
+            }
+            else
+            {
+                PresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<PresentationGameObjectPrefab>(entity);
+                newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);
+            }
 
 
 

@@ -30,7 +30,7 @@ public partial class MovePlayerCamera : SystemBase
         {
             cameraTransform.ValueRW.Rotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
 
-            float3 newPosition = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position;
+            float3 newPosition = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position + new float3(0f, 0.3f, 0f);
 
             if (float.IsNaN(newPosition.x) || float.IsNaN(newPosition.y) || float.IsNaN(newPosition.z)) cameraTransform.ValueRW.Position = float3.zero;
             else cameraTransform.ValueRW.Position = newPosition;
