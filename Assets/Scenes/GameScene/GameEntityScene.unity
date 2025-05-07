@@ -4505,7 +4505,7 @@ MonoBehaviour:
   _playerCameraPrefab: {fileID: 6974674559639081040, guid: 1dc1bad9eb262254fb4bb84bdce5b040, type: 3}
   _soulGroupPrefab: {fileID: 875631237982281265, guid: 7c8b32f072abf65438924fc4843f8018, type: 3}
   _soulPrefab: {fileID: 9199856799111944138, guid: 431803d8cd11d2643b87a2c89948ce08, type: 3}
-  _parkourChallengePrefab: {fileID: -2286785702756119782, guid: 0ba0b8aa6234e144881c2fc431cea758, type: 3}
+  _parkourChallengePrefab: {fileID: 7953563745082011650, guid: c9cdc6ea1f0e08a468d656d2a1aea6b5, type: 3}
   _lightningStormDisasterPrefab: {fileID: 7962082946490727139, guid: e2b9c69c5c939b04695b31c385632e4c, type: 3}
   _meteorShowerDisasterPrefab: {fileID: 6552752887713790240, guid: 00b4c8e7d9fcde6478d9d107b72dfa91, type: 3}
   _meteorPrefab: {fileID: 1139366034430314029, guid: 930521f79aa1547428c71885983440ad, type: 3}
