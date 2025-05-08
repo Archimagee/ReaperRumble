@@ -4,6 +4,7 @@ using Unity.NetCode;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
+using UnityEngine;
 
 
 
@@ -37,6 +38,9 @@ public partial class InitialiseSoulGroupServerSystem : SystemBase
             });
             ecb.AddComponent<SendRpcCommandRequest>(sendRpcEntity);
 
+            Debug.Log(initialise.ValueRO.TimeLastsForSeconds);
+            if (initialise.ValueRO.TimeLastsForSeconds != 0) ecb.AddComponent(groupEntity, new DestroySoulGroup() { TimeToDestroyAt = SystemAPI.Time.ElapsedTime + initialise.ValueRO.TimeLastsForSeconds });
+
             ecb.RemoveComponent<SoulGroupInitialise>(groupEntity);
         }
 
@@ -48,7 +52,7 @@ public partial class InitialiseSoulGroupServerSystem : SystemBase
 
             Entity newSoulGroup = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
             ecb.SetComponent(newSoulGroup, new LocalTransform() { Position = position, Scale = 1f, Rotation = quaternion.identity });
-            ecb.AddComponent(newSoulGroup, new SoulGroupInitialise() { SoulAmount = SystemAPI.GetComponent<SoulGroupInitialise>(entity).SoulAmount });
+            ecb.AddComponent(newSoulGroup, new SoulGroupInitialise() { SoulAmount = initialise.ValueRO.SoulAmount, TimeLastsForSeconds = initialise.ValueRO.TimeLastsForSeconds });
 
             ecb.RemoveComponent<SoulGroupInitialise>(entity);
         }

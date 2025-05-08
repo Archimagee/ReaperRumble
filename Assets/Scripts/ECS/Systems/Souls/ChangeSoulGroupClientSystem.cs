@@ -96,7 +96,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
 
             if (soulsToKeep.Length == 0)
             {
-                //DestroySoulGroup(groupToMoveFrom, ecb);
+                DestroySoulGroup(groupToMoveFrom, ecb);
             }
             else
             {

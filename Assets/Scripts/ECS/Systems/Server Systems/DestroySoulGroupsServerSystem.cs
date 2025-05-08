@@ -11,7 +11,7 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
 {
     protected override void OnCreate()
     {
-        RequireForUpdate<DestroySoulGroupRequestRPC>();
+        RequireAnyForUpdate(SystemAPI.QueryBuilder().WithAny<DestroySoulGroupRequestRPC, DestroySoulGroup>().Build());
     }
 
 
@@ -19,8 +19,26 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
         double currentTime = SystemAPI.Time.ElapsedTime;
+
+
+
+        foreach ((RefRW<DestroySoulGroup> destroy, RefRO<GhostInstance> ghost, Entity entity) in SystemAPI.Query<RefRW<DestroySoulGroup>, RefRO<GhostInstance>>().WithEntityAccess())
+        {
+            if (currentTime >= destroy.ValueRO.TimeToDestroyAt + 1d)
+            {
+                ecb.DestroyEntity(entity);
+            }
+            else if (currentTime >= destroy.ValueRO.TimeToDestroyAt && !destroy.ValueRO.SoulsDestroyed)
+            {
+                Entity newRPC = ecb.CreateEntity();
+                ecb.AddComponent(newRPC, new DestroySoulGroupRequestRPC() { GroupToDestroyID = ghost.ValueRO.ghostId });
+                ecb.AddComponent<SendRpcCommandRequest>(newRPC);
+
+                destroy.ValueRW.SoulsDestroyed = true;
+            }
+        }
 
 
 
@@ -30,7 +48,7 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
             foreach ((RefRO<GhostInstance> ghostInstance, RefRO<SoulGroupTag> soulGroup, Entity soulGroupEntity)
                 in SystemAPI.Query<RefRO<GhostInstance>, RefRO<SoulGroupTag>>().WithEntityAccess())
             {
-                if (ghostInstance.ValueRO.ghostId == destroyRequest.ValueRO.GroupToDestroyID) ecb.DestroyEntity(soulGroupEntity);
+                if (ghostInstance.ValueRO.ghostId == destroyRequest.ValueRO.GroupToDestroyID) ecb.AddComponent(soulGroupEntity, new DestroySoulGroup() { TimeToDestroyAt = currentTime, SoulsDestroyed = false });
             }
             ecb.DestroyEntity(rpcEntity);
         }
@@ -47,4 +65,10 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
 public partial struct DestroySoulGroupRequestRPC : IRpcCommand
 {
     public int GroupToDestroyID;
+}
+
+public partial struct DestroySoulGroup : IComponentData
+{
+    public double TimeToDestroyAt;
+    public bool SoulsDestroyed;
 }

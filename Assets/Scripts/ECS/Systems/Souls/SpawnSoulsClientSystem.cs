@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Burst;
 using Unity.NetCode;
-using UnityEngine;
 
 
 
@@ -42,7 +41,6 @@ public partial class SpawnSoulsClientSystem : SystemBase
                 Entity soul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
                 ecb.SetName(soul, "Soul");
                 ecb.SetComponent(soul, new LocalTransform { Position = spawnPos, Scale = 1f, Rotation = quaternion.identity });
-                ecb.SetComponent(soul, new Soul { Speed = 9f, SeparationForce = 1.125f });
                 ecb.AddComponent(soul, new SoulGroupMember { MyGroup = soulSpawnData.SoulGroupToSpawnTo });
 
                 ecb.AppendToBuffer(soulSpawnData.SoulGroupToSpawnTo, new SoulBufferElement { Soul = soul });

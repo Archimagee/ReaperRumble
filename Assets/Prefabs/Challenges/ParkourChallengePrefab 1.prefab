@@ -338,7 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b6da07ff5c64d48a67cadefbd564bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeLastsForSeconds: 35
+  _timeLastsForSeconds: 45
   _challengeType: 0
 --- !u!114 &3370581589796510545
 MonoBehaviour:
@@ -368,7 +368,7 @@ MonoBehaviour:
   SupportedGhostModes: 3
   OptimizationMode: 1
   Importance: 1
-  prefabId: 0ba0b8aa6234e144881c2fc431cea758
+  prefabId: c9cdc6ea1f0e08a468d656d2a1aea6b5
   HasOwner: 0
   SupportAutoCommandTarget: 1
   TrackInterpolationDelay: 0
@@ -1267,6 +1267,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _initialSoulAmount: 10
+  _timeLastsForSeconds: 45
 --- !u!1 &4046337279709957473
 GameObject:
   m_ObjectHideFlags: 0
