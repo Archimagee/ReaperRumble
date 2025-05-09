@@ -118,4 +118,5 @@ public partial struct PlayerData : IComponentData
     public int PlayerNumber;
     public PlayerAbility MyAbility;
     public Color MyColour;
+    public bool IsNicknameSet;
 }

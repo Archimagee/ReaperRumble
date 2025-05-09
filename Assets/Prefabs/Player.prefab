@@ -66,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerSpeed: 7
   _playerJumpSpeed: 6
-  _playerAttackCooldownSeconds: 1
+  _playerAttackCooldownSeconds: 3
 --- !u!114 &2207385700326887840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,12 +182,12 @@ MonoBehaviour:
     m_Friction:
       m_Override: 0
       m_Value:
-        Value: 0.4
+        Value: 0.2
         CombineMode: 1
     m_Restitution:
       m_Override: 0
       m_Value:
-        Value: 0
+        Value: 0.1
         CombineMode: 2
     m_BelongsToCategories:
       m_Override: 0

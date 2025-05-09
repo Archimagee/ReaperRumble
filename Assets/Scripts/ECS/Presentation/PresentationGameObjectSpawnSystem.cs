@@ -1,5 +1,7 @@
+using System.Collections;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.NetCode;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -16,7 +18,7 @@ public partial struct PresentationGameObjectSpawnSystem : ISystem
         {
             GameObject newGameObject;
 
-            if (SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity))
+            if (SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity) && SystemAPI.IsComponentEnabled<GhostOwnerIsLocal>(entity))
             {
                 LocalPresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<LocalPresentationGameObjectPrefab>(entity);
                 newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);
@@ -33,8 +35,6 @@ public partial struct PresentationGameObjectSpawnSystem : ISystem
             {
                 if (component != null) state.EntityManager.AddComponentObject(entity, component);
             }
-
-
 
             newGameObject.AddComponent<PresentationGameObject>().Assign(entity, state.World);
             state.EntityManager.AddComponentData(entity, new PresentationGameObjectCleanup() { Instance = newGameObject });

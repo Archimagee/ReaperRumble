@@ -38,9 +38,12 @@ public partial class SetupPlayerClientSystem : SystemBase
             ecb.SetName(newCameraEntity, "Player camera");
             ecb.AddComponent(newCameraEntity, new PlayerCameraFollowTarget { Target = playerEntity });
 
-            ecb.AddComponent(playerEntity, new PlayerData() {
+            ecb.AddComponent(playerEntity, new PlayerData()
+            {
                 MyAbility = playerSetup.ValueRO.PlayerAbility,
-                MyColour = playerSetup.ValueRO.PlayerColor });
+                MyColour = playerSetup.ValueRO.PlayerColor,
+                IsNicknameSet = false
+            });
 
             Entity playerSoulGroup = soulGroup.ValueRO.MySoulGroup;
             ecb.SetName(playerSoulGroup, "Player " + playerSetup.ValueRO.PlayerNumber + "'s soul group");
@@ -64,6 +67,7 @@ public partial class SetupPlayerClientSystem : SystemBase
 
             Entity playerSoulGroup = soulGroup.ValueRO.MySoulGroup;
             ecb.SetName(playerSoulGroup, "Player " + playerSetup.ValueRO.PlayerNumber + "'s soul group");
+
             if (!SystemAPI.HasBuffer<SoulBufferElement>(playerSoulGroup)) ecb.AddBuffer<SoulBufferElement>(playerSoulGroup);
 
 

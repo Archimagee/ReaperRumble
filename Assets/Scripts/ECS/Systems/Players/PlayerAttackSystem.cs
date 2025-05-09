@@ -84,7 +84,7 @@ partial struct PlayerAttackSystem : ISystem
                         {
                             PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hitEntity).ghostId,
                             KnockbackDirection = knockback,
-                            Strength = 9f
+                            Strength = 22f
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                     }

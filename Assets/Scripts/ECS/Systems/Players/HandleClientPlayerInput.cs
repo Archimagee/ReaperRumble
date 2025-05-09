@@ -55,13 +55,6 @@ partial struct HandleClientPlayerInput : ISystem
             if (input.x != 0f || input.y != 0f) animator.Value.SetBool("IsRunning", true);
             else animator.Value.SetBool("IsRunning", false);
 
-            //if (Input.GetKeyDown(KeyCode.Return))
-            //{
-            //    Entity rpcEntity = ecb.CreateEntity();
-            //    ecb.AddComponent(rpcEntity, new SpawnSoulsRequestRPC { GroupID = state.EntityManager.GetComponentData<GhostInstance>(soulGroup.ValueRO.MySoulGroup).ghostId, Amount = 5, Position = playerTransform.ValueRO.Position });
-            //    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-            //}
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 playerInput.ValueRW.IsJumping = true;

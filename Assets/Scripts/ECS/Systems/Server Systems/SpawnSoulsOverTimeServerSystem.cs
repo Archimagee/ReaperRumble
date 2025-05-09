@@ -21,7 +21,7 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
     private readonly AABB _spawnBounds = new()
     {
         Center = float3.zero,
-        Extents = new float3(48f, 15f, 39f)
+        Extents = new float3(48f, 30f, 39f)
     };
 
     private Entity _soulGroupPrefab;
@@ -84,7 +84,7 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
         RaycastInput raycastInput = new RaycastInput()
         {
             Start = randomSpawnPos,
-            End = randomSpawnPos + new float3(0f, -30f, 0f),
+            End = randomSpawnPos + new float3(0f, -50f, 0f),
             Filter = new CollisionFilter { BelongsTo = ~0u, CollidesWith = 1u << 2 }
         };
 

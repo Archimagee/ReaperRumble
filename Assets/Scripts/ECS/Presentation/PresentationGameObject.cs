@@ -16,6 +16,11 @@ public class PresentationGameObject : MonoBehaviour
         _world = world;
     }
 
+    public Entity GetEntity()
+    {
+        return _entityToPresent;
+    }
+
 
 
     public void OnDestroy()

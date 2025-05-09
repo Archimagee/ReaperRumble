@@ -6,32 +6,32 @@ using Unity.Entities;
 public class EntitySpawnerAuthoring : MonoBehaviour
 {
     [Header("Entities")]
-    [SerializeField] private PlayerAuthoring _playerPrefab;
-    [SerializeField] private PlayerColliderAuthoring _playerColliderPrefab;
-    [SerializeField] private PlayerCameraAuthoring _playerCameraPrefab;
-    [SerializeField] private SoulGroupAuthoring _soulGroupPrefab;
-    [SerializeField] private SoulAuthoring _soulPrefab;
+    [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] private GameObject _playerColliderPrefab;
+    [SerializeField] private GameObject _playerCameraPrefab;
+    [SerializeField] private GameObject _soulGroupPrefab;
+    [SerializeField] private GameObject _soulPrefab;
 
     [Header("Challenges")]
-    [SerializeField] private ChallengeAuthoring _parkourChallengePrefab;
+    [SerializeField] private GameObject _parkourChallengePrefab;
 
     [Header("Disasters")]
-    [SerializeField] private DisasterAuthoring _lightningStormDisasterPrefab;
-    [SerializeField] private DisasterAuthoring _meteorShowerDisasterPrefab;
+    [SerializeField] private GameObject _lightningStormDisasterPrefab;
+    [SerializeField] private GameObject _meteorShowerDisasterPrefab;
     [SerializeField] private GameObject _meteorPrefab;
-    [SerializeField] private DisasterAuthoring _lavaFloodDisasterPrefab;
-    [SerializeField] private DisasterAuthoring _tornadoDisasterPrefab;
+    [SerializeField] private GameObject _lavaFloodDisasterPrefab;
+    [SerializeField] private GameObject _tornadoDisasterPrefab;
 
     [Header("Abilities")]
     [SerializeField] private GameObject _poisonVialAbilityPrefab;
-    [SerializeField] private PoisonFieldAuthoring _poisonFieldPrefab;
+    [SerializeField] private GameObject _poisonFieldPrefab;
 
     [Header("VFX")]
-    [SerializeField] private VFXAuthoring _scytheSlashVFX;
-    [SerializeField] private VFXAuthoring _lightningStrikeIncomingVFX;
-    [SerializeField] private VFXAuthoring _lightningStrikeVFX;
-    [SerializeField] private VFXAuthoring _meteorImpactVFX;
-    [SerializeField] private VFXAuthoring _sixShooterTracerVFX;
+    [SerializeField] private GameObject _scytheSlashVFX;
+    [SerializeField] private GameObject _lightningStrikeIncomingVFX;
+    [SerializeField] private GameObject _lightningStrikeVFX;
+    [SerializeField] private GameObject _meteorImpactVFX;
+    //[SerializeField] private GameObject _sixShooterTracerVFX;
 
 
 
@@ -42,11 +42,11 @@ public class EntitySpawnerAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.None);
             AddComponent(entity, new EntitySpawnerPrefabs
             {
-                PlayerPrefabEntity = GetEntity(authoring._playerPrefab, TransformUsageFlags.Renderable),
+                PlayerPrefabEntity = GetEntity(authoring._playerPrefab, TransformUsageFlags.Dynamic),
                 PlayerColliderPrefabEntity = GetEntity(authoring._playerColliderPrefab, TransformUsageFlags.Dynamic),
-                PlayerCameraPrefabEntity = GetEntity(authoring._playerCameraPrefab, TransformUsageFlags.Renderable),
+                PlayerCameraPrefabEntity = GetEntity(authoring._playerCameraPrefab, TransformUsageFlags.Dynamic),
                 SoulGroupPrefabEntity = GetEntity(authoring._soulGroupPrefab, TransformUsageFlags.Dynamic),
-                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Renderable),
+                SoulPrefabEntity = GetEntity(authoring._soulPrefab, TransformUsageFlags.Dynamic),
                 ParkourChallengePrefabEntity = GetEntity(authoring._parkourChallengePrefab, TransformUsageFlags.Dynamic),
             });
 
@@ -56,7 +56,7 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 LightningStrikeIncomingVFXPrefabEntity = GetEntity(authoring._lightningStrikeIncomingVFX, TransformUsageFlags.Dynamic),
                 LightningStrikeVFXPrefabEntity = GetEntity(authoring._lightningStrikeVFX, TransformUsageFlags.Dynamic),
                 MeteorImpactVFXPrefabEntity = GetEntity(authoring._meteorImpactVFX, TransformUsageFlags.Dynamic),
-                SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic)
+                //SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic)
             });
 
             AddComponent(entity, new AbilityPrefabs

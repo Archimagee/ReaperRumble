@@ -130,16 +130,21 @@ public partial class LightningStormDisasterSystem : SystemBase
                         PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hit.Entity).ghostId });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-                    if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).IsEmpty)
+
+
+                    if (SystemAPI.HasBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup))
                     {
-                        rpcEntity = ecb.CreateEntity();
-                        ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                        if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).IsEmpty)
                         {
-                            GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
-                            Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Length, 2),
-                            Position = strikePosition
-                        });
-                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                            rpcEntity = ecb.CreateEntity();
+                            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
+                            {
+                                GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                                Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Length, 2),
+                                Position = strikePosition
+                            });
+                            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                        }
                     }
                 }
 
