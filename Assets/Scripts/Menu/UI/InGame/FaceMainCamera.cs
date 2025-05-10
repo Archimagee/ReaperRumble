@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class FaceMainCamera : MonoBehaviour
 {
-    void Update()
+    [SerializeField] private bool _reverse;
+    void LateUpdate()
     {
-        transform.LookAt(Camera.main.transform.position);
+        if (_reverse) transform.forward = Camera.main.transform.forward;
+        else transform.forward = -Camera.main.transform.forward;
     }
 }

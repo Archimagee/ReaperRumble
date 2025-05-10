@@ -16,8 +16,7 @@ public partial struct PresentationGameObjectCleanupSystem : ISystem
         {
             if (cleanup.Instance == null) continue;
 
-            PresentationGameObjectDestructionManager destructionManager;
-            cleanup.Instance.TryGetComponent<PresentationGameObjectDestructionManager>(out destructionManager);
+            cleanup.Instance.TryGetComponent(out PresentationGameObjectDestructionManager destructionManager);
 
             if (destructionManager != null) destructionManager.Destroy(cleanup.Instance);
             else Object.Destroy(cleanup.Instance.gameObject);

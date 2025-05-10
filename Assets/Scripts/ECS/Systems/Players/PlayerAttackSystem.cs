@@ -87,6 +87,9 @@ partial struct PlayerAttackSystem : ISystem
                             Strength = 22f
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                        Entity hitVFX = ecb.Instantiate(SystemAPI.GetSingleton<VFXPrefabs>().HitVFXPrefabEntity);
+                        ecb.SetComponent(hitVFX, new LocalTransform() { Position = SystemAPI.GetComponent<LocalTransform>(hitEntity).Position, Rotation = quaternion.identity, Scale = 1f });
                     }
                 }
 

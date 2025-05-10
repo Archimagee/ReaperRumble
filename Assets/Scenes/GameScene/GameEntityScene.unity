@@ -4677,6 +4677,7 @@ MonoBehaviour:
   _lightningStrikeIncomingVFX: {fileID: 8093041872391995893, guid: 948dc695ac19bbf4f93a108393452557, type: 3}
   _lightningStrikeVFX: {fileID: 727581923118649637, guid: 22511ad2f1e15a444a14698f18be4ff1, type: 3}
   _meteorImpactVFX: {fileID: 7333746763176810457, guid: c3e319b8d47397349b0a0d25c0125fd6, type: 3}
+  _HitVFX: {fileID: 8702699283883482646, guid: 03c88657e7cdae743b455693b10f94a7, type: 3}
 --- !u!4 &1120766919
 Transform:
   m_ObjectHideFlags: 0

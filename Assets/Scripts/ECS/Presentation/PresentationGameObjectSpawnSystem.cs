@@ -1,4 +1,3 @@
-using System.Collections;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
@@ -12,13 +11,15 @@ public partial struct PresentationGameObjectSpawnSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (Entity entity in SystemAPI.QueryBuilder().WithAll<LocalToWorld, PresentationGameObjectPrefab>()
+        foreach (Entity entity in SystemAPI.QueryBuilder().WithAll<LocalToWorld>()
+            .WithAny<PresentationGameObjectPrefab, LocalPresentationGameObjectPrefab>()
             .WithNone<PresentationGameObjectCleanup>()
             .Build().ToEntityArray(Allocator.Temp))
         {
             GameObject newGameObject;
 
-            if (SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity) && SystemAPI.IsComponentEnabled<GhostOwnerIsLocal>(entity))
+            if (!SystemAPI.HasComponent<GhostOwnerIsLocal>(entity) && SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity)
+                || SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity) && SystemAPI.IsComponentEnabled<GhostOwnerIsLocal>(entity))
             {
                 LocalPresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<LocalPresentationGameObjectPrefab>(entity);
                 newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);

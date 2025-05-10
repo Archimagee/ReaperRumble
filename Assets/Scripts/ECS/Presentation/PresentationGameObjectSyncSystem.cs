@@ -17,5 +17,10 @@ public partial struct PresentationGameObjectSyncSystem : ISystem
             transform.Value.position = localToWorld.ValueRO.Position;
             transform.Value.rotation = localToWorld.ValueRO.Rotation;
         }
+
+        foreach ((RefRO<LocalToWorld> localToWorld, UnityEngineComponent<RectTransform> transform) in SystemAPI.Query<RefRO<LocalToWorld>, SystemAPI.ManagedAPI.UnityEngineComponent<RectTransform>>())
+        {
+            transform.Value.position = localToWorld.ValueRO.Position;
+        }
     }
 }

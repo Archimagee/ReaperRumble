@@ -10,9 +10,9 @@ using Unity.NetCode;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class TriggerChallengeServerSystem : SystemBase
 {
-    private double _lastChallengeAt = 0f;
-    private readonly double _firstChallengeDelaySeconds = 3f;
-    private readonly double _challengeCooldownSeconds = 45f;
+    private double _lastChallengeAt = 0d;
+    private readonly double _firstChallengeDelaySeconds = 10d;
+    private readonly double _challengeCooldownSeconds = 45d;
     private Random _random = new();
 
 
