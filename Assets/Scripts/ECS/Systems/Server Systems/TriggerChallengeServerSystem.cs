@@ -11,8 +11,8 @@ using Unity.NetCode;
 public partial class TriggerChallengeServerSystem : SystemBase
 {
     private double _lastChallengeAt = 0d;
-    private readonly double _firstChallengeDelaySeconds = 10d;
-    private readonly double _challengeCooldownSeconds = 45d;
+    private readonly double _firstChallengeDelaySeconds = 13d;
+    private readonly double _challengeCooldownSeconds = 75d;
     private Random _random = new();
 
 

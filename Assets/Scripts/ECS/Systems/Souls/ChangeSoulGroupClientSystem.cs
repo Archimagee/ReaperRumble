@@ -94,7 +94,7 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             soulElementArray.Dispose();
 
 
-            if (soulsToKeep.Length == 0)
+            if (soulsToKeep.Length == 0 && SystemAPI.GetComponent<SoulGroupTarget>(groupToMoveFrom).MyTarget == Entity.Null)
             {
                 DestroySoulGroup(groupToMoveFrom, ecb);
             }

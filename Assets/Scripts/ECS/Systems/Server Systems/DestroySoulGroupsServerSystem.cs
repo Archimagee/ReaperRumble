@@ -26,7 +26,7 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
 
         foreach ((RefRW<DestroySoulGroup> destroy, RefRO<GhostInstance> ghost, Entity entity) in SystemAPI.Query<RefRW<DestroySoulGroup>, RefRO<GhostInstance>>().WithEntityAccess())
         {
-            if (currentTime >= destroy.ValueRO.TimeToDestroyAt + 1d)
+            if (currentTime >= destroy.ValueRO.TimeToDestroyAt + 1d && destroy.ValueRO.SoulsDestroyed)
             {
                 ecb.DestroyEntity(entity);
             }
@@ -48,7 +48,13 @@ public partial class DestroySoulGroupsServerSystem : SystemBase
             foreach ((RefRO<GhostInstance> ghostInstance, RefRO<SoulGroupTag> soulGroup, Entity soulGroupEntity)
                 in SystemAPI.Query<RefRO<GhostInstance>, RefRO<SoulGroupTag>>().WithEntityAccess())
             {
-                if (ghostInstance.ValueRO.ghostId == destroyRequest.ValueRO.GroupToDestroyID) ecb.AddComponent(soulGroupEntity, new DestroySoulGroup() { TimeToDestroyAt = currentTime, SoulsDestroyed = false });
+                if (ghostInstance.ValueRO.ghostId == destroyRequest.ValueRO.GroupToDestroyID)
+                {
+                    if (SystemAPI.GetComponent<SoulGroupTarget>(soulGroupEntity).MyTarget == Entity.Null)
+                    {
+                        ecb.AddComponent(soulGroupEntity, new DestroySoulGroup() { TimeToDestroyAt = currentTime, SoulsDestroyed = false });
+                    }
+                }
             }
             ecb.DestroyEntity(rpcEntity);
         }

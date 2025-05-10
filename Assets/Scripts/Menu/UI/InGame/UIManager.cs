@@ -16,7 +16,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Color _depositAvailableColor;
     [SerializeField] private Color _depositUnavailableColor;
 
+    [SerializeField] private GameObject _announcementGO;
     [SerializeField] private TextMeshProUGUI _announcementText;
+
+    [SerializeField] private float _gameTimeSeconds;
+    private float _gameTimeLeft;
+    [SerializeField] private TextMeshProUGUI _timerText;
 
     private float _lastCooldown;
     private float _currentDepositCooldown;
@@ -31,7 +36,8 @@ public class UIManager : MonoBehaviour
 
     public void Start()
     {
-        _announcementText.gameObject.SetActive(false);
+        _gameTimeLeft = _gameTimeSeconds;
+        _announcementGO.SetActive(false);
     }
 
 
@@ -52,7 +58,16 @@ public class UIManager : MonoBehaviour
             _depositCooldownFill.fillAmount = _currentDepositCooldown / _lastCooldown;
         }
 
-        if (_announcementText.gameObject.activeSelf && _hideAnnouncementAt <= Time.time) _announcementText.gameObject.SetActive(false);
+        if (_announcementGO.activeInHierarchy && _hideAnnouncementAt <= Time.time) _announcementGO.SetActive(false);
+
+        _gameTimeLeft -= Time.deltaTime;
+        if (_gameTimeLeft <= 0f) SendAnnouncement("Game Over!", 100f);
+
+        _timerText.text = "";
+        if (TimeSpan.FromSeconds(_gameTimeLeft).Minutes < 10) _timerText.text += "0";
+        _timerText.text += TimeSpan.FromSeconds(_gameTimeLeft).Minutes.ToString() + ":";
+        if (TimeSpan.FromSeconds(_gameTimeLeft).Seconds < 10) _timerText.text += "0";
+        _timerText.text += TimeSpan.FromSeconds(_gameTimeLeft).Seconds.ToString();
     }
 
 
@@ -84,6 +99,6 @@ public class UIManager : MonoBehaviour
         _hideAnnouncementAt = Time.time + timeSeconds;
 
         _announcementText.text = text;
-        _announcementText.gameObject.SetActive(true);
+        _announcementGO.SetActive(true);
     }
 }

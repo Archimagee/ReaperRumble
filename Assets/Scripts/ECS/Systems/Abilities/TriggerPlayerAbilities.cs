@@ -65,23 +65,36 @@ public partial class TriggerPlayerAbilities : SystemBase
         Unity.Physics.RaycastHit hit = new();
         bool hasHit = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CastRay(raycastInput, out hit);
 
-        Debug.Log(raycastInput.Start);
-        Debug.Log(raycastInput.End);
+        Entity gunshotVFX = ecb.Instantiate(SystemAPI.GetSingleton<VFXPrefabs>().SixShooterTracerVFXPrefabEntity);
+        ecb.SetComponent(gunshotVFX, new LocalTransform() { Position = playerPosition, Scale = 1f, Rotation =  quaternion.identity });
+        
+
+
         if (hasHit)
         {
             Entity hitPlayer = hit.Entity;
-            Debug.Log("Hit player " + hitPlayer);
 
             float3 knockbackDirection = playerFacingDirection;
-            knockbackDirection.y = math.clamp(knockbackDirection.y, 0f, 0.03f / _sixShooterKnockbackStrength);
-            ecb.SetComponent(hitPlayer, new Knockback() { KnockbackDirection = playerFacingDirection, Decay = _sixShooterKnockbackDecay, Strength = _sixShooterKnockbackStrength });
-
             Entity rpcEntity = ecb.CreateEntity();
-            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC() {
-                Amount = _sixShooterSoulsOrphaned,
-                GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).ghostId,
-                Position = SystemAPI.GetComponent<LocalTransform>(hitPlayer).Position });
+            ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC()
+            {
+                PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hitPlayer).ghostId,
+                KnockbackDirection = knockbackDirection,
+                Strength = _sixShooterKnockbackStrength
+            });
             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+            if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).IsEmpty)
+            {
+                rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC()
+                {
+                    Amount = _sixShooterSoulsOrphaned,
+                    GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).ghostId,
+                    Position = SystemAPI.GetComponent<LocalTransform>(hitPlayer).Position
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+            }
         }
     }
 

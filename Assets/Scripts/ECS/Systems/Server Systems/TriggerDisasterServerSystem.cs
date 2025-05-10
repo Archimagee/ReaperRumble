@@ -11,7 +11,7 @@ using Unity.Mathematics;
 public partial class TriggerDisasterServerSystem : SystemBase
 {
     private double _lastDisasterAt = 0d;
-    private readonly double _firstDisasterDelaySeconds = 18d;
+    private readonly double _firstDisasterDelaySeconds = 20d;
     private readonly double _disasterCooldownSeconds = 90d;
     private Random _random = new();
 
@@ -37,7 +37,7 @@ public partial class TriggerDisasterServerSystem : SystemBase
             || currentTime >= _lastDisasterAt + _disasterCooldownSeconds)
         {
             _lastDisasterAt = currentTime;
-            DisasterType newDisaster = (DisasterType)_random.NextInt(0, System.Enum.GetValues(typeof(DisasterType)).Length);
+            DisasterType newDisaster = (DisasterType)_random.NextInt(0, System.Enum.GetValues(typeof(DisasterType)).Length - 1);
 
             Entity rpc = EntityManager.CreateEntity();
             ecb.AddComponent(rpc, new StartDisasterRequestRPC() { DisasterType = newDisaster, Seed = _random.NextUInt() });
@@ -57,8 +57,8 @@ public enum DisasterType
 {
     LightningStorm,
     MeteorShower,
-    LavaFlood,
-    Tornado
+    Tornado,
+    LavaFlood
 }
 
 public struct StartDisasterRequestRPC : IRpcCommand

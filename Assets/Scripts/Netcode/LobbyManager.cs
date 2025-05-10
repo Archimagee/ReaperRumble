@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
-using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -197,7 +196,7 @@ public class LobbyManager : MonoBehaviour
 
         await LobbyService.Instance.UpdatePlayerAsync(_currentLobby.Id, playerId, playerOptions);
         _thisPlayerData.PlayerName = displayName;
-        SetPlayerAbility(PlayerAbility.SixShooter);
+        SetPlayerAbility(PlayerAbility.PoisonVial);
 
         _lobbyCodeText.text = _currentLobby.LobbyCode;
         _lobbyNameText.text = _currentLobby.Name;
