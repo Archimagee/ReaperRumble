@@ -62,6 +62,9 @@ public partial class MoveSouls : SystemBase
 
         this.CompleteDependency();
         ecb.Playback(EntityManager);
+
+        groups.Dispose();
+        souls.Dispose();
         groupPositions.Dispose();
         soulPositions.Dispose();
     }

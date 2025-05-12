@@ -5,6 +5,7 @@ using Unity.NetCode;
 using UnityEngine.VFX;
 using UnityEngine;
 using Unity.Mathematics;
+using System;
 
 
 
@@ -79,6 +80,8 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
             NativeArray<Entity> soulsToMove = new(soulElementArray.Length, Allocator.Temp);
 
 
+            if (SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).IsEmpty || SystemAPI.GetBuffer<SoulBufferElement>(groupToMoveFrom).Length < changeData.AmountOfSoulsToMove)
+                throw new Exception("Tried to move " + changeData.AmountOfSoulsToMove + " from soul group " + changeData.SoulGroupToMoveFrom + " to " + changeData.SoulGroupToMoveTo + ", but the group didn't have enough souls");
 
             for (int i = 0; i < changeData.AmountOfSoulsToMove; i++)
             {
@@ -165,15 +168,19 @@ public partial class ChangeSoulGroupClientSystem : SystemBase
 
     public void SetSoulColor(Entity soul, Entity owner)
     {
-        VisualEffect vfx = EntityManager.GetComponentObject<VisualEffect>(soul);
-        Vector4 color;
-
-        if (owner == Entity.Null) color = new Vector4(0.32f, 0.2f, 0.7f, 1f);
-        else
+        if (SystemAPI.ManagedAPI.HasComponent<VisualEffect>(soul))
         {
-            color = SystemAPI.GetComponent<PlayerData>(owner).MyColour;
+            VisualEffect vfx = SystemAPI.ManagedAPI.GetComponent<VisualEffect>(soul);
+            Vector4 color;
+
+            if (owner == Entity.Null) color = new Vector4(0.32f, 0.2f, 0.7f, 1f);
+            else
+            {
+                color = SystemAPI.GetComponent<PlayerData>(owner).MyColour;
+            }
+            vfx.SetVector4("SoulColor", color);
         }
-        vfx.SetVector4("SoulColor", color);
+        else throw new Exception("Tried to set colour of soul " + soul + " but it does not have a visual effect component");
     }
 
 
