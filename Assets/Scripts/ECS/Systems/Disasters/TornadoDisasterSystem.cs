@@ -43,7 +43,7 @@ public partial class TornadoDisasterSystem : SystemBase
                 random = new Unity.Mathematics.Random();
                 random.InitState(seed.ValueRO.Seed);
 
-                localTransformTornado.ValueRW.Position = new float3(0f, -500f, 0f);
+                localTransformTornado.ValueRW.Position = new float3(-500f, -500f, -500f);
             }
             if (tornadoData.ValueRO.SpawnTime == 0.0 && SystemAPI.Time.ElapsedTime >= tornadoData.ValueRO.StartTime + tornadoData.ValueRO.SpawnDelaySeconds)
             {
@@ -85,7 +85,7 @@ public partial class TornadoDisasterSystem : SystemBase
                     ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC()
                     {
                         KnockbackDirection = new float3(localTransformTornado.ValueRO.Position.x - localTransformPlayer.ValueRO.Position.x, 0f, localTransformTornado.ValueRO.Position.z - localTransformPlayer.ValueRO.Position.z),
-                        Strength = math.lerp(tornadoData.ValueRO.KnockbackStrength, 0f, math.clamp(playerDistance - tornadoData.ValueRO.TornadoInnerRange, 0f, tornadoData.ValueRO.TornadoOuterRange) - tornadoData.ValueRO.TornadoInnerRange / (tornadoData.ValueRO.TornadoOuterRange - tornadoData.ValueRO.TornadoInnerRange)),
+                        Strength = 0.02f * math.lerp(tornadoData.ValueRO.KnockbackStrength, 0f, math.clamp(playerDistance - tornadoData.ValueRO.TornadoInnerRange, 0f, tornadoData.ValueRO.TornadoOuterRange) - tornadoData.ValueRO.TornadoInnerRange / (tornadoData.ValueRO.TornadoOuterRange - tornadoData.ValueRO.TornadoInnerRange)),
                         PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(playerEntity).ghostId
                     });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);

@@ -11,7 +11,7 @@ using Unity.Collections;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class SpawnSoulsOverTimeServerSystem : SystemBase
 {
-    private double _nextSpawnAt = 1.0;
+    private double _nextSpawnAt = 3.0;
 
     private readonly AABB _spawnBounds = new()
     {
@@ -38,7 +38,7 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
     {
         double currentTime = SystemAPI.Time.ElapsedTime;
 
-        if (currentTime >= _nextSpawnAt && SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build().ToEntityArray(Allocator.Temp).Length <= 20)
+        if (currentTime >= _nextSpawnAt && SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build().ToEntityArray(Allocator.Temp).Length <= 15)
         {
             float3 spawnPosition = GetSpawnPosition() + new float3(0f, 1.5f, 0f);
 
@@ -61,7 +61,7 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
                 EntityManager.GetBuffer<SoulBufferElement>(newSoulGroup).Add(new SoulBufferElement() { Soul = newSoul });
             }
 
-            _nextSpawnAt += _random.NextDouble(0.1d, 0.1d);
+            _nextSpawnAt += _random.NextDouble(5d, 10d);
         }
     }
 

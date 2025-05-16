@@ -26,7 +26,8 @@ partial struct PlayerAttackSystem : ISystem
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<LocalTransform> localTransform, Entity playerEntity) in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>().WithEntityAccess())
+        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<LocalTransform> localTransform, RefRO<GhostInstance> ghost, Entity playerEntity) 
+            in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<GhostInstance>>().WithAll<GhostOwnerIsLocal>().WithEntityAccess())
         {
             if (playerInput.ValueRO.IsAttacking)
             {
@@ -54,6 +55,14 @@ partial struct PlayerAttackSystem : ISystem
                     Effect = RRVFX.ScytheSlash,
                     Location = localTransform.ValueRO.Position,
                     Rotation = localTransform.ValueRO.Rotation
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC
+                {
+                    PlayerGhostID = ghost.ValueRO.ghostId,
+                    KnockbackDirection = playerForward,
+                    Strength = 15f
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 

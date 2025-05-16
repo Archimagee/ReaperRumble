@@ -9,7 +9,7 @@ using Unity.Transforms;
 
 
 [BurstCompile]
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
 public partial struct MovePlayers : ISystem
 {
     [BurstCompile]
@@ -32,7 +32,7 @@ public partial struct MovePlayers : ISystem
                         + (playerTransform.ValueRO.Right() * input.x))
                         * player.ValueRO.Speed;
 
-            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y - (knockback.ValueRO.KnockbackDirection.y * knockback.ValueRO.Strength), 0f);
+            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y - (knockback.ValueRO.KnockbackValue.y), 0f);
 
 
 
@@ -47,12 +47,15 @@ public partial struct MovePlayers : ISystem
 
 
 
-            if (knockback.ValueRO.Strength != 0f)
-            {
-                float newKnockbackStrength = math.clamp(knockback.ValueRO.Strength - knockback.ValueRO.Decay, 0f, knockback.ValueRO.Strength);
-                knockback.ValueRW.Strength = newKnockbackStrength;
-                newVelocity += knockback.ValueRO.KnockbackDirection * newKnockbackStrength;
-            }
+            //if (knockback.ValueRO.Strength != 0f)
+            //{
+            //    float newKnockbackStrength = math.clamp(knockback.ValueRO.Strength - knockback.ValueRO.Decay, 0f, knockback.ValueRO.Strength);
+            //    knockback.ValueRW.Strength = newKnockbackStrength;
+            //    newVelocity += knockback.ValueRO.KnockbackDirection * newKnockbackStrength;
+            //}
+
+            newVelocity += knockback.ValueRO.KnockbackValue;
+            knockback.ValueRW.KnockbackValue = math.lerp(knockback.ValueRO.KnockbackValue, float3.zero, 0.07f);
 
 
 

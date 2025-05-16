@@ -29,13 +29,19 @@ public partial class PlayerKnockbackServerSystem : SystemBase
         {
             foreach ((RefRO<GhostInstance> ghostInstance, RefRW<Knockback> knockback, RefRW<LocalTransform> localTransform) in SystemAPI.Query<RefRO<GhostInstance>, RefRW<Knockback>, RefRW<LocalTransform>>())
             {
-                float3 knockbackDirection = knockbackRequest.ValueRO.KnockbackDirection;
-
                 if (ghostInstance.ValueRO.ghostId == knockbackRequest.ValueRO.PlayerGhostID)
                 {
-                    knockback.ValueRW.KnockbackDirection = math.normalize(knockbackDirection);
-                    knockback.ValueRW.Strength = knockbackRequest.ValueRO.Strength;
-                    knockback.ValueRW.Decay = 0.4f;
+                    //float3 currentKnockback = knockback.ValueRO.KnockbackDirection * knockback.ValueRO.Strength;
+                    //float3 newKnockback = currentKnockback + math.normalize(knockbackRequest.ValueRO.KnockbackDirection) * knockbackRequest.ValueRO.Strength;
+
+                    //float3 knockbackDirection = math.normalize(newKnockback);
+                    //float knockbackStrength = newKnockback.x / knockbackDirection.x;
+
+                    knockback.ValueRW.KnockbackValue += knockbackRequest.ValueRO.KnockbackDirection * knockbackRequest.ValueRO.Strength;
+                    //knockback.ValueRW.Strength = knockbackStrength;
+                    //knockback.ValueRW.Decay = 0.4f;
+
+                    break;
                 }
             }
 
@@ -49,7 +55,7 @@ public partial class PlayerKnockbackServerSystem : SystemBase
 
 public struct Knockback : IComponentData
 {
-    public float3 KnockbackDirection;
-    public float Strength;
-    public float Decay;
+    public float3 KnockbackValue;
+    //public float Strength;
+    //public float Decay;
 }
