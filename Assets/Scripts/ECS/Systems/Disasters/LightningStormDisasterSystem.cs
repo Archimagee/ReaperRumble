@@ -132,20 +132,13 @@ public partial class LightningStormDisasterSystem : SystemBase
 
 
 
-                    if (SystemAPI.HasBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup))
+                    rpcEntity = ecb.CreateEntity();
+                    ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                     {
-                        if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).IsEmpty)
-                        {
-                            rpcEntity = ecb.CreateEntity();
-                            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
-                            {
-                                GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
-                                Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Length, 2),
-                                Position = strikePosition
-                            });
-                            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-                        }
-                    }
+                        GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                        Amount = 2
+                    });
+                    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
                 }
 
 

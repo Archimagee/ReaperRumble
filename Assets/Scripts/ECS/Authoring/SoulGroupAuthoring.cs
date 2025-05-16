@@ -11,8 +11,8 @@ public class SoulGroupAuthoring : MonoBehaviour
         public override void Bake(SoulGroupAuthoring authoring)
         {
             Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new SoulGroupTag { });
-            AddComponent(entity, new SoulGroupTarget { });
+            AddComponent<SoulGroupTag>(entity);
+            AddComponent<SoulGroupTarget>(entity);
         }
     }
 }
@@ -29,6 +29,7 @@ public struct SoulBufferElement : IBufferElementData
     }
 }
 
+[GhostComponent]
 public struct SoulGroupTarget : IComponentData
 {
     [GhostField] public Entity MyTarget;

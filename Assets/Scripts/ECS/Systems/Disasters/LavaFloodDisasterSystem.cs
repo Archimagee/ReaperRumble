@@ -63,17 +63,13 @@ public partial class LavaFloodDisasterSystem : SystemBase
                         });
                         ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-                        if (SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).Length > 0)
+                        rpcEntity = ecb.CreateEntity();
+                        ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                         {
-                            rpcEntity = ecb.CreateEntity();
-                            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
-                            {
-                                GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).ghostId,
-                                Amount = lavaData.ValueRO.LavaSoulsOrphaned,
-                                Position = SystemAPI.GetComponent<LocalTransform>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).Position
-                            });
-                            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-                        }
+                            GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).ghostId,
+                            Amount = 1
+                        });
+                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
                         lavaData.ValueRW.LastTickedAt = SystemAPI.Time.ElapsedTime;
                     }

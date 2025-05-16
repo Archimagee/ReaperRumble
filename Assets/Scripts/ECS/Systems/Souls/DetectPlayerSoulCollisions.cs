@@ -9,58 +9,50 @@ using Unity.NetCode;
 
 [BurstCompile]
 [UpdateInGroup(typeof(AfterPhysicsSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class DetectPlayerSoulCollisions : SystemBase
 {
     protected override void OnCreate()
     {
-        RequireForUpdate<PlayerCollider>();
+        RequireForUpdate<Soul>();
+        RequireForUpdate<Player>();
     }
 
 
 
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new(Allocator.TempJob);
 
 
-        EntityQuery query = SystemAPI.QueryBuilder().WithAll<Player>().WithAll<GhostOwnerIsLocal>().WithAll<PlayerSoulGroup>().Build();
 
-        NativeArray<Entity> players = query.ToEntityArray(Allocator.Temp);
+        NativeArray<Entity> players = SystemAPI.QueryBuilder().WithAll<Player>().WithAll<PlayerSoulGroup>().Build().ToEntityArray(Allocator.Temp);
 
         NativeHashMap<Entity, Entity> playerSoulGroups = new(players.Length, Allocator.TempJob);
-        NativeHashMap<Entity, int> playerSoulGroupGhostIDs = new(players.Length, Allocator.TempJob);
         foreach (Entity playerEntity in players)
         {
-            playerSoulGroups.Add(SystemAPI.GetComponent<SoulWorldCollider>(playerEntity).ColliderEntity, SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup);
-            playerSoulGroupGhostIDs.Add(SystemAPI.GetComponent<SoulWorldCollider>(playerEntity).ColliderEntity, SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup).ghostId);
+            playerSoulGroups.Add(playerEntity, SystemAPI.GetComponent<PlayerSoulGroup>(playerEntity).MySoulGroup);
         }
 
         players.Dispose();
 
 
 
-        query = SystemAPI.QueryBuilder().WithAll<Soul>().WithAll<SoulGroupMember>().Build();
-        NativeArray<Entity> soulEntities = query.ToEntityArray(Allocator.Temp);
-        NativeHashMap<Entity, SoulGroupMember> souls = new(soulEntities.Length, Allocator.TempJob);
-        NativeHashMap<Entity, int> soulSoulGroupGhostIDs = new(soulEntities.Length, Allocator.TempJob);
+        NativeArray<Entity> soulEntities = SystemAPI.QueryBuilder().WithAll<Soul>().Build().ToEntityArray(Allocator.Temp);
+        NativeHashMap<Entity, Entity> soulSoulGroups = new(soulEntities.Length, Allocator.TempJob);
         foreach (Entity soulEntity in soulEntities)
         {
-            if (SystemAPI.HasComponent<SoulGroupMember>(soulEntity))
-            {
-                souls.Add(soulEntity, SystemAPI.GetComponent<SoulGroupMember>(soulEntity));
-                soulSoulGroupGhostIDs.Add(soulEntity, SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<SoulGroupMember>(soulEntity).MyGroup).ghostId);
-            }
+            soulSoulGroups.Add(soulEntity, SystemAPI.GetComponent<SoulGroupMember>(soulEntity).MyGroup);
         }
+
+        soulEntities.Dispose();
 
 
 
         var job = new PlayerSoulCollisionJob
         {
             PlayerSoulGroups = playerSoulGroups,
-            PlayerSoulGroupGhostIDs = playerSoulGroupGhostIDs,
-            SoulEntities = souls,
-            SoulSoulGroupGhostIDs = soulSoulGroupGhostIDs,
+            SoulSoulGroups = soulSoulGroups,
             Ecb = ecb
         };
 
@@ -68,10 +60,7 @@ public partial class DetectPlayerSoulCollisions : SystemBase
         Dependency.Complete();
 
         playerSoulGroups.Dispose();
-        playerSoulGroupGhostIDs.Dispose();
-        soulEntities.Dispose();
-        soulSoulGroupGhostIDs.Dispose();
-        souls.Dispose();
+        soulSoulGroups.Dispose();
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
@@ -81,26 +70,24 @@ public partial class DetectPlayerSoulCollisions : SystemBase
 
 
 [BurstCompile]
-struct PlayerSoulCollisionJob : ICollisionEventsJob
+struct PlayerSoulCollisionJob : ITriggerEventsJob
 {
     public NativeHashMap<Entity, Entity> PlayerSoulGroups;
-    public NativeHashMap<Entity, int> PlayerSoulGroupGhostIDs;
-    public NativeHashMap<Entity, SoulGroupMember> SoulEntities;
-    public NativeHashMap<Entity, int> SoulSoulGroupGhostIDs;
+    public NativeHashMap<Entity, Entity> SoulSoulGroups;
     public EntityCommandBuffer Ecb;
 
-    public void Execute(CollisionEvent collisionEvent)
+    public void Execute(TriggerEvent triggerEvent)
     {
-        Entity entityA = collisionEvent.EntityA;
-        Entity entityB = collisionEvent.EntityB;
+        Entity entityA = triggerEvent.EntityA;
+        Entity entityB = triggerEvent.EntityB;
 
 
 
-        if (PlayerSoulGroups.ContainsKey(entityA) && SoulEntities.ContainsKey(entityB))
+        if (PlayerSoulGroups.ContainsKey(entityA) && SoulSoulGroups.ContainsKey(entityB))
         {
             HandleSoulCollision(entityA, entityB);
         }
-        else if (PlayerSoulGroups.ContainsKey(entityB) && SoulEntities.ContainsKey(entityA))
+        else if (PlayerSoulGroups.ContainsKey(entityB) && SoulSoulGroups.ContainsKey(entityA))
         {
             HandleSoulCollision(entityB, entityA);
         }
@@ -110,13 +97,9 @@ struct PlayerSoulCollisionJob : ICollisionEventsJob
 
     public void HandleSoulCollision(Entity player, Entity soul)
     {
-        if (SoulEntities[soul].MyGroup != PlayerSoulGroups[player])
+        if (SoulSoulGroups[soul] != PlayerSoulGroups[player])
         {
             Ecb.AddComponent(soul, new ChangeSoulGroup { SoulGroupToMoveTo = PlayerSoulGroups[player] });
-
-            Entity rpcEntity = Ecb.CreateEntity();
-            Ecb.AddComponent(rpcEntity, new ChangeSoulGroupRequestRPC() { Amount = 1, GroupIDFrom = SoulSoulGroupGhostIDs[soul], GroupIDTo = PlayerSoulGroupGhostIDs[player] });
-            Ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
         }
     }
 }

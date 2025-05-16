@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
 
     public void AddScore(int playerNumber, int newScore)
     {
-        Debug.Log("Player " + playerNumber + " scored " + newScore + " souls!");
+        throw new NotImplementedException("Add score not implemented");
     }
 
     public void SetSoulCount(int amount)

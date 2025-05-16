@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
+using Unity.NetCode;
 
 
 
@@ -10,7 +11,7 @@ public partial class PlayAnnouncementSystem : SystemBase
 {
     protected override void OnCreate()
     {
-        RequireForUpdate<PlayAnnouncementAt>();
+        RequireAnyForUpdate(SystemAPI.QueryBuilder().WithAny<PlayAnnouncementAt>().WithAny<PlayAnnouncementAtRPC>().Build());
     }
 
 
@@ -34,6 +35,16 @@ public partial class PlayAnnouncementSystem : SystemBase
             }
         }
 
+        foreach ((RefRO<PlayAnnouncementAtRPC> announcement, Entity rpcEntity) in SystemAPI.Query<RefRO<PlayAnnouncementAtRPC>>().WithAll<ReceiveRpcCommandRequest>().WithEntityAccess())
+        {
+            if (currentTime >= announcement.ValueRO.TimeToPlayAt)
+            {
+                UIManager.Instance.SendAnnouncement(announcement.ValueRO.AnnouncementToPlay.ToString(), 5f);
+
+                ecb.DestroyEntity(rpcEntity);
+            }
+        }
+
 
 
         ecb.Playback(EntityManager);
@@ -42,6 +53,12 @@ public partial class PlayAnnouncementSystem : SystemBase
 }
 
 public partial struct PlayAnnouncementAt : IComponentData
+{
+    public FixedString64Bytes AnnouncementToPlay;
+    public double TimeToPlayAt;
+}
+
+public partial struct PlayAnnouncementAtRPC : IRpcCommand
 {
     public FixedString64Bytes AnnouncementToPlay;
     public double TimeToPlayAt;

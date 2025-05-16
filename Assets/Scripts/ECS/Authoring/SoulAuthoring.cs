@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
 
 
 
@@ -18,6 +19,9 @@ public class SoulAuthoring : MonoBehaviour
             Entity entity = GetEntity(TransformUsageFlags.Renderable);
             AddComponent(entity, new Soul() { Speed = authoring._soulSpeed, SeparationForce = authoring._soulSeparationForce });
             AddComponent(entity, new SoulFacingDirection() { FacingDirection = new float3(0f, 0f, 1f) });
+            AddComponent(entity, new SoulGroupMember() { MyGroup = Entity.Null });
+            AddComponent<SoulGroupWasChanged>(entity);
+            AddComponent<SoulColorChanged>(entity);
         }
     }
 }
@@ -31,7 +35,7 @@ public struct Soul : IComponentData
 }
 public struct SoulGroupMember : IComponentData
 {
-    public Entity MyGroup;
+    [GhostField] public Entity MyGroup;
 }
 
 public struct SoulFacingDirection : IComponentData
@@ -39,7 +43,7 @@ public struct SoulFacingDirection : IComponentData
     public float3 FacingDirection;
 }
 
-public struct ChangeSoulGroup : IComponentData
+public struct SoulGroupWasChanged : IComponentData
 {
-    public Entity SoulGroupToMoveTo;
+    [GhostField] public double WasChangedAt;
 }

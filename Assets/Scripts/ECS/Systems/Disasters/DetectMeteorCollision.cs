@@ -73,17 +73,13 @@ public partial class DetectMeteorCollision : SystemBase
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-                if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).IsEmpty)
+                rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                 {
-                    rpcEntity = ecb.CreateEntity();
-                    ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
-                    {
-                        GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
-                        Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).Length, 4),
-                        Position = impact.ValueRO.Position
-                    });
-                    ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-                }
+                    GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                    Amount = 3
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
 
             ecb.DestroyEntity(meteorEntity);

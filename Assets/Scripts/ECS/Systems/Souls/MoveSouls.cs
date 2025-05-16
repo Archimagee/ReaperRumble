@@ -5,13 +5,14 @@ using Unity.Collections;
 using Unity.Burst;
 using UnityEngine;
 using Unity.Physics;
+using Unity.NetCode;
 
 
 
 [BurstCompile]
 [RequireMatchingQueriesForUpdate]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class MoveSouls : SystemBase
 {
     private BufferLookup<SoulBufferElement> _lookup;
@@ -29,16 +30,14 @@ public partial class MoveSouls : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityQuery groupQuery = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build();
-        NativeArray<Entity> groups = groupQuery.ToEntityArray(Allocator.TempJob);
+        NativeArray<Entity> groups = SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().WithAll<Simulate>().Build().ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> groupPositions = new NativeHashMap<Entity, float3>(groups.Length, Allocator.TempJob);
         foreach (Entity group in groups)
         {
             groupPositions.Add(group, SystemAPI.GetComponentRO<LocalTransform>(group).ValueRO.Position);
         }
 
-        EntityQuery soulQuery = SystemAPI.QueryBuilder().WithAll<Soul>().Build();
-        NativeArray<Entity> souls = soulQuery.ToEntityArray(Allocator.TempJob);
+        NativeArray<Entity> souls = SystemAPI.QueryBuilder().WithAll<Soul>().WithAll<Simulate>().Build().ToEntityArray(Allocator.TempJob);
         NativeHashMap<Entity, float3> soulPositions = new NativeHashMap<Entity, float3>(souls.Length, Allocator.TempJob);
 
         foreach (Entity soul in souls)
@@ -50,18 +49,15 @@ public partial class MoveSouls : SystemBase
 
         _lookup.Update(this);
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         new MoveSoulJob()
         {
-            Ecb = ecb.AsParallelWriter(),
             SoulBufferLookup = _lookup,
             GroupPositions = groupPositions,
             SoulPositions = soulPositions,
             DeltaTime = SystemAPI.Time.DeltaTime
-        }.ScheduleParallel();
+        }.Schedule();
 
         this.CompleteDependency();
-        ecb.Playback(EntityManager);
 
         groups.Dispose();
         souls.Dispose();
@@ -84,7 +80,7 @@ public partial struct MoveSoulJob : IJobEntity
 
 
     [BurstCompile]
-    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulGroupMember soulGroupMember, ref SoulFacingDirection facingComponent, ref PhysicsVelocity physicsVelocity, in Entity entity)
+    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in Soul soul, in SoulGroupMember soulGroupMember, ref PhysicsVelocity velocity, ref SoulFacingDirection facingComponent, in Entity entity)
     {
         float3 separation = float3.zero;
         Entity group = soulGroupMember.MyGroup;
@@ -111,47 +107,6 @@ public partial struct MoveSoulJob : IJobEntity
             }
         }
 
-
-        physicsVelocity.Linear = separation + (facingComponent.FacingDirection * soul.Speed * (1 + (math.distance(transform.Position, groupPosition) / 45f)));
+        velocity.Linear = separation + (facingComponent.FacingDirection * soul.Speed * (1 + (math.distance(transform.Position, groupPosition) / 45f)));
     }
 }
-
-
-
-//[BurstCompile]
-//[WithAll(typeof(SoulComponent))]
-//public partial struct MoveSoulJobQuat : IJobEntity
-//{
-//    public EntityCommandBuffer.ParallelWriter Ecb;
-//    public float3 TargetPosition;
-//    [DeallocateOnJobCompletion] public NativeArray<float3> OtherPositions;
-//    public void Execute([ChunkIndexInQuery] int index, in LocalTransform transform, in SoulComponent soul, in Entity entity)
-//    {
-//        float3 separationDistance = float3.zero;
-//        float3 distanceToMove = float3.zero;
-//        float3 currentPos = transform.Position;
-//        float speed = soul.Speed + (math.distance(currentPos, TargetPosition) / 45f);
-
-//        quaternion currentRotation = transform.Rotation;
-//        quaternion directionTowards = quaternion.Euler(TargetPosition - currentPos);
-//        currentRotation = Quaternion.RotateTowards(currentRotation, directionTowards, 12.25f);
-
-//        foreach (float3 otherPosition in OtherPositions)
-//        {
-//            directionTowards = quaternion.Euler(otherPosition - currentPos);
-//            float distance = math.distance(currentPos, otherPosition);
-//            quaternion newFacing = Quaternion.RotateTowards(currentRotation, directionTowards, -0.13f);
-//            separationDistance += math.normalizesafe(-math.normalizesafe(otherPosition - currentPos) / distance) * (soul.SeparationForce / OtherPositions.Length);
-//        }
-
-//        float3 u = new float3(currentRotation.value.x, currentRotation.value.y, currentRotation.value.z);
-//        float s = currentRotation.value.w;
-//        float3 forward = new float3(0f, 0f, 1f);
-//        forward = math.normalizesafe(
-//            2.0f * math.dot(u, forward) * u
-//           + (s * s - math.dot(u, u)) * forward
-//           + 2.0f * s * math.cross(u, forward));
-
-//        Ecb.SetComponent<LocalTransform>(index, entity, new LocalTransform { Position = currentPos + separationDistance + forward * speed, Rotation = currentRotation, Scale = 1f });
-//    }
-//}

@@ -18,8 +18,7 @@ public partial struct PresentationGameObjectSpawnSystem : ISystem
         {
             GameObject newGameObject;
 
-            if (!SystemAPI.HasComponent<GhostOwnerIsLocal>(entity) && SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity)
-                || SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity) && SystemAPI.IsComponentEnabled<GhostOwnerIsLocal>(entity))
+            if (SystemAPI.HasComponent<GhostOwnerIsLocal>(entity) && SystemAPI.ManagedAPI.HasComponent<LocalPresentationGameObjectPrefab>(entity) && SystemAPI.IsComponentEnabled<GhostOwnerIsLocal>(entity))
             {
                 LocalPresentationGameObjectPrefab gameObjectPrefab = SystemAPI.ManagedAPI.GetComponent<LocalPresentationGameObjectPrefab>(entity);
                 newGameObject = Object.Instantiate(gameObjectPrefab.Prefab);

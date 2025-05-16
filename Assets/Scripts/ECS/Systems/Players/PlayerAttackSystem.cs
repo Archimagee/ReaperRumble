@@ -8,7 +8,7 @@ using Unity.NetCode;
 
 
 
-[BurstCompile]
+//[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct PlayerAttackSystem : ISystem
 {
@@ -19,7 +19,7 @@ partial struct PlayerAttackSystem : ISystem
 
 
 
-    [BurstCompile]
+    //[BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -65,18 +65,13 @@ partial struct PlayerAttackSystem : ISystem
 
                     if (hitEntity != playerEntity)
                     {
-                        Entity groupToOrphanFrom = SystemAPI.GetComponent<PlayerSoulGroup>(hitEntity).MySoulGroup;
-                        if (!SystemAPI.GetBuffer<SoulBufferElement>(groupToOrphanFrom).IsEmpty)
+                        rpcEntity = ecb.CreateEntity();
+                        ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
                         {
-                            rpcEntity = ecb.CreateEntity();
-                            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
-                            {
-                                GroupID = SystemAPI.GetComponent<GhostInstance>(groupToOrphanFrom).ghostId,
-                                Amount = math.min(SystemAPI.GetBuffer<SoulBufferElement>(groupToOrphanFrom).Length, 3),
-                                Position = SystemAPI.GetComponent<LocalTransform>(groupToOrphanFrom).Position
-                            });
-                            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-                        }
+                            GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
+                            Amount = 3
+                        });
+                        ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
                         rpcEntity = ecb.CreateEntity();
                         float3 knockback = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hitEntity).Position - localTransform.ValueRO.Position);
@@ -117,7 +112,6 @@ public struct OrphanSoulsRequestRPC : IRpcCommand
     public int Amount;
     public float3 Velocity;
     public float3 Position;
-    public int NewGroupID;
 }
 
 public struct ApplyKnockbackToPlayerRequestRPC : IRpcCommand

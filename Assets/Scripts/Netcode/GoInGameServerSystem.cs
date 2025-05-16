@@ -53,12 +53,14 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.SetName(newPlayerEntity, "Player " + playerNumber);
             ecb.SetName(newSoulGroupEntity, "Player " + playerNumber + "'s soul group");
 
+            ecb.AddBuffer<SoulBufferElement>(newSoulGroupEntity);
+
             ecb.AddComponent(newPlayerEntity, new PlayerSoulGroup { MySoulGroup = newSoulGroupEntity });
             ecb.SetComponent(newSoulGroupEntity, new SoulGroupTarget { MyTarget = newPlayerEntity });
 
             ecb.AddComponent(newPlayerEntity, new GhostOwner { NetworkId = playerNumber });
             ecb.AddComponent(newSoulGroupEntity, new GhostOwner { NetworkId = playerNumber });
-            
+
             ecb.AppendToBuffer(sourceConnection, new LinkedEntityGroup { Value = newPlayerEntity });
 
 
@@ -70,6 +72,12 @@ public partial class GoInGameServerSystem : SystemBase
                 PlayerNumber = playerNumber,
                 PlayerAbility = goInGameRequestRPC.ValueRO.PlayerAbility,
                 PlayerColor = _playerColors[playerNumber - 1]
+            });
+            ecb.AddComponent(newPlayerEntity, new PlayerData()
+            {
+                PlayerNumber = playerNumber,
+                MyAbility = goInGameRequestRPC.ValueRO.PlayerAbility,
+                MyColour = _playerColors[playerNumber - 1]
             });
 
 

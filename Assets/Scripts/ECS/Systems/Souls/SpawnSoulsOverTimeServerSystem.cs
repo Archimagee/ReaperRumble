@@ -3,7 +3,6 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
-using Unity.NetCode;
 using Unity.Collections;
 
 
@@ -12,9 +11,7 @@ using Unity.Collections;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class SpawnSoulsOverTimeServerSystem : SystemBase
 {
-    private double _nextSpawnAt = 5.0;
-
-    private NativeQueue<Entity> _spawnQueue = new(Allocator.Persistent);
+    private double _nextSpawnAt = 1.0;
 
     private readonly AABB _spawnBounds = new()
     {
@@ -22,7 +19,6 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
         Extents = new float3(48f, 30f, 39f)
     };
 
-    private Entity _soulGroupPrefab;
     Unity.Mathematics.Random _random = new();
 
 
@@ -40,35 +36,32 @@ public partial class SpawnSoulsOverTimeServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        if (_soulGroupPrefab == Entity.Null)
-        {
-            _soulGroupPrefab = SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity;
-        }
-
-
-
-        if (_spawnQueue.Count > 0)
-        {
-            Entity newSoulGroup = _spawnQueue.Dequeue();
-
-            float3 spawnPosition = GetSpawnPosition();
-            spawnPosition.y += 1f;
-            EntityManager.SetComponentData(newSoulGroup, new LocalTransform() { Position = spawnPosition });
-
-            Entity rpcEntity = EntityManager.CreateEntity();
-            EntityManager.AddComponentData(rpcEntity, new SpawnSoulsRequestRPC() { Amount = _random.NextInt(2, 5), GroupID = SystemAPI.GetComponent<GhostInstance>(newSoulGroup).ghostId, Position = spawnPosition });
-            EntityManager.AddComponent<SendRpcCommandRequest>(rpcEntity);
-        }
-
-
-
         double currentTime = SystemAPI.Time.ElapsedTime;
 
         if (currentTime >= _nextSpawnAt && SystemAPI.QueryBuilder().WithAll<SoulGroupTag>().Build().ToEntityArray(Allocator.Temp).Length <= 20)
         {
-            _spawnQueue.Enqueue(EntityManager.Instantiate(_soulGroupPrefab));
+            float3 spawnPosition = GetSpawnPosition() + new float3(0f, 1.5f, 0f);
 
-            _nextSpawnAt += _random.NextDouble(15d, 25d);
+            Entity newSoulGroup = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
+            EntityManager.SetName(newSoulGroup, "Random Spawn Soul Group");
+            EntityManager.SetComponentData(newSoulGroup, new LocalTransform() { Position = spawnPosition, Rotation = quaternion.identity, Scale = 1f });
+            EntityManager.AddBuffer<SoulBufferElement>(newSoulGroup);
+
+            for (int i = 0; i < _random.NextInt(2, 5); i++)
+            {
+                Entity newSoul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
+                EntityManager.SetName(newSoul, "Random Spawn Soul");
+                EntityManager.SetComponentData(newSoul, new LocalTransform()
+                {
+                    Position = spawnPosition + _random.NextFloat3(new float3(-1f, -1f, -1f), new float3(1f, 1f, 1f)),
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+                EntityManager.SetComponentData<SoulGroupMember>(newSoul, new SoulGroupMember() { MyGroup = newSoulGroup });
+                EntityManager.GetBuffer<SoulBufferElement>(newSoulGroup).Add(new SoulBufferElement() { Soul = newSoul });
+            }
+
+            _nextSpawnAt += _random.NextDouble(0.1d, 0.1d);
         }
     }
 
