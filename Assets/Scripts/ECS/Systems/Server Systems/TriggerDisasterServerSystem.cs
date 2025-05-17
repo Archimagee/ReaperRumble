@@ -37,7 +37,7 @@ public partial class TriggerDisasterServerSystem : SystemBase
             || currentTime >= _lastDisasterAt + _disasterCooldownSeconds)
         {
             _lastDisasterAt = currentTime;
-            DisasterType newDisaster = (DisasterType)_random.NextInt(0, System.Enum.GetValues(typeof(DisasterType)).Length - 1);
+            DisasterType newDisaster = (DisasterType)_random.NextInt(0, System.Enum.GetValues(typeof(DisasterType)).Length);
 
             Entity rpc = EntityManager.CreateEntity();
             ecb.AddComponent(rpc, new StartDisasterRequestRPC() { DisasterType = newDisaster, Seed = _random.NextUInt() });
