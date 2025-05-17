@@ -8,6 +8,7 @@ using UnityEngine;
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[UpdateAfter(typeof(MovePlayers))]
 public partial class MovePlayerCamera : SystemBase
 {
     private float3 _cameraRotation = float3.zero;
@@ -28,7 +29,7 @@ public partial class MovePlayerCamera : SystemBase
     {
         foreach ((RefRO<PlayerCameraFollowTarget> cameraTarget, RefRW<LocalTransform> cameraTransform) in SystemAPI.Query<RefRO<PlayerCameraFollowTarget>, RefRW<LocalTransform>>())
         {
-            cameraTransform.ValueRW.Rotation = SystemAPI.GetComponent<ClientPlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
+            cameraTransform.ValueRW.Rotation = SystemAPI.GetComponent<PlayerInput>(cameraTarget.ValueRO.Target).ClientCameraRotation;
 
             float3 newPosition = SystemAPI.GetComponent<LocalTransform>(cameraTarget.ValueRO.Target).Position + new float3(0f, 0.3f, 0f);
 

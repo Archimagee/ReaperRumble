@@ -20,7 +20,7 @@ partial struct HandleClientPlayerInput : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<NetworkStreamInGame>();
-        state.RequireForUpdate<ClientPlayerInput>();
+        state.RequireForUpdate<PlayerInput>();
     }
 
 
@@ -31,7 +31,7 @@ partial struct HandleClientPlayerInput : ISystem
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, UnityEngineComponent<Animator> animator, RefRO<ClientPlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player, RefRO<LocalTransform> playerTransform) in SystemAPI.Query<RefRW<ClientPlayerInput>, UnityEngineComponent<Animator>, RefRO<ClientPlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<PlayerInput> playerInput, UnityEngineComponent<Animator> animator, RefRO<PlayerInputSettings> inputSettings, RefRO<PlayerSoulGroup> soulGroup, RefRO<Player> player, RefRO<LocalTransform> playerTransform) in SystemAPI.Query<RefRW<PlayerInput>, UnityEngineComponent<Animator>, RefRO<PlayerInputSettings>, RefRO<PlayerSoulGroup>, RefRO<Player>, RefRO<LocalTransform>>().WithAll<GhostOwnerIsLocal>())
         {
             float2 input = new float2();
             if (Input.GetKey(KeyCode.W))
@@ -99,26 +99,24 @@ public struct SpawnSoulsRequestRPC : IRpcCommand
     public float3 Position;
 }
 
-
-[GhostComponent]
-public struct ClientPlayerInput : IInputComponentData
+public struct PlayerInput : IInputComponentData
 {
-    [GhostField] public float2 ClientInput;
+    public float2 ClientInput;
 
-    [GhostField] public bool IsJumping;
+    public bool IsJumping;
 
     public bool IsUsingAbility;
     public double LastUsedAbilityAt;
 
     public double LastAttackedAt;
-    [GhostField] public bool IsAttacking;
+    public bool IsAttacking;
 
     public float3 ClientPlayerRotationEuler;
     public quaternion ClientCameraRotation;
     public float3 ClientCameraRotationEuler;
 }
 
-public struct ClientPlayerInputSettings : IInputComponentData
+public struct PlayerInputSettings : IInputComponentData
 {
     public float LookSensitivity;
 }

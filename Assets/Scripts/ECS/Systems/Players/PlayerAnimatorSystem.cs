@@ -10,15 +10,15 @@ partial struct PlayerAnimatorSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<ClientPlayerInput>();
+        state.RequireForUpdate<PlayerInput>();
     }
 
 
 
     public void OnUpdate(ref SystemState state)
     {
-        foreach ((RefRW<ClientPlayerInput> playerInput, UnityEngineComponent<Animator> animator) 
-            in SystemAPI.Query<RefRW<ClientPlayerInput>, UnityEngineComponent<Animator>>().WithNone<GhostOwnerIsLocal>())
+        foreach ((RefRW<PlayerInput> playerInput, UnityEngineComponent<Animator> animator) 
+            in SystemAPI.Query<RefRW<PlayerInput>, UnityEngineComponent<Animator>>().WithNone<GhostOwnerIsLocal>())
         {
             if (playerInput.ValueRO.ClientInput.x != 0f || playerInput.ValueRO.ClientInput.y != 0f) animator.Value.SetBool("IsRunning", true);
 

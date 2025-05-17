@@ -5,8 +5,6 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Physics.Systems;
-using UnityEngine;
-using System.Linq;
 using Unity.NetCode;
 
 
@@ -16,6 +14,7 @@ using Unity.NetCode;
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial struct PoisonVialSystem : ISystem
 {
+    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         NativeArray<EntityQuery> queries = new NativeArray<EntityQuery>(2, Allocator.Temp);
@@ -27,6 +26,7 @@ public partial struct PoisonVialSystem : ISystem
 
 
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);

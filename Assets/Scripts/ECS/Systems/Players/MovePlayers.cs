@@ -17,44 +17,39 @@ public partial struct MovePlayers : ISystem
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<Knockback> knockback, RefRW<LocalTransform> playerTransform, RefRO<Player> player)
-            in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<Knockback>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRW<PlayerInput> playerInput, RefRW<IsPlayerGrounded> grounded, RefRW<PhysicsVelocity> playerVelocity, RefRW<Knockback> knockback, RefRW<LocalTransform> playerTransform, RefRO<Player> player)
+            in SystemAPI.Query<RefRW<PlayerInput>, RefRW<IsPlayerGrounded>, RefRW<PhysicsVelocity>, RefRW<Knockback>, RefRW<LocalTransform>, RefRO<Player>>().WithAll<Simulate>().WithAll<GhostOwnerIsLocal>())
         {
-            float2 input = playerInput.ValueRO.ClientInput;
-
-
-
             playerTransform.ValueRW.Rotation = quaternion.EulerXYZ(playerInput.ValueRO.ClientPlayerRotationEuler);
 
 
 
-            float3 newVelocity = ((playerTransform.ValueRO.Forward() * input.y)
-                        + (playerTransform.ValueRO.Right() * input.x))
-                        * player.ValueRO.Speed;
-
-            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y - (knockback.ValueRO.KnockbackValue.y), 0f);
+            float3 newVelocity = float3.zero;
+            newVelocity += playerInput.ValueRO.ClientInput.y * playerTransform.ValueRO.Forward() * player.ValueRO.Speed;
+            newVelocity += playerInput.ValueRO.ClientInput.x * playerTransform.ValueRO.Right() * player.ValueRO.Speed;
+            newVelocity += new float3(0f, playerVelocity.ValueRO.Linear.y, 0f);
 
 
 
             if (playerInput.ValueRO.IsJumping && grounded.ValueRW.IsGrounded)
             {
-                if (playerVelocity.ValueRO.Linear.y <= 0f - player.ValueRO.JumpSpeed * 2) newVelocity.y = player.ValueRO.JumpSpeed / 3;
-                else if (playerVelocity.ValueRO.Linear.y <= (player.ValueRO.JumpSpeed / 3) * 2) newVelocity.y = player.ValueRO.JumpSpeed;
-                else newVelocity.y += player.ValueRO.JumpSpeed / 3;
+                //if (playerVelocity.ValueRO.Linear.y <= 0f - player.ValueRO.JumpSpeed * 2) noKnockbackVelocity.y = player.ValueRO.JumpSpeed / 3;
+                //else if (playerVelocity.ValueRO.Linear.y <= (player.ValueRO.JumpSpeed / 3) * 2) noKnockbackVelocity.y = player.ValueRO.JumpSpeed;
+                //else noKnockbackVelocity.y += player.ValueRO.JumpSpeed / 3;
+
+                newVelocity.y = player.ValueRO.JumpSpeed;
+
                 playerInput.ValueRW.IsJumping = false;
                 grounded.ValueRW.IsGrounded = false;
             }
 
 
 
-            //if (knockback.ValueRO.Strength != 0f)
-            //{
-            //    float newKnockbackStrength = math.clamp(knockback.ValueRO.Strength - knockback.ValueRO.Decay, 0f, knockback.ValueRO.Strength);
-            //    knockback.ValueRW.Strength = newKnockbackStrength;
-            //    newVelocity += knockback.ValueRO.KnockbackDirection * newKnockbackStrength;
-            //}
+            if (knockback.ValueRO.KnockbackValue.y > 0f) knockback.ValueRW.KnockbackValue.y /= 3f;
 
             newVelocity += knockback.ValueRO.KnockbackValue;
+
+            knockback.ValueRW.KnockbackValue.y = 0f;
             knockback.ValueRW.KnockbackValue = math.lerp(knockback.ValueRO.KnockbackValue, float3.zero, 0.07f);
 
 

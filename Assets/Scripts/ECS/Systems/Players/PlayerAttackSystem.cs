@@ -8,26 +8,26 @@ using Unity.NetCode;
 
 
 
-//[BurstCompile]
+[BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 partial struct PlayerAttackSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<ClientPlayerInput>();
+        state.RequireForUpdate<PlayerInput>();
     }
 
 
 
-    //[BurstCompile]
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
 
 
-        foreach ((RefRW<ClientPlayerInput> playerInput, RefRO<LocalTransform> localTransform, RefRO<GhostInstance> ghost, Entity playerEntity) 
-            in SystemAPI.Query<RefRW<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<GhostInstance>>().WithAll<GhostOwnerIsLocal>().WithEntityAccess())
+        foreach ((RefRW<PlayerInput> playerInput, RefRO<LocalTransform> localTransform, RefRO<GhostInstance> ghost, Entity playerEntity) 
+            in SystemAPI.Query<RefRW<PlayerInput>, RefRO<LocalTransform>, RefRO<GhostInstance>>().WithAll<GhostOwnerIsLocal>().WithEntityAccess())
         {
             if (playerInput.ValueRO.IsAttacking)
             {
@@ -61,7 +61,7 @@ partial struct PlayerAttackSystem : ISystem
                 ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC
                 {
                     PlayerGhostID = ghost.ValueRO.ghostId,
-                    KnockbackDirection = playerForward,
+                    KnockbackDirection = math.mul(playerInput.ValueRO.ClientCameraRotation, new float3(0f, 0f, 1f)),
                     Strength = 15f
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);

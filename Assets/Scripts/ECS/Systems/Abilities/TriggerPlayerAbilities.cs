@@ -15,9 +15,10 @@ using Unity.Physics;
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
 public partial class TriggerPlayerAbilities : SystemBase
 {
+    [BurstCompile]
     protected override void OnCreate()
     {
-        RequireForUpdate<ClientPlayerInput>();
+        RequireForUpdate<PlayerInput>();
     }
 
 
@@ -29,8 +30,8 @@ public partial class TriggerPlayerAbilities : SystemBase
 
 
 
-        foreach ((RefRO<ClientPlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PhysicsVelocity> playerVelocity, RefRO<PlayerData> playerClass)
-            in SystemAPI.Query<RefRO<ClientPlayerInput>, RefRO<LocalTransform>, RefRO<PhysicsVelocity>, RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
+        foreach ((RefRO<PlayerInput> playerInput, RefRO<LocalTransform> playerTransform, RefRO<PhysicsVelocity> playerVelocity, RefRO<PlayerData> playerClass)
+            in SystemAPI.Query<RefRO<PlayerInput>, RefRO<LocalTransform>, RefRO<PhysicsVelocity>, RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
         {
             if (!playerInput.ValueRO.IsUsingAbility) break;
 
@@ -53,6 +54,7 @@ public partial class TriggerPlayerAbilities : SystemBase
     private readonly float _sixShooterKnockbackDecay = 0.8f;
     private readonly int _sixShooterSoulsOrphaned = 3;
 
+    [BurstCompile]
     public void UseSixShooter(float3 playerPosition, float3 playerFacingDirection, EntityCommandBuffer ecb)
     {
         RaycastInput raycastInput = new RaycastInput()
@@ -102,6 +104,7 @@ public partial class TriggerPlayerAbilities : SystemBase
 
     #region PoisonVial
 
+    [BurstCompile]
     public void UsePoisonVial(float3 playerPosition, float3 playerFacingDirection, float3 playerVelocity, EntityCommandBuffer ecb)
     {
         Entity rpcEntity = ecb.CreateEntity();

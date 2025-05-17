@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerSpeed: 7
-  _playerJumpSpeed: 6
+  _playerJumpSpeed: 6.5
   _playerAttackCooldownSeconds: 3
 --- !u!114 &2207385700326887840
 MonoBehaviour:
