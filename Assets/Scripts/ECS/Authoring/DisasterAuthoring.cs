@@ -14,7 +14,7 @@ public class DisasterAuthoring : MonoBehaviour
     {
         public override void Bake(DisasterAuthoring authoring)
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+            Entity entity = GetEntity(TransformUsageFlags.None);
             AddComponent(entity, new DisasterData()
             {
                 TimeLastsForSeconds = authoring._timeLastsForSeconds,

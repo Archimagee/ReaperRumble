@@ -41,6 +41,7 @@ public class FightMusicManager : MonoBehaviour
         else if (disaster == DisasterType.LightningStorm) CurrentTrack = MusicNames.LightningStorm;
         else if (disaster == DisasterType.MeteorShower) CurrentTrack = MusicNames.MeteorShower;
         else if (disaster == DisasterType.Tornado) CurrentTrack = MusicNames.Tornado;
+        else if (disaster == DisasterType.Eruption) CurrentTrack = MusicNames.Eruption;
     }
     public void PlayFightMusic()
     {

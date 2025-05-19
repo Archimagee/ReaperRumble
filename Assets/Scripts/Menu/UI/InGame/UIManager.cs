@@ -12,7 +12,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _soulCountText;
     [SerializeField] private TextMeshProUGUI _depositCooldownText;
     [SerializeField] private Image _depositCooldownFill;
-    [SerializeField] private Image _depositCooldownBG;
     [SerializeField] private Color _depositAvailableColor;
     [SerializeField] private Color _depositUnavailableColor;
 
@@ -51,7 +50,7 @@ public class UIManager : MonoBehaviour
             {
                 _currentDepositCooldown = 0;
                 _depositCooldownText.text = "";
-                _depositCooldownBG.color = _depositAvailableColor;
+                _depositCooldownFill.color = _depositAvailableColor;
             }
             else _depositCooldownText.text = ((int)TimeSpan.FromMilliseconds(_currentDepositCooldown).TotalSeconds).ToString() + "s";
 
@@ -91,7 +90,7 @@ public class UIManager : MonoBehaviour
     {
         _currentDepositCooldown = amount;
         _lastCooldown = amount;
-        _depositCooldownBG.color = _depositUnavailableColor;
+        _depositCooldownFill.color = _depositUnavailableColor;
     }
 
     public void SendAnnouncement(string text, float timeSeconds)

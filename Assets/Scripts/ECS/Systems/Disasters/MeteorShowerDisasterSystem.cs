@@ -41,7 +41,7 @@ public partial class MeteorShowerDisasterSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
 

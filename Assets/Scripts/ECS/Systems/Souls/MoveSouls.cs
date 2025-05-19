@@ -53,8 +53,7 @@ public partial class MoveSouls : SystemBase
         {
             SoulBufferLookup = _lookup,
             GroupPositions = groupPositions,
-            SoulPositions = soulPositions,
-            DeltaTime = SystemAPI.Time.DeltaTime
+            SoulPositions = soulPositions
         }.Schedule();
 
         this.CompleteDependency();
@@ -71,11 +70,9 @@ public partial class MoveSouls : SystemBase
 [BurstCompile]
 public partial struct MoveSoulJob : IJobEntity
 {
-    public EntityCommandBuffer.ParallelWriter Ecb;
     [ReadOnly] public NativeHashMap<Entity, float3> GroupPositions;
     [ReadOnly] public NativeHashMap<Entity, float3> SoulPositions;
     [ReadOnly] public BufferLookup<SoulBufferElement> SoulBufferLookup;
-    [ReadOnly] public float DeltaTime;
 
 
 

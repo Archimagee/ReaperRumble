@@ -1951,8 +1951,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 0
         Category05: 0
         Category06: 0
@@ -4966,6 +4966,8 @@ MonoBehaviour:
   _meteorPrefab: {fileID: 1139366034430314029, guid: 930521f79aa1547428c71885983440ad, type: 3}
   _lavaFloodDisasterPrefab: {fileID: 848827953088278407, guid: 474bca98769114a418d044794002ca99, type: 3}
   _tornadoDisasterPrefab: {fileID: 127861024565438286, guid: 3069495f2920acc458601e98b56e4d97, type: 3}
+  _eruptionDisasterPrefab: {fileID: 8241933184922967778, guid: 5f7bc7e34555687438af49100cae01b2, type: 3}
+  _eruptionRockPrefab: {fileID: 1139366034430314029, guid: 92592992a5d7c9a4fbdba306a51a9dcb, type: 3}
   _poisonVialAbilityPrefab: {fileID: 8525339322839954538, guid: 431b2ae8561b31e4b9e5152a339220b0, type: 3}
   _poisonFieldPrefab: {fileID: 2979897922149724865, guid: 3862ec7f4a962ae4897e2ea81d80802a, type: 3}
   _scytheSlashVFX: {fileID: 5136648168912748210, guid: e0b0433b4429f8349b2291419c5e3a24, type: 3}
@@ -6267,8 +6269,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 0
         Category05: 0
         Category06: 0
@@ -6790,8 +6792,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 0
         Category05: 0
         Category06: 0
@@ -8010,8 +8012,8 @@ MonoBehaviour:
       m_Value:
         Category00: 0
         Category01: 0
-        Category02: 1
-        Category03: 0
+        Category02: 0
+        Category03: 1
         Category04: 0
         Category05: 0
         Category06: 0

@@ -21,6 +21,8 @@ public class EntitySpawnerAuthoring : MonoBehaviour
     [SerializeField] private GameObject _meteorPrefab;
     [SerializeField] private GameObject _lavaFloodDisasterPrefab;
     [SerializeField] private GameObject _tornadoDisasterPrefab;
+    [SerializeField] private GameObject _eruptionDisasterPrefab;
+    [SerializeField] private GameObject _eruptionRockPrefab;
 
     [Header("Abilities")]
     [SerializeField] private GameObject _poisonVialAbilityPrefab;
@@ -73,7 +75,9 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 MeteorShowerDisasterPrefabEntity = GetEntity(authoring._meteorShowerDisasterPrefab, TransformUsageFlags.None),
                 MeteorPrefabEntity = GetEntity(authoring._meteorPrefab, TransformUsageFlags.Dynamic),
                 LavaFloodDisasterPrefabEntity = GetEntity(authoring._lavaFloodDisasterPrefab, TransformUsageFlags.Dynamic),
-                TornadoDisasterPrefabEntity = GetEntity(authoring._tornadoDisasterPrefab, TransformUsageFlags.Dynamic)
+                TornadoDisasterPrefabEntity = GetEntity(authoring._tornadoDisasterPrefab, TransformUsageFlags.Dynamic),
+                EruptionDisasterPrefabEntity = GetEntity(authoring._eruptionDisasterPrefab, TransformUsageFlags.Dynamic),
+                EruptionRockPrefabEntity = GetEntity(authoring._eruptionRockPrefab, TransformUsageFlags.Dynamic)
             });
         }
     }
@@ -99,6 +103,8 @@ public struct DisasterPrefabs : IComponentData
     public Entity MeteorPrefabEntity;
     public Entity LavaFloodDisasterPrefabEntity;
     public Entity TornadoDisasterPrefabEntity;
+    public Entity EruptionDisasterPrefabEntity;
+    public Entity EruptionRockPrefabEntity;
 }
 
 public struct AbilityPrefabs : IComponentData

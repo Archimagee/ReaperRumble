@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7468428943114029536
+--- !u!1 &1139366034430314029
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,55 +8,146 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8217469129831111644}
-  - component: {fileID: 9199856799111944138}
-  - component: {fileID: -1445628142447225633}
-  - component: {fileID: -4629163203990147642}
-  - component: {fileID: 6199783048049064585}
-  - component: {fileID: 2247127338697327544}
+  - component: {fileID: 8122314669494046264}
+  - component: {fileID: 1421066990048243846}
+  - component: {fileID: 335336668146305147}
+  - component: {fileID: -1732375331417756101}
+  - component: {fileID: 6621189037155369919}
+  - component: {fileID: -3584428473670971289}
+  - component: {fileID: 1559956515371951981}
   m_Layer: 0
-  m_Name: Soul
+  m_Name: EruptionRockPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8217469129831111644
+--- !u!4 &8122314669494046264
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
+  m_GameObject: {fileID: 1139366034430314029}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9199856799111944138
+--- !u!23 &1421066990048243846
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139366034430314029}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -3033667219593020291, guid: 67e7efcac3f216d47a775c22f0bba7ee, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &335336668146305147
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139366034430314029}
+  m_Mesh: {fileID: -8803958151903233206, guid: 30cae8e972715b749be6b81604a85c91, type: 3}
+--- !u!114 &-1732375331417756101
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
+  m_GameObject: {fileID: 1139366034430314029}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fbe8efc2a8c63144a7e7fdd35a3d71a, type: 3}
+  m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _soulSpeed: 7.5
-  _soulSeparationForce: 1.25
---- !u!114 &-1445628142447225633
+  m_MotionType: 0
+  m_Smoothing: 1
+  m_Mass: 1
+  m_LinearDamping: 0.01
+  m_AngularDamping: Infinity
+  m_InitialLinearVelocity:
+    x: 0
+    y: 0
+    z: 0
+  m_InitialAngularVelocity:
+    x: 0
+    y: 0
+    z: 0
+  m_GravityFactor: 0
+  m_OverrideDefaultMassDistribution: 0
+  m_CenterOfMass:
+    x: 0
+    y: 0
+    z: 0
+  m_Orientation:
+    Value:
+      x: 0
+      y: 0
+      z: 0
+    RotationOrder: 4
+  m_InertiaTensor:
+    x: 0.4
+    y: 0.4
+    z: 0.4
+  m_WorldIndex: 0
+  m_CustomTags:
+    Tag00: 0
+    Tag01: 0
+    Tag02: 0
+    Tag03: 0
+    Tag04: 0
+    Tag05: 0
+    Tag06: 0
+    Tag07: 0
+--- !u!114 &6621189037155369919
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
+  m_GameObject: {fileID: 1139366034430314029}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b275e5f92732148048d7b77e264ac30e, type: 3}
@@ -68,9 +159,9 @@ MonoBehaviour:
     y: 0
     z: 0
   m_PrimitiveSize:
-    x: 1
-    y: 1
-    z: 1
+    x: 6
+    y: 6
+    z: 6
   m_PrimitiveOrientation:
     Value:
       x: -0
@@ -78,21 +169,21 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_Capsule:
-    Height: 1
-    Radius: 0.5
+    Height: 6
+    Radius: 3
     Axis: 2
   m_Cylinder:
-    Height: 1
-    Radius: 0.5
+    Height: 6
+    Radius: 3
     Axis: 2
   m_CylinderSideCount: 20
-  m_SphereRadius: 0.5
+  m_SphereRadius: 3
   m_MinimumSkinnedVertexWeight: 0.1
   m_ConvexHullGenerationParameters:
-    m_SimplificationTolerance: 0.015
+    m_SimplificationTolerance: 0.01
     m_BevelRadius: 0.05
     m_MinimumAngle: 2.5000002
-  m_CustomMesh: {fileID: 0}
+  m_CustomMesh: {fileID: 8691780276856062721, guid: 97158fe0173828245883d7fc00f5a889, type: 3}
   m_ForceUnique: 0
   m_Material:
     m_SupportsTemplate: 1
@@ -114,10 +205,10 @@ MonoBehaviour:
       m_Override: 0
       m_Value:
         Category00: 0
-        Category01: 1
+        Category01: 0
         Category02: 0
         Category03: 0
-        Category04: 0
+        Category04: 1
         Category05: 0
         Category06: 0
         Category07: 0
@@ -151,7 +242,7 @@ MonoBehaviour:
         Category00: 1
         Category01: 0
         Category02: 1
-        Category03: 1
+        Category03: 0
         Category04: 0
         Category05: 0
         Category06: 0
@@ -193,79 +284,39 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &-4629163203990147642
+--- !u!114 &-3584428473670971289
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
+  m_GameObject: {fileID: 1139366034430314029}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6199783048049064585
+--- !u!114 &1559956515371951981
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
+  m_GameObject: {fileID: 1139366034430314029}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MotionType: 0
-  m_Smoothing: 1
-  m_Mass: 1
-  m_LinearDamping: 0.01
-  m_AngularDamping: 0.05
-  m_InitialLinearVelocity:
-    x: 0
-    y: 0
-    z: 0
-  m_InitialAngularVelocity:
-    x: 0
-    y: 0
-    z: 0
-  m_GravityFactor: 1
-  m_OverrideDefaultMassDistribution: 0
-  m_CenterOfMass:
-    x: 0
-    y: 0
-    z: 0
-  m_Orientation:
-    Value:
-      x: 0
-      y: 0
-      z: 0
-    RotationOrder: 4
-  m_InertiaTensor:
-    x: 0.4
-    y: 0.4
-    z: 0.4
-  m_WorldIndex: 1
-  m_CustomTags:
-    Tag00: 0
-    Tag01: 0
-    Tag02: 0
-    Tag03: 0
-    Tag04: 0
-    Tag05: 0
-    Tag06: 0
-    Tag07: 0
---- !u!114 &2247127338697327544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7468428943114029536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6f542d8b58c30f42988543c1b61e584, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _presentationPrefab: {fileID: 7176338535098983290, guid: 9dc8594f92ade994aa4031eceff7d313, type: 3}
+  DefaultGhostMode: 0
+  SupportedGhostModes: 3
+  OptimizationMode: 0
+  Importance: 1
+  prefabId: 92592992a5d7c9a4fbdba306a51a9dcb
+  HasOwner: 0
+  SupportAutoCommandTarget: 1
+  TrackInterpolationDelay: 0
+  GhostGroup: 0
+  UsePreSerialization: 0
+  RollbackPredictedSpawnedGhostState: 0
+  RollbackPredictionOnStructuralChanges: 1

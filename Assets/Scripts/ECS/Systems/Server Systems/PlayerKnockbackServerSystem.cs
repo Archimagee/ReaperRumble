@@ -4,7 +4,6 @@ using Unity.Burst;
 using Unity.NetCode;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 
 
@@ -33,7 +32,6 @@ public partial class PlayerKnockbackServerSystem : SystemBase
                 if (ghostInstance.ValueRO.ghostId == knockbackRequest.ValueRO.PlayerGhostID)
                 {
                     knockback.ValueRW.KnockbackValue += math.normalize(knockbackRequest.ValueRO.KnockbackDirection) * knockbackRequest.ValueRO.Strength;
-                    Debug.Log(math.normalize(knockbackRequest.ValueRO.KnockbackDirection) * knockbackRequest.ValueRO.Strength);
 
                     break;
                 }

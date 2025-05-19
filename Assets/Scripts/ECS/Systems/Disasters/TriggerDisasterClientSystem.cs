@@ -15,7 +15,7 @@ public partial class TriggerDisasterClientSystem : SystemBase
         else if (disasterType == DisasterType.MeteorShower) return SystemAPI.GetSingleton<DisasterPrefabs>().MeteorShowerDisasterPrefabEntity;
         else if (disasterType == DisasterType.LavaFlood) return SystemAPI.GetSingleton<DisasterPrefabs>().LavaFloodDisasterPrefabEntity;
         else if (disasterType == DisasterType.Tornado) return SystemAPI.GetSingleton<DisasterPrefabs>().TornadoDisasterPrefabEntity;
-        else return Entity.Null;
+        else throw new System.Exception("Disaster of type " + disasterType + " does not have an associated prefab");
     }
 
     private string GetDisasterAnnouncement(DisasterType disasterType)
@@ -24,7 +24,8 @@ public partial class TriggerDisasterClientSystem : SystemBase
         else if (disasterType == DisasterType.MeteorShower) return "Incoming Meteor Shower OF DOOOOM!";
         else if (disasterType == DisasterType.LavaFlood) return "The Floor is LAVA!";
         else if (disasterType == DisasterType.Tornado) return "Beware the Tornado of Terror!";
-        else return "Undefined disaster announcement";
+        else if (disasterType == DisasterType.Eruption) return "Mt. Sillinamus Stirs...";
+        else throw new System.Exception("Disaster of type " + disasterType + " does not have an associated announcement message");
     }
 
 
@@ -32,18 +33,18 @@ public partial class TriggerDisasterClientSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
 
 
-        foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<StartDisasterRequestRPC> disaster, Entity recieveRpcEntity) in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<StartDisasterRequestRPC>>().WithEntityAccess())
+        foreach ((RefRO<ReceiveRpcCommandRequest> rpcCommandRequest, RefRO<StartDisasterRequestRPC> disaster, Entity recieveRpcEntity)
+            in SystemAPI.Query<RefRO<ReceiveRpcCommandRequest>, RefRO<StartDisasterRequestRPC>>().WithEntityAccess())
         {
             Entity disasterPrefab = GetDisasterPrefab(disaster.ValueRO.DisasterType);
            
             Entity newDisaster = ecb.Instantiate(disasterPrefab);
             double timeDisasterLastsFor = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<DisasterData>(disasterPrefab).TimeLastsForSeconds;
-            ecb.AddComponent(newDisaster, new EventDestroyAt() {
-                TimeToDestroyAt = timeDisasterLastsFor});
+            ecb.AddComponent(newDisaster, new EventDestroyAt() { TimeToDestroyAt = timeDisasterLastsFor });
             ecb.AddComponent(newDisaster, new EventSeed() { Seed = disaster.ValueRO.Seed });
             ecb.SetName(newDisaster, disaster.ValueRO.DisasterType.ToString());
 
