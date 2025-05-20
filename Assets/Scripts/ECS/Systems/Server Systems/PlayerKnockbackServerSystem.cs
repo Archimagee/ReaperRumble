@@ -48,6 +48,4 @@ public partial class PlayerKnockbackServerSystem : SystemBase
 public struct Knockback : IComponentData
 {
     public float3 KnockbackValue;
-    //public float Strength;
-    //public float Decay;
 }

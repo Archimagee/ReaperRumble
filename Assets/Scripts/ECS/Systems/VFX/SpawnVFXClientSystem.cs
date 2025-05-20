@@ -37,11 +37,13 @@ public partial class SpawnVFXClientSystem : SystemBase
     private Entity GetVFXPrefab(RRVFX effect)
     {
         if (effect == RRVFX.ScytheSlash) return SystemAPI.GetSingleton<VFXPrefabs>().ScytheSlashVFXPrefabEntity;
+        else if (effect == RRVFX.Fire) return SystemAPI.GetSingleton<VFXPrefabs>().FireVFXPrefabEntity;
         else return Entity.Null;
     }
 }
 
 public enum RRVFX
 {
-    ScytheSlash
+    ScytheSlash,
+    Fire
 }

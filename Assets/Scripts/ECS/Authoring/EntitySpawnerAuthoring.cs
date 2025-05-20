@@ -35,6 +35,7 @@ public class EntitySpawnerAuthoring : MonoBehaviour
     [SerializeField] private GameObject _meteorImpactVFX;
     [SerializeField] private GameObject _HitVFX;
     [SerializeField] private GameObject _sixShooterTracerVFX;
+    [SerializeField] private GameObject _fireVFX;
 
 
 
@@ -60,7 +61,8 @@ public class EntitySpawnerAuthoring : MonoBehaviour
                 LightningStrikeVFXPrefabEntity = GetEntity(authoring._lightningStrikeVFX, TransformUsageFlags.Dynamic),
                 MeteorImpactVFXPrefabEntity = GetEntity(authoring._meteorImpactVFX, TransformUsageFlags.Dynamic),
                 HitVFXPrefabEntity = GetEntity(authoring._HitVFX, TransformUsageFlags.Dynamic),
-                SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic)
+                SixShooterTracerVFXPrefabEntity = GetEntity(authoring._sixShooterTracerVFX, TransformUsageFlags.Dynamic),
+                FireVFXPrefabEntity = GetEntity(authoring._fireVFX, TransformUsageFlags.Dynamic)
             });
 
             AddComponent(entity, new AbilityPrefabs
@@ -125,4 +127,6 @@ public struct VFXPrefabs : IComponentData
     public Entity HitVFXPrefabEntity;
 
     public Entity SixShooterTracerVFXPrefabEntity;
+
+    public Entity FireVFXPrefabEntity;
 }

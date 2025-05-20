@@ -138,31 +138,10 @@ MonoBehaviour:
     - model: {fileID: 8926484042661614671}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 8926484042661614673}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 8926484042661614676}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 8926484042661614691}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614695}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614707}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614719}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 8926484042661614723}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614735}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614740}
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614743}
@@ -2461,7 +2440,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 1.2
+      m_SerializableObject: 1.3
     m_Space: -1
   m_Property:
     name: B

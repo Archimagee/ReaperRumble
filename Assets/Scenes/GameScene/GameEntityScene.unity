@@ -4976,6 +4976,7 @@ MonoBehaviour:
   _meteorImpactVFX: {fileID: 7333746763176810457, guid: c3e319b8d47397349b0a0d25c0125fd6, type: 3}
   _HitVFX: {fileID: 8702699283883482646, guid: 03c88657e7cdae743b455693b10f94a7, type: 3}
   _sixShooterTracerVFX: {fileID: 6315297340127981717, guid: a23ec52a1059ac94d8f9734384a3f8c4, type: 3}
+  _fireVFX: {fileID: 4169428328606171108, guid: 6cd23f5d966209346942e93aa920d52b, type: 3}
 --- !u!4 &1120766919
 Transform:
   m_ObjectHideFlags: 0

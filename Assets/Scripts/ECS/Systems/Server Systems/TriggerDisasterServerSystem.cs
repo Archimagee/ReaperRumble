@@ -39,8 +39,6 @@ public partial class TriggerDisasterServerSystem : SystemBase
         {
             _lastDisasterAt = currentTime;
             DisasterType newDisaster = (DisasterType)_random.NextInt(0, System.Enum.GetValues(typeof(DisasterType)).Length);
-            newDisaster = DisasterType.Eruption;
-            Debug.Log(newDisaster);
 
             if (newDisaster == DisasterType.Eruption)
             {

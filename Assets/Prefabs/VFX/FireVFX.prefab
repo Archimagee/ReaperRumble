@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8006266708577933479}
   - component: {fileID: 6491450559880293661}
   - component: {fileID: 3048652924659568544}
+  - component: {fileID: -246692838960825036}
   m_Layer: 0
   m_Name: FireVFX
   m_TagString: Untagged
@@ -114,3 +115,16 @@ VFXRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &-246692838960825036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4169428328606171108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 368c2f389ca73c749bd42c1a16b535e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lifetimeSeconds: 7

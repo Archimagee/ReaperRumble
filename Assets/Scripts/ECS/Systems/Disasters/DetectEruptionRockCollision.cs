@@ -69,6 +69,14 @@ public partial class DetectEruptionRockCollision : SystemBase
                 ecb.AddComponent(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup, new OrphanSouls() { Amount = 3 });
             }
 
+
+
+            Entity rpcEntity = ecb.CreateEntity();
+            ecb.AddComponent(rockEntity, new SpawnVFXRequest() { Effect = RRVFX.Fire, Location = impact.ValueRO.Position, Rotation = quaternion.identity });
+            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+
+
             ecb.DestroyEntity(rockEntity);
         }
 
