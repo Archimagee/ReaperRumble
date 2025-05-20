@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _timeLastsForSeconds: 50
-  _disasterType: 2
+  _disasterType: 3
 --- !u!114 &6395278186055380603
 MonoBehaviour:
   m_ObjectHideFlags: 0

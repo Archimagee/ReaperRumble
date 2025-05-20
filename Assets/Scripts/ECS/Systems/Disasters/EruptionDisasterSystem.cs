@@ -29,7 +29,7 @@ public partial class EruptionDisasterSystem : SystemBase
     private readonly AABB _impactBounds = new()
     {
         Center = float3.zero,
-        Extents = new float3(48f, 15f, 39f)
+        Extents = new float3(44f, 30f, 35f)
     };
 
 
@@ -79,7 +79,7 @@ public partial class EruptionDisasterSystem : SystemBase
                     RaycastInput raycastInput = new RaycastInput()
                     {
                         Start = randomStrikePos,
-                        End = randomStrikePos + new float3(0f, -30f, 0f),
+                        End = randomStrikePos + new float3(0f, -40f, 0f),
                         Filter = new CollisionFilter { BelongsTo = ~0u, CollidesWith = 1u << 2 }
                     };
 

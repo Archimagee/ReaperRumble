@@ -5,7 +5,6 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.NetCode;
 using UnityEngine;
-using Unity.Burst.CompilerServices;
 
 
 
@@ -84,8 +83,8 @@ public partial class TornadoDisasterSystem : SystemBase
 
                     ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC()
                     {
-                        KnockbackDirection = new float3(localTransformTornado.ValueRO.Position.x - localTransformPlayer.ValueRO.Position.x, 0f, localTransformTornado.ValueRO.Position.z - localTransformPlayer.ValueRO.Position.z),
-                        Strength = 0.02f * math.lerp(tornadoData.ValueRO.KnockbackStrength, 0f, math.clamp(playerDistance - tornadoData.ValueRO.TornadoInnerRange, 0f, tornadoData.ValueRO.TornadoOuterRange) - tornadoData.ValueRO.TornadoInnerRange / (tornadoData.ValueRO.TornadoOuterRange - tornadoData.ValueRO.TornadoInnerRange)),
+                        KnockbackDirection = new float3(localTransformTornado.ValueRO.Position + new float3(0f, 8f, 0f) - localTransformPlayer.ValueRO.Position),
+                        Strength = 0.1f * math.lerp(tornadoData.ValueRO.KnockbackStrength, 0f, math.clamp(playerDistance - tornadoData.ValueRO.TornadoInnerRange, 0f, tornadoData.ValueRO.TornadoOuterRange) - tornadoData.ValueRO.TornadoInnerRange / (tornadoData.ValueRO.TornadoOuterRange - tornadoData.ValueRO.TornadoInnerRange)),
                         PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(playerEntity).ghostId
                     });
                     ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);

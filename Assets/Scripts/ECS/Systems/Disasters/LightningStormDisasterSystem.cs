@@ -26,7 +26,7 @@ public partial class LightningStormDisasterSystem : SystemBase
 
     private readonly AABB _strikeBounds = new() {
         Center = float3.zero,
-        Extents = new float3(48f, 15f, 39f) };
+        Extents = new float3(46f, 17f, 37f) };
 
 
 
