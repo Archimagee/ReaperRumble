@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _loadingText;
+    [SerializeField] private GameObject _loadingTab;
     [SerializeField] private TextMeshProUGUI _lobbyCodeText;
     [SerializeField] private TextMeshProUGUI _lobbyNameText;
     [SerializeField] private TextMeshProUGUI _lobbyPlayercountText;
@@ -54,7 +54,7 @@ public class LobbyManager : MonoBehaviour
 
     public async void CreateLobby(string displayName)
     {
-        _loadingText.enabled = true;
+        _loadingTab.SetActive(true);
         try
         {
             _currentLobby = await LobbyService.Instance.CreateLobbyAsync("Test Lobby", 4, _lobbyOptions);
@@ -65,16 +65,26 @@ public class LobbyManager : MonoBehaviour
         }
         IsHost = true;
         _thisPlayerData.PlayerNumber = 0;
-        _loadingText.enabled = false;
+        _loadingTab.SetActive(false);
         _lobbyTab.SetActive(true);
 
         HeartbeatLobby();
         Setup(displayName);
     }
 
+    public async void LeaveLobby()
+    {
+        if (_currentLobby == null) return;
+        else
+        {
+            await LobbyService.Instance.RemovePlayerAsync(_currentLobby.Id, AuthenticationService.Instance.PlayerId);
+        }
+        _currentLobby = null;
+    }
+
     public async void JoinLobbyByCode(string code, string displayName)
     {
-        _loadingText.enabled = true;
+        _loadingTab.SetActive(true);
         try
         {
             _currentLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
@@ -87,7 +97,7 @@ public class LobbyManager : MonoBehaviour
         IsHost = false;
         _thisPlayerData.PlayerNumber = _currentLobby.Players.Count - 1;
 
-        _loadingText.enabled = false;
+        _loadingTab.SetActive(false);
         _lobbyTab.SetActive(true);
 
         Setup(displayName);
@@ -166,7 +176,7 @@ public class LobbyManager : MonoBehaviour
     public void CreateGameFromLobby()
     {
         Debug.Log("Game is starting");
-        _loadingText.enabled = true;
+        _loadingTab.SetActive(true);
         _lobbyTab.SetActive(false);
         _isGameStarting = true;
         RaiseGameCreatedFromLobby?.Invoke();

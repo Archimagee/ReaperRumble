@@ -36,6 +36,11 @@ public class MenuMusicManager : MonoBehaviour
         _music.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
+    public void StartPlaying()
+    {
+        _music.start();
+    }
+
 
 
     private void Start()

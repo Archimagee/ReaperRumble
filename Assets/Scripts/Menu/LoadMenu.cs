@@ -3,13 +3,12 @@ using Unity.Services.Core;
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
-using TMPro;
 
 
 
 public class LoadMenu : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _loadingText;
+    [SerializeField] private GameObject _loadingTab;
 
     public static LoadMenu Instance;
 
@@ -34,7 +33,7 @@ public class LoadMenu : MonoBehaviour
     {
         RaiseLoadMenuFinished += OnLoadMenuFinished;
 
-        _loadingText.enabled = true;
+        _loadingTab.SetActive(true);
 
         try
         {
@@ -53,7 +52,7 @@ public class LoadMenu : MonoBehaviour
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        _loadingText.enabled = false;
+        _loadingTab.SetActive(false);
         RaiseLoadMenuFinished?.Invoke();
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
