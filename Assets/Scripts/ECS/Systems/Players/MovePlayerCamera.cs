@@ -3,11 +3,13 @@ using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEngine;
+using Unity.NetCode;
 
 
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(MovePlayers))]
 public partial class MovePlayerCamera : SystemBase
 {

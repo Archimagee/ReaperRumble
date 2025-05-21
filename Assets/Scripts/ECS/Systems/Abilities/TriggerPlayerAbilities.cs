@@ -51,7 +51,6 @@ public partial class TriggerPlayerAbilities : SystemBase
 
     private readonly float _sixShooterRange = 100f;
     private readonly float _sixShooterKnockbackStrength = 25f;
-    private readonly float _sixShooterKnockbackDecay = 0.8f;
     private readonly int _sixShooterSoulsOrphaned = 3;
 
     [BurstCompile]

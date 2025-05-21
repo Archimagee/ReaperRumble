@@ -9,7 +9,7 @@ using Unity.Transforms;
 
 
 [BurstCompile]
-[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
+[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup), OrderFirst = true)]
 public partial struct MovePlayers : ISystem
 {
     [BurstCompile]
@@ -33,10 +33,6 @@ public partial struct MovePlayers : ISystem
 
             if (playerInput.ValueRO.IsJumping && grounded.ValueRW.IsGrounded)
             {
-                //if (playerVelocity.ValueRO.Linear.y <= 0f - player.ValueRO.JumpSpeed * 2) noKnockbackVelocity.y = player.ValueRO.JumpSpeed / 3;
-                //else if (playerVelocity.ValueRO.Linear.y <= (player.ValueRO.JumpSpeed / 3) * 2) noKnockbackVelocity.y = player.ValueRO.JumpSpeed;
-                //else noKnockbackVelocity.y += player.ValueRO.JumpSpeed / 3;
-
                 newVelocity.y = player.ValueRO.JumpSpeed;
 
                 playerInput.ValueRW.IsJumping = false;

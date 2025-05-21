@@ -2,8 +2,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.NetCode;
-using Unity.Mathematics;
-using UnityEngine;
 
 
 
@@ -12,7 +10,7 @@ using UnityEngine;
 public partial class TriggerDisasterServerSystem : SystemBase
 {
     private double _lastDisasterAt = 0d;
-    private readonly double _firstDisasterDelaySeconds = 5d;
+    private readonly double _firstDisasterDelaySeconds = 20d;
     private readonly double _disasterCooldownSeconds = 90d;
     private Unity.Mathematics.Random _random = new();
 
@@ -46,13 +44,17 @@ public partial class TriggerDisasterServerSystem : SystemBase
                 ecb.SetName(eruption, "Eruption Disaster");
                 ecb.AddComponent(eruption, new EventSeed() { Seed = _random.NextUInt() });
 
-                Entity rpc = EntityManager.CreateEntity();
-                ecb.AddComponent(rpc, new PlayAnnouncementAt() { AnnouncementToPlay = "Mt. Sillinamus Stirs...", TimeToPlayAt = SystemAPI.Time.ElapsedTime });
-                ecb.AddComponent<SendRpcCommandRequest>(rpc);
+                Entity rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new PlayAnnouncementAtRPC()
+                {
+                    AnnouncementToPlay = "Mt. Sillinamus Stirs...",
+                    TimeToPlayAt = SystemAPI.Time.ElapsedTime
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
             else
             {
-                Entity rpc = EntityManager.CreateEntity();
+                Entity rpc = ecb.CreateEntity();
                 ecb.AddComponent(rpc, new StartDisasterRequestRPC() { DisasterType = newDisaster, Seed = _random.NextUInt() });
                 ecb.AddComponent<SendRpcCommandRequest>(rpc);
             }

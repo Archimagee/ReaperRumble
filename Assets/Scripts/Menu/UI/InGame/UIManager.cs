@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -22,6 +25,14 @@ public class UIManager : MonoBehaviour
     private float _gameTimeLeft;
     [SerializeField] private TextMeshProUGUI _timerText;
 
+    [SerializeField] private GameObject scoreTab;
+    [SerializeField] private TextMeshProUGUI[] scoreText = new TextMeshProUGUI[4];
+    private Dictionary<int, int> playerScores = new Dictionary<int, int>(4);
+
+    [SerializeField] private GameObject endGameTab;
+    [SerializeField] private TextMeshProUGUI[] endGamePlayerNameText = new TextMeshProUGUI[4];
+    [SerializeField] private TextMeshProUGUI[] endGameScoreText = new TextMeshProUGUI[4];
+
     private float _lastCooldown;
     private float _currentDepositCooldown;
     private float _hideAnnouncementAt;
@@ -37,6 +48,9 @@ public class UIManager : MonoBehaviour
     {
         _gameTimeLeft = _gameTimeSeconds;
         _announcementGO.SetActive(false);
+        scoreTab.SetActive(false);
+
+        for (int i = 1; i <= scoreText.Length; i++) playerScores.Add(i, 0);
     }
 
 
@@ -58,6 +72,8 @@ public class UIManager : MonoBehaviour
         }
 
         if (_announcementGO.activeInHierarchy && _hideAnnouncementAt <= Time.time) _announcementGO.SetActive(false);
+        if (Input.GetKeyDown(KeyCode.Tab)) scoreTab.SetActive(true);
+        else if (Input.GetKeyUp(KeyCode.Tab)) scoreTab.SetActive(false);
 
         _gameTimeLeft -= Time.deltaTime;
         if (_gameTimeLeft <= 0f) SendAnnouncement("Game Over!", 100f);
@@ -76,9 +92,21 @@ public class UIManager : MonoBehaviour
         GetComponent<Canvas>().worldCamera = camera;
     }
 
-    public void AddScore(int playerNumber, int newScore)
+    public void AddScore(int playerNumber, int scoreToAdd)
     {
-        throw new NotImplementedException("Add score not implemented");
+        if (playerNumber < 1 || playerNumber > 4) throw new Exception("Tried to add score to player number " + playerNumber);
+        else
+        {
+            playerScores[playerNumber] += scoreToAdd;
+            scoreText[playerNumber].text = playerScores[playerNumber].ToString();
+        }
+    }
+
+    public NativeList<int> GetScores()
+    {
+        NativeList<int> scores = new NativeList<int>(4, Allocator.Temp);
+        for (int i = 1; i <= scoreText.Length; i++) scores.Add(playerScores[i]);
+        return scores;
     }
 
     public void SetSoulCount(int amount)
@@ -99,5 +127,31 @@ public class UIManager : MonoBehaviour
 
         _announcementText.text = text;
         _announcementGO.SetActive(true);
+    }
+
+
+
+    public void EndGame(int player1Score, int player2Score, int player3Score, int player4Score)
+    {
+        endGamePlayerNameText[0].text = "Player 1";
+        endGameScoreText[0].text = player1Score.ToString();
+
+        endGamePlayerNameText[1].text = "Player 2";
+        endGameScoreText[1].text = player2Score.ToString();
+
+        endGamePlayerNameText[2].text = "Player 3";
+        endGameScoreText[2].text = player3Score.ToString();
+
+        endGamePlayerNameText[3].text = "Player 4";
+        endGameScoreText[3].text = player4Score.ToString();
+
+        endGameTab.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Single);
     }
 }

@@ -3,7 +3,6 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Physics.Systems;
 using Unity.Physics;
-using UnityEngine;
 using Unity.NetCode;
 
 
@@ -50,6 +49,8 @@ public partial class DepositSoulsServerSystem : SystemBase
         Dependency = job.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), Dependency);
         Dependency.Complete();
 
+        ecb.Playback(EntityManager);
+        ecb = new EntityCommandBuffer(Allocator.Temp);
         playerSoulGroups.Dispose();
 
 
@@ -69,6 +70,14 @@ public partial class DepositSoulsServerSystem : SystemBase
                 {
                     AnnouncementToPlay = "Player " + SystemAPI.GetComponent<PlayerData>(player.ValueRO.MyTarget).PlayerNumber + " scored " + amount + " souls!",
                     TimeToPlayAt = SystemAPI.Time.ElapsedTime
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new AddPlayerScore()
+                {
+                    PlayerNumber = SystemAPI.GetComponent<PlayerData>(player.ValueRO.MyTarget).PlayerNumber,
+                    ScoreToAdd = amount
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
             }
@@ -117,3 +126,9 @@ struct PlayerDepositTriggerJob : ITriggerEventsJob
 
 
 public partial struct DepositSouls : IComponentData { }
+
+public partial struct AddPlayerScore : IRpcCommand
+{
+    public int PlayerNumber;
+    public int ScoreToAdd;
+}

@@ -21,7 +21,7 @@ public partial class PlayerKnockbackServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new(Allocator.TempJob);
+        EntityCommandBuffer ecb = new(Allocator.Temp);
 
 
 

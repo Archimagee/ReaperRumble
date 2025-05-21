@@ -105,6 +105,9 @@ public class StartGameManager : MonoBehaviour
         Entity playerDataEntity = clientWorld.EntityManager.CreateEntity();
         clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
 
+        Entity endGame = serverWorld.EntityManager.CreateEntity();
+        serverWorld.EntityManager.AddComponentData(endGame, new EndGameTime() { TimeToEndGameAt = 300d });
+
         MenuMusicManager.Instance.StopPlaying();
 
         Debug.Log("Host started");
