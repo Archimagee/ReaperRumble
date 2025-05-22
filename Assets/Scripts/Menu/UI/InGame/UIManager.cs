@@ -33,6 +33,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI[] endGamePlayerNameText = new TextMeshProUGUI[4];
     [SerializeField] private TextMeshProUGUI[] endGameScoreText = new TextMeshProUGUI[4];
 
+    [SerializeField] private GameObject menuTab;
+
     private float _lastCooldown;
     private float _currentDepositCooldown;
     private float _hideAnnouncementAt;
@@ -49,6 +51,7 @@ public class UIManager : MonoBehaviour
         _gameTimeLeft = _gameTimeSeconds;
         _announcementGO.SetActive(false);
         scoreTab.SetActive(false);
+        menuTab.SetActive(false);
 
         for (int i = 1; i <= scoreText.Length; i++) playerScores.Add(i, 0);
     }
@@ -74,6 +77,9 @@ public class UIManager : MonoBehaviour
         if (_announcementGO.activeInHierarchy && _hideAnnouncementAt <= Time.time) _announcementGO.SetActive(false);
         if (Input.GetKeyDown(KeyCode.Tab)) scoreTab.SetActive(true);
         else if (Input.GetKeyUp(KeyCode.Tab)) scoreTab.SetActive(false);
+
+        if (Input.GetKeyDown(KeyCode.Escape) && menuTab.activeInHierarchy == false) OpenEscapeMenu();
+        else if (Input.GetKeyDown(KeyCode.Escape) && menuTab.activeInHierarchy == true) CloseEscapeMenu();
 
         _gameTimeLeft -= Time.deltaTime;
         if (_gameTimeLeft <= 0f) SendAnnouncement("Game Over!", 100f);
@@ -131,6 +137,21 @@ public class UIManager : MonoBehaviour
 
 
 
+    public void OpenEscapeMenu()
+    {
+        menuTab.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+    public void CloseEscapeMenu()
+    {
+        menuTab.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+
+
     public void EndGame(int player1Score, int player2Score, int player3Score, int player4Score)
     {
         endGamePlayerNameText[0].text = "Player 1";
@@ -153,5 +174,10 @@ public class UIManager : MonoBehaviour
     public void ReturnToMenu()
     {
         SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Single);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
