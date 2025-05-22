@@ -91,6 +91,7 @@ public static class NetworkManager
 
         await SceneManager.LoadSceneAsync("GameScene", LoadSceneMode.Additive);
         await SceneManager.UnloadSceneAsync("MainMenuScene");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("GameScene"));
 
         Entity networkStreamEntity = _serverWorld.EntityManager.CreateEntity(ComponentType.ReadWrite<NetworkStreamRequestListen>());
         _serverWorld.EntityManager.SetName(networkStreamEntity, "NetworkStreamRequestListen");
@@ -133,6 +134,7 @@ public static class NetworkManager
 
         await SceneManager.LoadSceneAsync("GameScene", LoadSceneMode.Additive);        
         await SceneManager.UnloadSceneAsync("MainMenuScene");
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("GameScene"));
 
         Entity networkStreamEntity = _clientWorld.EntityManager.CreateEntity(ComponentType.ReadWrite<NetworkStreamRequestConnect>());
         _clientWorld.EntityManager.SetName(networkStreamEntity, "NetworkStreamRequestConnect");

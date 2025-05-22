@@ -3,6 +3,7 @@ using Unity.Services.Core;
 using UnityEngine;
 using System.Threading.Tasks;
 using System;
+using UnityEngine.SceneManagement;
 
 
 
@@ -29,6 +30,7 @@ public class LoadMenu : MonoBehaviour
     private async void Start()
     {
         _loadingTab.SetActive(true);
+        await SceneManager.LoadSceneAsync("CommonScene", LoadSceneMode.Additive);
 
         try
         {
@@ -42,7 +44,7 @@ public class LoadMenu : MonoBehaviour
 
 
         SetupEvents();
-        if (!AuthenticationService.Instance.IsSignedIn) await SignInAnonymouslyAsync();
+        await SignInAnonymouslyAsync();
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
@@ -97,7 +99,7 @@ public class LoadMenu : MonoBehaviour
     {
         try
         {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            if (!AuthenticationService.Instance.IsSignedIn) await AuthenticationService.Instance.SignInAnonymouslyAsync();
             Debug.Log("Sign in anonymously succeeded!");
 
             // Shows how to get the playerID
