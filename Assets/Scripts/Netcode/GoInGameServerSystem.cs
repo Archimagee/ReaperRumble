@@ -14,10 +14,10 @@ public partial class GoInGameServerSystem : SystemBase
 {
     private NativeArray<Entity> _connectedPlayers = new(4, Allocator.Persistent);
     private NativeList<float3> _spawnPositions = new(4, Allocator.Persistent) {
-        new float3(-46.25f, 9f, -36.5f),
-        new float3(46.25f, 9f, 36.5f),
-        new float3(46.25f, 9f, -36.5f),
-        new float3(-46.25f, 9f, 36.5f) };
+        new float3(-37.75f, 8f, -29.5f),
+        new float3(37.75f, 8f, 29.5f),
+        new float3(37.75f, 8f, -29.5f),
+        new float3(-37.75f, 8f, 29.5f) };
 
     private NativeList<Color> _playerColors = new(4, Allocator.Persistent) {
         new Color(1f, 0f, 0f, 1f),

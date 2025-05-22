@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour
         scoreTab.SetActive(false);
         menuTab.SetActive(false);
 
-        for (int i = 1; i <= scoreText.Length; i++) playerScores.Add(i, 0);
+        for (int i = 0; i < scoreText.Length; i++) playerScores.Add(i, 0);
     }
 
 
@@ -103,15 +103,15 @@ public class UIManager : MonoBehaviour
         if (playerNumber < 1 || playerNumber > 4) throw new Exception("Tried to add score to player number " + playerNumber);
         else
         {
-            playerScores[playerNumber] += scoreToAdd;
-            scoreText[playerNumber].text = playerScores[playerNumber].ToString();
+            playerScores[playerNumber - 1] += scoreToAdd;
+            scoreText[playerNumber - 1].text = playerScores[playerNumber - 1].ToString();
         }
     }
 
     public NativeList<int> GetScores()
     {
         NativeList<int> scores = new NativeList<int>(4, Allocator.Temp);
-        for (int i = 1; i <= scoreText.Length; i++) scores.Add(playerScores[i]);
+        for (int i = 0; i < scoreText.Length; i++) scores.Add(playerScores[i]);
         return scores;
     }
 

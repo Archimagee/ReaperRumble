@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Entities;
-using Unity.NetCode;
 
 
 
@@ -19,8 +18,8 @@ public class SpawnSoulGroupAuthoring : MonoBehaviour
     }
 }
 
-public struct SoulGroupInitialise : IComponentData
+public partial struct SoulGroupInitialise : IComponentData
 {
-    [GhostField] public int SoulAmount;
-    [GhostField] public double TimeLastsForSeconds;
+    public int SoulAmount;
+    public double TimeLastsForSeconds;
 }

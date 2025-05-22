@@ -22,45 +22,40 @@ public partial class InitialiseSoulGroupServerSystem : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-
-
-
-        foreach ((RefRO<SoulGroupInitialise> initialise, RefRO<LocalTransform> transform, Entity initialiseEntity) in SystemAPI.Query<RefRO<SoulGroupInitialise>, RefRO<LocalTransform>>().WithNone<SoulGroupTag>().WithEntityAccess())
+        NativeArray<Entity> groupsToInitialise = SystemAPI.QueryBuilder().WithAll<SoulGroupInitialise>().WithNone<SoulGroupTag>().Build().ToEntityArray(Allocator.Temp);
+        if (groupsToInitialise.Length > 0)
         {
-            Entity newSoulGroup = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
-            ecb.SetName(newSoulGroup, "Initialised Soul Group");
-            ecb.SetComponent(newSoulGroup, new LocalTransform() { Position = transform.ValueRO.Position, Rotation = quaternion.identity, Scale = 1f });
-            ecb.AddBuffer<SoulBufferElement>(newSoulGroup);
-            ecb.AddComponent(newSoulGroup, new SoulGroupInitialise() { SoulAmount = initialise.ValueRO.SoulAmount, TimeLastsForSeconds = initialise.ValueRO.TimeLastsForSeconds });
-            ecb.RemoveComponent<SoulGroupInitialise>(initialiseEntity);
-        }
+            Entity initialiseGroup = groupsToInitialise[0];
+            Entity newSoulGroup = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulGroupPrefabEntity);
+            EntityManager.SetName(newSoulGroup, "Initialised Soul Group");
+            EntityManager.SetComponentData(newSoulGroup, new LocalTransform() { Position = SystemAPI.GetComponent<LocalToWorld>(initialiseGroup).Position, Rotation = quaternion.identity, Scale = 1f });
+            EntityManager.AddBuffer<SoulBufferElement>(newSoulGroup);
+            EntityManager.AddComponentData(newSoulGroup, new DestroySoulGroup() { TimeToDestroyAt = SystemAPI.Time.ElapsedTime + SystemAPI.GetComponent<SoulGroupInitialise>(initialiseGroup).TimeLastsForSeconds });
 
-        foreach ((RefRO<SoulGroupInitialise> initialise, RefRO<LocalTransform> transform, Entity initialiseGroup) in SystemAPI.Query<RefRO<SoulGroupInitialise>, RefRO<LocalTransform>>().WithAll<SoulGroupTag>().WithEntityAccess())
-        {
+
+
             Unity.Mathematics.Random random = new();
             random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
 
-            for (int i = 0; i < initialise.ValueRO.SoulAmount; i++)
+            for (int i = 0; i < SystemAPI.GetComponent<SoulGroupInitialise>(initialiseGroup).SoulAmount; i++)
             {
-                Entity newSoul = ecb.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
-                ecb.SetName(newSoul, "Initialised Soul");
-                ecb.SetComponent(newSoul, new LocalTransform()
+                Entity newSoul = EntityManager.Instantiate(SystemAPI.GetSingleton<EntitySpawnerPrefabs>().SoulPrefabEntity);
+                EntityManager.SetName(newSoul, "Initialised Soul");
+                EntityManager.SetComponentData(newSoul, new LocalTransform()
                 {
-                    Position = transform.ValueRO.Position + random.NextFloat3(new float3(-1f, -1f, -1f), new float3(1f, 1f, 1f)),
+                    Position = SystemAPI.GetComponent<LocalTransform>(newSoulGroup).Position + random.NextFloat3(new float3(-1f, -1f, -1f), new float3(1f, 1f, 1f)),
                     Rotation = quaternion.identity,
                     Scale = 1f
                 });
-                ecb.SetComponent(newSoul, new SoulGroupMember() { MyGroup = initialiseGroup });
-                SystemAPI.GetBuffer<SoulBufferElement>(initialiseGroup).Add(new SoulBufferElement() { Soul = newSoul });
+                EntityManager.SetComponentData(newSoul, new SoulGroupMember() { MyGroup = newSoulGroup });
+                SystemAPI.GetBuffer<SoulBufferElement>(newSoulGroup).Add(new SoulBufferElement() { Soul = newSoul });
 
-                ecb.RemoveComponent<SoulGroupInitialise>(initialiseGroup);
+                EntityManager.RemoveComponent<SoulGroupInitialise>(newSoulGroup);
             }
+
+
+
+            EntityManager.RemoveComponent<SoulGroupInitialise>(initialiseGroup);
         }
-
-
-
-        ecb.Playback(EntityManager);
-        ecb.Dispose();
     }
 }
