@@ -11,8 +11,8 @@ public class MenuMusicManager : MonoBehaviour
 
     private FMOD.Studio.EventInstance _music;
 
-    private float _currentTrack;
-    public float CurrentTrack
+    private int _currentTrack;
+    public int CurrentTrack
     {
         get { return _currentTrack; }
         set
@@ -26,7 +26,7 @@ public class MenuMusicManager : MonoBehaviour
         }
     }
 
-    public void SetMusic(float value)
+    public void SetMusic(int value)
     {
         CurrentTrack = value;
     }
@@ -46,6 +46,5 @@ public class MenuMusicManager : MonoBehaviour
     private void Start()
     {
         _music = FMODUnity.RuntimeManager.CreateInstance("event:/MenuMusic");
-        _music.start();
     }
 }

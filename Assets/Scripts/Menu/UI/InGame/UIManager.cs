@@ -173,7 +173,7 @@ public class UIManager : MonoBehaviour
 
     public void ReturnToMenu()
     {
-        SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Single);
+        NetworkManager.EndClient();
     }
 
     public void QuitGame()

@@ -50,6 +50,7 @@ public partial class DepositSoulsServerSystem : SystemBase
         Dependency.Complete();
 
         ecb.Playback(EntityManager);
+        ecb.Dispose();
         ecb = new EntityCommandBuffer(Allocator.Temp);
         playerSoulGroups.Dispose();
 
@@ -80,6 +81,8 @@ public partial class DepositSoulsServerSystem : SystemBase
                     ScoreToAdd = amount
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+
+                ecb.RemoveComponent<DepositSouls>(soulGroup);
             }
         }
 

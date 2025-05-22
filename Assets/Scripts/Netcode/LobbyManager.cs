@@ -39,11 +39,6 @@ public class LobbyManager : MonoBehaviour
 
 
 
-    public delegate void LobbyEvent();
-    public LobbyEvent RaiseGameCreatedFromLobby;
-
-
-
     public void Awake()
     {
         if (Instance == null) Instance = this;
@@ -70,6 +65,7 @@ public class LobbyManager : MonoBehaviour
 
         HeartbeatLobby();
         Setup(displayName);
+        MenuMusicManager.Instance.CurrentTrack = 1;
     }
 
     public async void LeaveLobby()
@@ -80,6 +76,7 @@ public class LobbyManager : MonoBehaviour
             await LobbyService.Instance.RemovePlayerAsync(_currentLobby.Id, AuthenticationService.Instance.PlayerId);
         }
         _currentLobby = null;
+        MenuMusicManager.Instance.CurrentTrack = 0;
     }
 
     public async void JoinLobbyByCode(string code, string displayName)
@@ -101,6 +98,7 @@ public class LobbyManager : MonoBehaviour
         _lobbyTab.SetActive(true);
 
         Setup(displayName);
+        MenuMusicManager.Instance.CurrentTrack = 1;
     }
 
     public async void HeartbeatLobby()
@@ -179,7 +177,7 @@ public class LobbyManager : MonoBehaviour
         _loadingTab.SetActive(true);
         _lobbyTab.SetActive(false);
         _isGameStarting = true;
-        RaiseGameCreatedFromLobby?.Invoke();
+        NetworkManager.OnGameCreatedFromLobby();
     }
 
 
@@ -275,7 +273,7 @@ public class LobbyManager : MonoBehaviour
             {
                 Debug.Log("Join code recieved");
                 RelayJoinCode = dataChange.Value.Value.Value;
-                CreateGameFromLobby();
+                if (!IsHost) CreateGameFromLobby();
             }
         }
     }
@@ -288,7 +286,7 @@ public class LobbyManager : MonoBehaviour
             {
                 Debug.Log("Join code recieved");
                 RelayJoinCode = dataChange.Value.Value.Value;
-                CreateGameFromLobby();
+                if (!IsHost) CreateGameFromLobby();
             }
         }
     }

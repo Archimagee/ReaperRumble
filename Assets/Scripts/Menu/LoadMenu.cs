@@ -12,9 +12,6 @@ public class LoadMenu : MonoBehaviour
 
     public static LoadMenu Instance;
 
-    public delegate void LoadMenuDelegate();
-    public LoadMenuDelegate RaiseLoadMenuFinished;
-
 
 
     [SerializeField] private GameObject[] _gameObjectsToEnable;
@@ -31,8 +28,6 @@ public class LoadMenu : MonoBehaviour
 
     private async void Start()
     {
-        RaiseLoadMenuFinished += OnLoadMenuFinished;
-
         _loadingTab.SetActive(true);
 
         try
@@ -47,22 +42,16 @@ public class LoadMenu : MonoBehaviour
 
 
         SetupEvents();
-        await SignInAnonymouslyAsync();
+        if (!AuthenticationService.Instance.IsSignedIn) await SignInAnonymouslyAsync();
 
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        _loadingTab.SetActive(false);
-        RaiseLoadMenuFinished?.Invoke();
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
-    }
-
-
-
-    public void OnDestroy()
-    {
-        RaiseLoadMenuFinished -= OnLoadMenuFinished;
+        MenuMusicManager.Instance.CurrentTrack = 0;
+        MenuMusicManager.Instance.StartPlaying();
+        _loadingTab.SetActive(false);
     }
 
 

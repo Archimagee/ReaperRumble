@@ -30,7 +30,6 @@ public class FightMusicManager : MonoBehaviour
     private void Start()
     {
         _music = FMODUnity.RuntimeManager.CreateInstance("event:/FightMusic");
-        _music.start();
     }
 
 
@@ -51,6 +50,15 @@ public class FightMusicManager : MonoBehaviour
     {
         _currentTrack = MusicNames.None;
         _music.setParameterByName("CurrentDisaster", (float)MusicNames.None);
+    }
+
+    public void StartPlaying()
+    {
+        _music.start();
+    }
+    public void StopPlaying()
+    {
+        _music.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 }
 
