@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Physics.Systems;
 using Unity.Physics;
 using Unity.NetCode;
+using UnityEngine;
 
 
 
@@ -56,7 +57,16 @@ public partial class DepositSoulsServerSystem : SystemBase
 
 
 
-        foreach ((RefRO<SoulGroupTarget> player, Entity soulGroup) in SystemAPI.Query<RefRO<SoulGroupTarget>>().WithAll<DepositSouls>().WithEntityAccess())
+        foreach ((RefRO<DepositCooldown> cooldown, Entity soulGroup) in SystemAPI.Query<RefRO<DepositCooldown>>().WithAll<SoulGroupTarget>().WithEntityAccess())
+        {
+            if (SystemAPI.HasComponent<DepositSouls>(soulGroup)) ecb.RemoveComponent<DepositSouls>(soulGroup);
+
+            if (SystemAPI.Time.ElapsedTime >= cooldown.ValueRO.CanDepositAt) ecb.RemoveComponent<DepositCooldown>(soulGroup);
+        }
+
+
+
+            foreach ((RefRO<SoulGroupTarget> player, Entity soulGroup) in SystemAPI.Query<RefRO<SoulGroupTarget>>().WithAll<DepositSouls>().WithNone<DepositCooldown>().WithEntityAccess())
         {
             DynamicBuffer<SoulBufferElement> souls = SystemAPI.GetBuffer<SoulBufferElement>(soulGroup);
             int amount = souls.Length;
@@ -82,8 +92,9 @@ public partial class DepositSoulsServerSystem : SystemBase
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-                ecb.RemoveComponent<DepositSouls>(soulGroup);
+                ecb.AddComponent(soulGroup, new DepositCooldown() { CanDepositAt = SystemAPI.Time.ElapsedTime + 60d });
             }
+            ecb.RemoveComponent<DepositSouls>(soulGroup);
         }
 
 
@@ -134,4 +145,9 @@ public partial struct AddPlayerScore : IRpcCommand
 {
     public int PlayerNumber;
     public int ScoreToAdd;
+}
+
+public partial struct DepositCooldown : IComponentData
+{
+    public double CanDepositAt;
 }

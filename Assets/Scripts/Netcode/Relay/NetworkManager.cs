@@ -103,7 +103,11 @@ public static class NetworkManager
 
         PlayerLobbyData playerLobbyData = LobbyManager.Instance.GetPlayerData();
         Entity playerDataEntity = _clientWorld.EntityManager.CreateEntity();
-        _clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
+        _clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() {
+            PlayerNickname = playerLobbyData.PlayerName,
+            PlayerNumber = playerLobbyData.PlayerNumber,
+            PlayerAbility = playerLobbyData.PlayerAbility,
+            PlayerColour = playerLobbyData.PlayerColour });
 
         Entity endGame = _serverWorld.EntityManager.CreateEntity();
         _serverWorld.EntityManager.AddComponentData(endGame, new EndGameTime() { TimeToEndGameAt = 300d });
@@ -142,7 +146,12 @@ public static class NetworkManager
 
         PlayerLobbyData playerLobbyData = LobbyManager.Instance.GetPlayerData();
         Entity playerDataEntity = _clientWorld.EntityManager.CreateEntity();
-        _clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() { PlayerNumber = playerLobbyData.PlayerNumber, PlayerAbility = playerLobbyData.PlayerAbility, PlayerColour = playerLobbyData.PlayerColour });
+        _clientWorld.EntityManager.AddComponentData(playerDataEntity, new PlayerDataFromLobby() {
+            PlayerNickname = playerLobbyData.PlayerName,
+            PlayerNumber = playerLobbyData.PlayerNumber,
+            PlayerAbility = playerLobbyData.PlayerAbility,
+            PlayerColour = playerLobbyData.PlayerColour
+        });
 
         MenuMusicManager.Instance.StopPlaying();
         FightMusicManager.Instance.StartPlaying();

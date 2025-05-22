@@ -30,7 +30,9 @@ partial struct GoInGameClientSystem : ISystem
             ecb.AddComponent<NetworkStreamInGame>(entity);
 
             Entity rpcEntity = ecb.CreateEntity();
-            ecb.AddComponent(rpcEntity, new GoInGameRequestRPC() { PlayerAbility = SystemAPI.GetSingleton<PlayerDataFromLobby>().PlayerAbility });
+            ecb.AddComponent(rpcEntity, new GoInGameRequestRPC() {
+                PlayerAbility = SystemAPI.GetSingleton<PlayerDataFromLobby>().PlayerAbility,
+                PlayerNickname = SystemAPI.GetSingleton<PlayerDataFromLobby>().PlayerNickname });
             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
             ecb.DestroyEntity(SystemAPI.GetSingletonEntity<PlayerDataFromLobby>());
@@ -51,6 +53,7 @@ partial struct GoInGameClientSystem : ISystem
 public struct GoInGameRequestRPC : IRpcCommand
 {
     public PlayerAbility PlayerAbility;
+    public FixedString64Bytes PlayerNickname;
 }
 
 public partial struct PlayerDataFromLobby : IComponentData
@@ -58,4 +61,5 @@ public partial struct PlayerDataFromLobby : IComponentData
     public int PlayerNumber;
     public PlayerAbility PlayerAbility;
     public float4 PlayerColour;
+    public FixedString64Bytes PlayerNickname;
 }

@@ -85,17 +85,14 @@ public partial class TriggerPlayerAbilities : SystemBase
             });
             ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
-            if (!SystemAPI.GetBuffer<SoulBufferElement>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).IsEmpty)
+            rpcEntity = ecb.CreateEntity();
+            ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC()
             {
-                rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC()
-                {
-                    Amount = _sixShooterSoulsOrphaned,
-                    GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).ghostId,
-                    Position = SystemAPI.GetComponent<LocalTransform>(hitPlayer).Position
-                });
-                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-            }
+                Amount = _sixShooterSoulsOrphaned,
+                GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hitPlayer).MySoulGroup).ghostId,
+                Position = SystemAPI.GetComponent<LocalTransform>(hitPlayer).Position
+            });
+            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
         }
     }
 
@@ -130,8 +127,8 @@ public enum PlayerAbility
 
 public partial struct PlayerData : IComponentData
 {
-    public int PlayerNumber;
-    public PlayerAbility MyAbility;
-    public Color MyColour;
-    public bool IsNicknameSet;
+    [GhostField] public int PlayerNumber;
+    [GhostField] public PlayerAbility MyAbility;
+    [GhostField] public Color MyColour;
+    [GhostField] public FixedString64Bytes PlayerNickname;
 }

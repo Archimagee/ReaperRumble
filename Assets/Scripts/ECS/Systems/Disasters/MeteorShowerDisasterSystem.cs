@@ -8,7 +8,7 @@ using Unity.Transforms;
 
 
 [BurstCompile]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class MeteorShowerDisasterSystem : SystemBase
 {
     private Entity _meteorPrefab = Entity.Null;
@@ -56,8 +56,7 @@ public partial class MeteorShowerDisasterSystem : SystemBase
         {
             if (disasterData.ValueRO.MyDisasterType != DisasterType.MeteorShower) break;
 
-            Unity.Mathematics.Random random = new Unity.Mathematics.Random();
-            random.InitState(seed.ValueRO.Seed);
+            Unity.Mathematics.Random random = new Unity.Mathematics.Random(seed.ValueRO.Seed);
 
             double endTime = SystemAPI.Time.ElapsedTime + disasterData.ValueRO.TimeLastsForSeconds;
             double time = SystemAPI.Time.ElapsedTime + _firstMeteorDelaySeconds;
@@ -66,21 +65,19 @@ public partial class MeteorShowerDisasterSystem : SystemBase
             while (time <= endTime)
             {
                 float3 randomStrikePos = random.NextFloat3(_impactBounds.Min, _impactBounds.Max);
-                randomStrikePos.y = 15f;
+                randomStrikePos.y = 40f;
 
 
 
                 RaycastInput raycastInput = new RaycastInput()
                 {
                     Start = randomStrikePos,
-                    End = randomStrikePos + new float3(0f, -40f, 0f),
+                    End = randomStrikePos + new float3(0f, -50f, 0f),
                     Filter = new CollisionFilter { BelongsTo = ~0u, CollidesWith = 1u << 2 }
                 };
 
                 Unity.Physics.RaycastHit hit = new();
                 bool hasHit = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CastRay(raycastInput, out hit);
-
-
 
                 if (hasHit)
                 {

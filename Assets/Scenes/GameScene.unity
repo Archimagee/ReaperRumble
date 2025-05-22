@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player 4
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 166.4
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -320,9 +320,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -349,7 +347,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 170
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1710,7 +1708,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player 1
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -1737,7 +1735,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 166.4
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1854,9 +1852,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -1883,7 +1879,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 170
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2691,9 +2687,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
   m_sharedMaterial: {fileID: 446100935651288354, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
@@ -3171,7 +3165,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0s
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -3198,7 +3192,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3507,7 +3501,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &527799591
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3907,9 +3901,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
   m_sharedMaterial: {fileID: 446100935651288354, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
@@ -4045,7 +4037,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Player 1 :'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -4773,12 +4765,17 @@ MonoBehaviour:
   _depositCooldownText: {fileID: 466271047}
   _depositCooldownFill: {fileID: 2013485580}
   _depositAvailableColor: {r: 1, g: 1, b: 1, a: 1}
-  _depositUnavailableColor: {r: 1, g: 0.654902, b: 0.654902, a: 1}
+  _depositUnavailableColor: {r: 0.29803923, g: 0.30980393, b: 0.32156864, a: 0.4745098}
   _announcementGO: {fileID: 1761789253}
   _announcementText: {fileID: 850964476}
   _gameTimeSeconds: 300
   _timerText: {fileID: 33268771}
   scoreTab: {fileID: 1508385549}
+  playerNicknames:
+  - {fileID: 157238609}
+  - {fileID: 1647147804}
+  - {fileID: 1485330329}
+  - {fileID: 2300631}
   scoreText:
   - {fileID: 175538497}
   - {fileID: 5275459}
@@ -5172,51 +5169,6 @@ RectTransform:
   m_AnchoredPosition: {x: -48, y: -202}
   m_SizeDelta: {x: 1457, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &854951987
-GameObject:
-  m_ObjectHideFlags: 19
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 854951989}
-  - component: {fileID: 854951988}
-  m_Layer: 0
-  m_Name: SceneIDMap
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &854951988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 854951987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1671886100}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Entries: []
---- !u!4 &854951989
-Transform:
-  m_ObjectHideFlags: 19
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 854951987}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &886457584
 GameObject:
   m_ObjectHideFlags: 0
@@ -5274,9 +5226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
   m_sharedMaterial: {fileID: 446100935651288354, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
@@ -5992,7 +5942,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Player 2 :'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -6580,9 +6530,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
   m_sharedMaterial: {fileID: 446100935651288354, guid: 08eef075270249143b457eefc2f3fbb0, type: 2}
@@ -6946,9 +6894,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -6975,7 +6921,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 170
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7103,7 +7049,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player 3
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -7130,7 +7076,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 166.4
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8202,7 +8148,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player 2
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -8229,7 +8175,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 166.4
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8281,21 +8227,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647147802}
   m_CullTransparentMesh: 1
---- !u!115 &1671886100
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 7
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_Type: 0
-  m_ExecutionOrder: 0
-  m_ClassName: SceneObjectIDMapSceneAsset
-  m_Namespace: UnityEngine.Rendering.HighDefinition
-  m_AssemblyName: Unity.RenderPipelines.HighDefinition.Runtime
 --- !u!1 &1680024850
 GameObject:
   m_ObjectHideFlags: 0
@@ -8353,7 +8284,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Player 4 :'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -9090,9 +9021,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '0
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -9119,7 +9048,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 170
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9464,8 +9393,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 113.4, y: -354.3}
-  m_SizeDelta: {x: 940, y: 940}
+  m_AnchoredPosition: {x: 88, y: -372}
+  m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2013485580
 MonoBehaviour:
@@ -9492,7 +9421,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -9880,7 +9809,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Player 3 :'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
   m_sharedMaterial: {fileID: -8222088425703477461, guid: ed604f187cb9a82498c6ed8fc542066b, type: 2}
@@ -9975,4 +9904,3 @@ SceneRoots:
   - {fileID: 738254238}
   - {fileID: 1517074319}
   - {fileID: 1120766919}
-  - {fileID: 854951989}

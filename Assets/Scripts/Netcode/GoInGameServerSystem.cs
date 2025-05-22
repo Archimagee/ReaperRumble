@@ -69,18 +69,22 @@ public partial class GoInGameServerSystem : SystemBase
             ecb.SetComponent(newPlayerEntity, new LocalTransform { Position = _spawnPositions[playerNumber - 1], Scale = 1f, Rotation = quaternion.identity });
             ecb.AddComponent(newPlayerEntity, new PlayerSetupRequired()
             {
+                PlayerNickname = goInGameRequestRPC.ValueRO.PlayerNickname,
                 PlayerNumber = playerNumber,
                 PlayerAbility = goInGameRequestRPC.ValueRO.PlayerAbility,
                 PlayerColor = _playerColors[playerNumber - 1]
             });
             ecb.AddComponent(newPlayerEntity, new PlayerData()
             {
+                PlayerNickname = goInGameRequestRPC.ValueRO.PlayerNickname,
                 PlayerNumber = playerNumber,
                 MyAbility = goInGameRequestRPC.ValueRO.PlayerAbility,
                 MyColour = _playerColors[playerNumber - 1]
             });
 
 
+
+            Entity rpcEntity = ecb.CreateEntity();
 
             ecb.DestroyEntity(recieveRpcEntity);
         }
@@ -97,4 +101,5 @@ public struct PlayerSetupRequired : IComponentData
     [GhostField] public int PlayerNumber;
     [GhostField] public PlayerAbility PlayerAbility;
     [GhostField] public Color PlayerColor;
+    [GhostField] public FixedString64Bytes PlayerNickname;
 }

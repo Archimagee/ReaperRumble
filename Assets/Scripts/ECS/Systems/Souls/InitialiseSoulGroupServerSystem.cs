@@ -3,7 +3,6 @@ using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
-using UnityEngine;
 
 
 
@@ -34,8 +33,7 @@ public partial class InitialiseSoulGroupServerSystem : SystemBase
 
 
 
-            Unity.Mathematics.Random random = new();
-            random.InitState((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
+            Unity.Mathematics.Random random = new((uint)System.DateTime.Now.Millisecond * (uint)System.DateTime.Now.Second);
 
             for (int i = 0; i < SystemAPI.GetComponent<SoulGroupInitialise>(initialiseGroup).SoulAmount; i++)
             {

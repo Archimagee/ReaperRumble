@@ -27,12 +27,13 @@ public partial class SetupPlayerClientSystem : SystemBase
         {
             ecb.SetName(playerEntity, "Player " + playerSetup.ValueRO.PlayerNumber);
 
-            ecb.AddComponent(playerEntity, new PlayerData()
-            {
-                MyAbility = playerSetup.ValueRO.PlayerAbility,
-                MyColour = playerSetup.ValueRO.PlayerColor,
-                IsNicknameSet = false
-            });
+            //ecb.AddComponent(playerEntity, new PlayerData()
+            //{
+            //    PlayerNumber = playerSetup.ValueRO.PlayerNumber,
+            //    MyAbility = playerSetup.ValueRO.PlayerAbility,
+            //    MyColour = playerSetup.ValueRO.PlayerColor,
+            //    PlayerNickname = playerSetup.ValueRO.PlayerNickname
+            //});
 
 
 

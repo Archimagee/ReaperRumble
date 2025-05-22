@@ -23,6 +23,7 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent<Knockback>(entity);
             AddComponent<PlayerSetupRequired>(entity);
             AddComponent<PlayerSoulGroup>(entity);
+            AddComponent<PlayerData>(entity);
         }
     }
 }

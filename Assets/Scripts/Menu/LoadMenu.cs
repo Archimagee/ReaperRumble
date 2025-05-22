@@ -30,7 +30,7 @@ public class LoadMenu : MonoBehaviour
     private async void Start()
     {
         _loadingTab.SetActive(true);
-        await SceneManager.LoadSceneAsync("CommonScene", LoadSceneMode.Additive);
+        if (SceneManager.loadedSceneCount == 1) await SceneManager.LoadSceneAsync("CommonScene", LoadSceneMode.Additive);
 
         try
         {

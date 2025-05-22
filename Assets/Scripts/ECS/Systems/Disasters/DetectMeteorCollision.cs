@@ -11,7 +11,7 @@ using Unity.NetCode;
 
 [BurstCompile]
 [UpdateInGroup(typeof(AfterPhysicsSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class DetectMeteorCollision : SystemBase
 {
     Entity _meteorImpactVFXPrefabEntity;
@@ -56,30 +56,18 @@ public partial class DetectMeteorCollision : SystemBase
 
         foreach ((RefRO<MeteorImpact> impact, RefRO<MeteorData> meteorData, Entity meteorEntity) in SystemAPI.Query<RefRO<MeteorImpact>, RefRO<MeteorData>>().WithEntityAccess())
         {
-            Entity impactVFX = ecb.Instantiate(_meteorImpactVFXPrefabEntity);
-            ecb.SetComponent(impactVFX, new LocalTransform() { Position = impact.ValueRO.Position, Rotation = quaternion.identity, Scale = 4f });
+            Entity rpcEntity = ecb.CreateEntity();
+            ecb.AddComponent(rpcEntity, new SpawnVFXRequest() { Effect = RRVFX.Explosion, Location = impact.ValueRO.Position, Rotation = quaternion.identity });
+            ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
 
             NativeList<DistanceHit> hits = new(Allocator.Temp);
             SystemAPI.GetSingleton<PhysicsWorldSingleton>().OverlapSphere(impact.ValueRO.Position, meteorData.ValueRO.ImpactRadius, ref hits, new CollisionFilter() { BelongsTo = ~0u, CollidesWith = 1u << 0 });
 
             foreach (DistanceHit hit in hits)
             {
-                Entity rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new ApplyKnockbackToPlayerRequestRPC()
-                {
-                    KnockbackDirection = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hit.Entity).Position - impact.ValueRO.Position),
-                    Strength = meteorData.ValueRO.KnockbackStrength,
-                    PlayerGhostID = SystemAPI.GetComponent<GhostInstance>(hit.Entity).ghostId
-                });
-                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
-
-                rpcEntity = ecb.CreateEntity();
-                ecb.AddComponent(rpcEntity, new OrphanSoulsRequestRPC
-                {
-                    GroupID = SystemAPI.GetComponent<GhostInstance>(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup).ghostId,
-                    Amount = 3
-                });
-                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+                float3 currentKnockback = SystemAPI.GetComponent<Knockback>(hit.Entity).KnockbackValue;
+                ecb.SetComponent(hit.Entity, new Knockback() { KnockbackValue = currentKnockback = math.normalizesafe(SystemAPI.GetComponent<LocalTransform>(hit.Entity).Position - impact.ValueRO.Position) * meteorData.ValueRO.KnockbackStrength });
+                ecb.AddComponent(SystemAPI.GetComponent<PlayerSoulGroup>(hit.Entity).MySoulGroup, new OrphanSouls() { Amount = 3 });
             }
 
             ecb.DestroyEntity(meteorEntity);

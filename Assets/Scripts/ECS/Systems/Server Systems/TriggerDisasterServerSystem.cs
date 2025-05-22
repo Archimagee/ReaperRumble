@@ -10,7 +10,7 @@ using Unity.NetCode;
 public partial class TriggerDisasterServerSystem : SystemBase
 {
     private double _lastDisasterAt = 0d;
-    private readonly double _firstDisasterDelaySeconds = 20d;
+    private readonly double _firstDisasterDelaySeconds = 5d;
     private readonly double _disasterCooldownSeconds = 90d;
     private Unity.Mathematics.Random _random = new();
 
@@ -48,6 +48,20 @@ public partial class TriggerDisasterServerSystem : SystemBase
                 ecb.AddComponent(rpcEntity, new PlayAnnouncementAtRPC()
                 {
                     AnnouncementToPlay = "Mt. Sillinamus Stirs...",
+                    TimeToPlayAt = SystemAPI.Time.ElapsedTime
+                });
+                ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);
+            }
+            else if (newDisaster == DisasterType.MeteorShower)
+            {
+                Entity eruption = ecb.Instantiate(SystemAPI.GetSingleton<DisasterPrefabs>().MeteorShowerDisasterPrefabEntity);
+                ecb.SetName(eruption, "Meteor Shower Disaster");
+                ecb.AddComponent(eruption, new EventSeed() { Seed = _random.NextUInt() });
+
+                Entity rpcEntity = ecb.CreateEntity();
+                ecb.AddComponent(rpcEntity, new PlayAnnouncementAtRPC()
+                {
+                    AnnouncementToPlay = "Meteor Shower of DOOOOOOOM!!",
                     TimeToPlayAt = SystemAPI.Time.ElapsedTime
                 });
                 ecb.AddComponent<SendRpcCommandRequest>(rpcEntity);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -26,6 +25,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _timerText;
 
     [SerializeField] private GameObject scoreTab;
+    [SerializeField] private TextMeshProUGUI[] playerNicknames = new TextMeshProUGUI[4];
     [SerializeField] private TextMeshProUGUI[] scoreText = new TextMeshProUGUI[4];
     private Dictionary<int, int> playerScores = new Dictionary<int, int>(4);
 
@@ -62,14 +62,14 @@ public class UIManager : MonoBehaviour
     {
         if (_currentDepositCooldown > 0)
         {
-            _currentDepositCooldown -= Time.deltaTime * 1000;
+            _currentDepositCooldown -= Time.deltaTime;
             if (_currentDepositCooldown < 0)
             {
                 _currentDepositCooldown = 0;
                 _depositCooldownText.text = "";
                 _depositCooldownFill.color = _depositAvailableColor;
             }
-            else _depositCooldownText.text = ((int)TimeSpan.FromMilliseconds(_currentDepositCooldown).TotalSeconds).ToString() + "s";
+            else _depositCooldownText.text = ((int)TimeSpan.FromSeconds(_currentDepositCooldown).TotalSeconds).ToString() + "s";
 
             _depositCooldownFill.fillAmount = _currentDepositCooldown / _lastCooldown;
         }
@@ -133,6 +133,14 @@ public class UIManager : MonoBehaviour
 
         _announcementText.text = text;
         _announcementGO.SetActive(true);
+    }
+
+    public void SetPlayerNickname(int playerNumber, FixedString64Bytes name)
+    {
+        endGamePlayerNameText[playerNumber - 1].text = name.ToString() + ":";
+        endGameScoreText[playerNumber - 1].text = "0";
+        playerNicknames[playerNumber - 1].text = name.ToString();
+        scoreText[playerNumber - 1].text = "0";
     }
 
 

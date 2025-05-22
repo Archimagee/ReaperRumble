@@ -1,13 +1,13 @@
 using Unity.Entities;
-using Unity.Collections;
 using Unity.Burst;
 using Unity.Physics;
+using Unity.NetCode;
 
 
 
 [BurstCompile]
-[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 public partial class MoveMeteors : SystemBase
 {
     protected override void OnCreate()
@@ -20,18 +20,10 @@ public partial class MoveMeteors : SystemBase
     [BurstCompile]
     protected override void OnUpdate()
     {
-        EntityCommandBuffer ecb = new(Allocator.Temp);
-
-
-
         foreach ((RefRO<MeteorData> meteorData, RefRW<PhysicsVelocity> physicsVelocity)
-            in SystemAPI.Query<RefRO<MeteorData>, RefRW<PhysicsVelocity>>())
+            in SystemAPI.Query<RefRO<MeteorData>, RefRW<PhysicsVelocity>>().WithAll<Simulate>())
         {
             physicsVelocity.ValueRW.Linear = meteorData.ValueRO.MovementDirection * meteorData.ValueRO.MovementSpeed;
         }
-
-
-
-        ecb.Playback(EntityManager);
     }
 }

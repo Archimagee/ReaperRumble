@@ -28,6 +28,11 @@ public partial class AddScoreClientSystem : SystemBase
         {
             UIManager.Instance.AddScore(addScore.ValueRO.PlayerNumber, addScore.ValueRO.ScoreToAdd);
 
+            foreach (RefRO<PlayerData> player in SystemAPI.Query<RefRO<PlayerData>>().WithAll<GhostOwnerIsLocal>())
+            {
+                if (player.ValueRO.PlayerNumber == addScore.ValueRO.PlayerNumber) UIManager.Instance.SetDepositCooldown(60);
+            }
+
             ecb.DestroyEntity(rpcEntity);
         }
 
